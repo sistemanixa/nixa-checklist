@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NIXA — Commissioning Bariloche</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+ 
 <!-- Firebase compat SDK — funciona en Safari/iOS sin problemas -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
+ 
 <style>
 :root {
   --bg:      #08090c;
@@ -31,7 +31,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
-
+ 
 /* ── LOADING ─────────────────────────── */
 #loading{
   position:fixed;inset:0;background:var(--bg);z-index:3000;
@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ld-bar{width:100%;height:1px;background:var(--border2);overflow:hidden;}
 .ld-fill{height:100%;background:var(--accent);animation:ldfill 1.4s ease-in-out infinite;}
 @keyframes ldfill{0%{width:0;margin-left:0}60%{width:70%}100%{width:0;margin-left:100%}}
-
+ 
 /* ── LOGIN ───────────────────────────── */
 #login{
   position:fixed;inset:0;background:var(--bg);z-index:2000;
@@ -72,7 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   padding:.72rem 1rem;outline:none;transition:border-color .2s;margin-bottom:1.1rem;
 }
 .linput:focus{border-color:var(--accent);}
-
+ 
 /* Admin toggle */
 .admin-toggle{
   display:flex;align-items:center;gap:.5rem;margin-bottom:1.4rem;cursor:pointer;
@@ -80,9 +80,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   letter-spacing:.1em;text-transform:uppercase;user-select:none;width:fit-content;
 }
 .admin-toggle input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
-
+ 
 #admin-pass-wrap{display:none;margin-bottom:1.1rem;}
-
+ 
 .login-btn{
   width:100%;background:var(--accent);color:var(--bg);border:none;
   font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;
@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 }
 .login-btn:hover{opacity:.88;}
 .login-err{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--red);margin-top:.6rem;display:none;}
-
+ 
 /* ── HEADER ──────────────────────────── */
 header{
   position:sticky;top:0;z-index:100;
@@ -122,7 +122,7 @@ header{
 .h-me{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);border:1px solid var(--border2);padding:.2rem .6rem;display:flex;align-items:center;gap:.38rem;}
 .h-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
+ 
 /* ── SUPERVISOR PANEL ─────────────────── */
 #sup-panel{max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;}
 .sup-inner{background:var(--s1);border:1px solid var(--border);padding:1.25rem 1.5rem;}
@@ -145,7 +145,7 @@ header{
 .sup-checker-name{font-size:.76rem;font-weight:600;}
 .sup-checker-count{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent);}
 .sup-empty{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--dim);padding:.4rem 0;}
-
+ 
 /* ── TOASTS ──────────────────────────── */
 #toasts{position:fixed;bottom:1.25rem;right:1.25rem;width:265px;z-index:500;display:flex;flex-direction:column;gap:.3rem;pointer-events:none;}
 .toast{background:var(--s2);border:1px solid var(--border2);border-left:2px solid var(--accent);padding:.52rem .75rem;font-size:.68rem;color:var(--text);line-height:1.5;animation:tin .3s ease,tout .35s ease 3.65s forwards;}
@@ -154,7 +154,7 @@ header{
 .toast span{color:var(--muted);}
 @keyframes tin{from{transform:translateX(10px);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes tout{from{opacity:1}to{opacity:0}}
-
+ 
 /* ── ROOM TASK WITH QUANTITY ─────────── */
 .room-task{display:flex;align-items:flex-start;gap:.6rem;padding:.45rem .6rem;border:1px solid transparent;transition:all .15s;position:relative;}
 .room-task:hover{background:var(--s2);border-color:var(--border);}
@@ -179,7 +179,7 @@ header{
 .rt-note-btn:hover{color:var(--muted);}
 .rt-note-btn.has-note{color:var(--yellow);}
 .stock-tag{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:.06em;white-space:nowrap;margin-top:3px;flex-shrink:0;}
-
+ 
 /* ── CONFIRM UNCHECK MODAL ───────────── */
 #confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
 #confirm-modal.open{display:flex;}
@@ -189,7 +189,7 @@ header{
 .confirm-btns{display:flex;gap:.6rem;justify-content:center;}
 .confirm-yes{background:var(--red);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700;padding:.55rem 1.25rem;cursor:pointer;letter-spacing:.05em;}
 .confirm-no{background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.55rem 1.1rem;cursor:pointer;}
-
+ 
 /* ── HERO ────────────────────────────── */
 .hero{max-width:1160px;margin:0 auto;padding:2rem 1.25rem 1.25rem;}
 .hero-eyebrow{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;margin-bottom:.65rem;display:flex;align-items:center;gap:.55rem;}
@@ -198,10 +198,10 @@ header{
 .hero-badges{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.9rem;}
 .badge{font-family:'DM Mono',monospace;font-size:.53rem;color:var(--muted);border:1px solid var(--border);padding:.22rem .55rem;letter-spacing:.07em;text-transform:uppercase;}
 .badge b{color:var(--accent2);}
-
+ 
 /* ── LAYOUT ──────────────────────────── */
 .main{max-width:1160px;margin:0 auto;padding:1.25rem 1.25rem 5rem;display:grid;grid-template-columns:210px 1fr;gap:1.25rem;align-items:start;}
-
+ 
 /* ── SIDEBAR ─────────────────────────── */
 .sidebar{position:sticky;top:72px;background:var(--s1);border:1px solid var(--border);}
 .sb-head{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:.8rem 1.1rem .6rem;border-bottom:1px solid var(--border);}
@@ -209,7 +209,7 @@ header{
 .nav-item:hover{background:var(--s2);color:var(--text);border-left-color:var(--accent);}
 .ni-n{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);min-width:.9rem;}
 .ni-p{margin-left:auto;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);}
-
+ 
 /* ── SECTIONS ────────────────────────── */
 .content{display:flex;flex-direction:column;gap:1.1rem;}
 .section{background:var(--s1);border:1px solid var(--border);overflow:hidden;}
@@ -222,12 +222,12 @@ header{
 .section.collapsed .sec-chev{transform:rotate(-90deg);}
 .section.collapsed .sec-body{display:none;}
 .sec-body{padding:.85rem 1.1rem 1.1rem;}
-
+ 
 /* ── SUBSECTION ──────────────────────── */
 .sub{margin-bottom:1.1rem;}
 .sub:last-child{margin-bottom:0;}
 .sub-t{font-family:'DM Mono',monospace;font-size:.54rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.52rem;padding-bottom:.32rem;border-bottom:1px solid var(--border);}
-
+ 
 /* ── CHECKLIST ───────────────────────── */
 .cl{list-style:none;display:flex;flex-direction:column;gap:.18rem;}
 .cl li{display:flex;align-items:flex-start;gap:.58rem;padding:.44rem .58rem;border:1px solid transparent;transition:background .12s,border-color .12s;cursor:pointer;}
@@ -243,12 +243,12 @@ header{
 .ic{font-family:'DM Mono',monospace;font-size:.47rem;color:var(--accent);white-space:nowrap;opacity:0;transition:opacity .2s;}
 .cl li.checked .ic{opacity:1;}
 .itime{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--dim);white-space:nowrap;}
-
+ 
 /* NOTE BUTTON */
 .note-btn{background:none;border:none;cursor:pointer;padding:.18rem .28rem;color:var(--dim);font-size:.58rem;transition:color .15s;flex-shrink:0;margin-top:2px;font-family:'DM Mono',monospace;}
 .note-btn:hover{color:var(--muted);}
 .note-btn.has-note{color:var(--yellow);}
-
+ 
 /* NOTE PANEL */
 .note-panel{display:none;padding:.5rem .55rem .6rem 2.35rem;border-top:1px solid var(--border);background:rgba(0,0,0,.18);}
 .note-panel.open{display:block;}
@@ -257,25 +257,25 @@ header{
 .note-actions{display:flex;justify-content:flex-end;gap:.38rem;margin-top:.3rem;}
 .note-save{background:var(--accent);color:var(--bg);border:none;font-family:'DM Sans',sans-serif;font-size:.62rem;font-weight:700;padding:.28rem .7rem;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;}
 .note-cancel{background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.62rem;padding:.28rem .6rem;cursor:pointer;}
-
+ 
 /* ── TAGS ────────────────────────────── */
 .tag{font-family:'DM Mono',monospace;font-size:.45rem;padding:.09rem .3rem;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;margin-top:3px;}
 .tc{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);}
 .th{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);}
 .tm{background:rgba(0,200,240,.1);color:var(--accent);border:1px solid rgba(0,200,240,.2);}
 .tl{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2);}
-
+ 
 /* ── NOTE BOX ────────────────────────── */
 .note-box{background:rgba(0,200,240,.04);border-left:2px solid var(--accent);padding:.62rem .82rem;margin-bottom:.82rem;font-size:.71rem;color:var(--muted);line-height:1.5;}
 .note-box strong{color:var(--accent);}
-
+ 
 /* ── VLAN GRID ───────────────────────── */
 .vlan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.48rem;margin-bottom:.6rem;}
 .vc{border:1px solid var(--border);padding:.62rem;background:var(--s2);}
 .vid{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--accent);margin-bottom:.14rem;}
 .vn{font-size:.74rem;font-weight:600;margin-bottom:.14rem;}
 .vd{font-size:.6rem;color:var(--muted);line-height:1.4;}
-
+ 
 /* ── SCENE GRID ──────────────────────── */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.55rem;}
 .sc{border:1px solid var(--border);background:var(--s2);overflow:hidden;}
@@ -284,7 +284,7 @@ header{
 .scb{padding:.58rem .82rem;}
 .sc .cl li{padding:.26rem .34rem;}
 .sc .it{font-size:.69rem;}
-
+ 
 /* ── PLAN TABLE ──────────────────────── */
 .pt{width:100%;border-collapse:collapse;font-size:.71rem;}
 .pt th{font-family:'DM Mono',monospace;font-size:.49rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:.38rem .58rem;border-bottom:1px solid var(--border);text-align:left;}
@@ -292,7 +292,7 @@ header{
 .pt tr:last-child td{border-bottom:none;}
 .tc2{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);white-space:nowrap;}
 .dh td{background:var(--s2);color:var(--accent2);font-weight:700;font-size:.65rem;letter-spacing:.07em;text-transform:uppercase;padding:.58rem;}
-
+ 
 /* ── RISK TABLE ──────────────────────── */
 .rt{width:100%;border-collapse:collapse;font-size:.71rem;}
 .rt th{font-family:'DM Mono',monospace;font-size:.49rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:.38rem .58rem;border-bottom:1px solid var(--border);text-align:left;background:var(--s2);}
@@ -301,7 +301,7 @@ header{
 .rn{font-weight:700;color:var(--red);font-size:.67rem;margin-bottom:.14rem;}
 .rd{color:var(--muted);font-size:.63rem;}
 .rf{color:var(--green);font-size:.63rem;}
-
+ 
 /* ── PRIORITY BLOCKS ─────────────────── */
 .pb{border:1px solid var(--border);margin-bottom:.52rem;overflow:hidden;}
 .pb:last-child{margin-bottom:0;}
@@ -314,12 +314,12 @@ header{
 .pl{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.09em;text-transform:uppercase;}
 .pb ol{padding:.58rem .82rem .58rem 1.75rem;display:flex;flex-direction:column;gap:.26rem;}
 .pb ol li{font-size:.74rem;color:var(--text);line-height:1.4;}
-
+ 
 /* ── FOOTER ──────────────────────────── */
 footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;max-width:1160px;margin:0 auto;}
 .fl{font-family:'Playfair Display',serif;font-size:.85rem;font-weight:800;letter-spacing:.04em;color:var(--text);}
 .fm{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--dim);text-align:right;}
-
+ 
 /* ── COMPONENT COUNTER ───────────────── */
 .comp-grid{display:flex;flex-direction:column;gap:.3rem;}
 .comp-row{
@@ -381,7 +381,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   transition:all .15s;font-family:'DM Mono',monospace;line-height:1;
 }
 .info-btn:hover{border-color:var(--accent);color:var(--accent);}
-
+ 
 /* ── INFO MODAL ──────────────────────── */
 #info-modal{
   position:fixed;inset:0;z-index:4000;display:none;
@@ -425,7 +425,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   color:var(--muted);font-size:.9rem;cursor:pointer;padding:.2rem .4rem;
 }
 .info-close:hover{color:var(--text);}
-
+ 
 /* ── MOBILE DRAWER ───────────────────── */
 #drawer-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
@@ -444,14 +444,14 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 #drawer .nav-item:hover{background:var(--s2);color:var(--text);border-left-color:var(--accent);}
 #drawer .ni-n{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);min-width:.9rem;}
 #drawer .ni-p{margin-left:auto;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);}
-
+ 
 /* hamburger */
 .h-burger{
   display:none;background:none;border:none;cursor:pointer;
   flex-direction:column;gap:4px;padding:.3rem;
 }
 .h-burger span{display:block;width:18px;height:1.5px;background:var(--muted);}
-
+ 
 @media(max-width:800px){
   .main{grid-template-columns:1fr;}
   .sidebar{display:none;}
@@ -463,7 +463,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 </style>
 </head>
 <body>
-
+ 
 <!-- PANTALLA VERSION DESACTUALIZADA -->
 <div id="outdated-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:4000;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;">
   <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:800;color:var(--text)">NIXA</div>
@@ -481,7 +481,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   </div>
   <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--dim)">Tu versión: <span id="my-version-label"></span></div>
 </div>
-
+ 
 <!-- LOADING -->
 <div id="loading">
   <div style="text-align:center">
@@ -492,36 +492,36 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="ld-bar"><div class="ld-fill"></div></div>
   </div>
 </div>
-
+ 
 <!-- LOGIN -->
 <div id="login">
   <div class="login-wrap">
     <div class="login-wordmark">NIXA</div>
     <div class="login-desc">Commissioning — Bariloche</div>
     <div class="login-divider"></div>
-
+ 
     <label class="lbl">Nombre</label>
-    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off"/>
-
+    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter') document.getElementById('admin-check').checked ? document.getElementById('admin-pass').focus() : doLogin()"/>
+ 
     <label class="admin-toggle">
       <input type="checkbox" id="admin-check" onchange="toggleAdmin(this)"/>
       Ingresar como administrador
     </label>
-
+ 
     <div id="admin-pass-wrap">
       <label class="lbl">Clave de administrador</label>
-      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0"/>
+      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0" onkeydown="if(event.key==='Enter') doLogin()"/>
     </div>
-
+ 
     <div style="height:1.1rem"></div>
     <button class="login-btn" onclick="doLogin()">Ingresar al proyecto</button>
     <div class="login-err" id="lerr"></div>
   </div>
 </div>
-
+ 
 <!-- TOASTS -->
 <div id="toasts"></div>
-
+ 
 <!-- MOBILE DRAWER -->
 <div id="drawer-overlay" onclick="closeDrawer()"></div>
 <div id="drawer">
@@ -545,7 +545,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   <a class="nav-item" onclick="openAndScroll('s14');closeDrawer()"><span class="ni-n">15</span>Arquitectura<span class="ni-p" id="dnp14">—</span></a>
   <a class="nav-item" onclick="openAndScroll('s15');closeDrawer()"><span class="ni-n">16</span>Prioridades<span class="ni-p" id="dnp15">—</span></a>
 </div>
-
+ 
 <!-- CONFIRM UNCHECK MODAL -->
 <div id="confirm-modal">
   <div class="confirm-box">
@@ -557,7 +557,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     </div>
   </div>
 </div>
-
+ 
 <!-- INFO MODAL -->
 <div id="info-modal" onclick="closeInfo(event)">
   <div class="info-box">
@@ -567,7 +567,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="info-body" id="info-body"></div>
   </div>
 </div>
-
+ 
 <!-- HEADER -->
 <header>
   <button class="h-burger" onclick="openDrawer()" aria-label="Menú">
@@ -587,7 +587,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     </div>
   </div>
 </header>
-
+ 
 <!-- SUPERVISOR PANEL -->
 <!-- PANEL TODOS — 4 cards visibles para todos -->
 <div id="sup-panel" style="display:block;max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;">
@@ -601,7 +601,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     </div>
   </div>
 </div>
-
+ 
 <!-- PANEL ADMIN — barras + actividad solo para admin -->
 <div id="admin-panel" style="display:none;max-width:1160px;margin:.75rem auto 0;padding:0 1.25rem;">
   <div class="sup-inner">
@@ -610,7 +610,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div id="sup-checker-list"><div class="sup-empty">Sin actividad aún</div></div>
   </div>
 </div>
-
+ 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Proyecto Domótica Premium</div>
@@ -624,10 +624,10 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="badge">DB <b>Firebase RT</b></div>
   </div>
 </div>
-
+ 
 <!-- MAIN -->
 <div class="main">
-
+ 
   <nav class="sidebar">
     <div class="sb-head">Índice</div>
     <a class="nav-item" onclick="openAndScroll('s0')"><span class="ni-n">00</span>Herramientas<span class="ni-p" id="np0">—</span></a>
@@ -649,9 +649,9 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <a class="nav-item" onclick="openAndScroll('s14')"><span class="ni-n">15</span>Arquitectura<span class="ni-p" id="np14">—</span></a>
     <a class="nav-item" onclick="openAndScroll('s15')"><span class="ni-n">16</span>Prioridades<span class="ni-p" id="np15">—</span></a>
   </nav>
-
+ 
   <div class="content">
-
+ 
   <div class="section collapsed" id="s0">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">00</span><span class="sec-t">Check de Herramientas</span><span class="sec-st" id="st0">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -677,7 +677,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="sc">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">●</span><span class="sec-t">Componentes en Stock</span><span class="sec-st" id="stsc">—</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -689,10 +689,10 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
             <div class="comp-row" data-cid="c_02"><span class="comp-name">Sonoff Mini-RBS (control de cortinas)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_03"><span class="comp-name">Sonoff R5 (control remoto inalámbrico)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_04"><span class="comp-name">Sonoff CH4 Pro (4 canales WiFi)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+            <div class="comp-row" data-cid="c_15"><span class="comp-name">Sonoff CH4 (4 canales WiFi)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_05"><span class="comp-name">Relé WiFi (MINIR4 / Basic)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_06"><span class="comp-name">Relé físico modular (riel DIN)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_07"><span class="comp-name">Relé para cortina (módulo motorizado)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_13"><span class="comp-name">Relé 220V riel DIN</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
           </div>
         </div>
   
@@ -708,11 +708,19 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <div class="comp-grid" data-cg="hdmi">
             <div class="comp-row" data-cid="c_11"><span class="comp-name">Cable HDMI prearmado</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
             <div class="comp-row" data-cid="c_12"><span class="comp-name">Extensor HDMI por RJ45 (balun)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+            <div class="comp-row" data-cid="c_14"><span class="comp-name">Splitter HDMI × 4 canales</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          </div>
+        </div>
+ 
+        <div class="sub"><div class="sub-t">Eléctrico</div>
+          <div class="comp-grid" data-cg="electrico">
+            <div class="comp-row" data-cid="c_13"><span class="comp-name">Relé 220V riel DIN</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+            <div class="comp-row" data-cid="c_16"><span class="comp-name"><a href="https://www.casablanco.com/DETALLE/CONECTOR-RAPIDO-4--POLOS-REUTILIZABLE-PCT-214/ITEM_ID=188764/casablanco-electricidad.aspx" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;">Conector rápido 4 polos reutilizable PCT-214 <span style="font-size:.55rem;color:var(--accent)">↗</span></a></span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
           </div>
         </div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s1">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">01</span><span class="sec-t">Infraestructura Macro</span><span class="sec-st" id="st1">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -749,7 +757,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s2">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">02</span><span class="sec-t">Commissioning Profesional</span><span class="sec-st" id="st2">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -771,7 +779,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s4">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">04</span><span class="sec-t">RF / WiFi — Omada EAP670</span><span class="sec-st" id="st4">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -802,64 +810,65 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <!-- HABITACIONES — MERGED -->
-    <div class="section collapsed" id="s3">
-      <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">05</span><span class="sec-t">Check por Habitación</span><span class="sec-st" id="st3">0/0</span><span class="sec-chev">▼</span></div>
-      <div class="sec-body" id="s3-body">
-        <div class="note-box"><strong>Dos niveles:</strong> Protocolo general por ambiente (validación técnica) + Detalle de instalación por habitación con descuento de stock.</div>
-        <div class="sub" style="border-bottom:1px solid var(--border2);padding-bottom:1rem;margin-bottom:1rem"><div class="sub-t" style="color:var(--accent)">Protocolo General por Ambiente</div>
-  <div class="note-box"><strong>Protocolo estándar:</strong> completar en orden para cada ambiente antes de pasar al siguiente.</div>
-        <div class="sub"><div class="sub-t">Protocolo Universal</div><ul class="cl" data-s="3">
-          <li data-id="s3_01"><div class="cb"><span class="ci">✓</span></div><span class="it">Identificar todos los Sonoff del ambiente (Mini-Dim y Mini-RBS)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_02"><div class="cb"><span class="ci">✓</span></div><span class="it">Cada dispositivo visible en eWeLink y responde desde app</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_03"><div class="cb"><span class="ci">✓</span></div><span class="it">AP asignado correcto — RSSI ≥ −65 dBm confirmado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_04"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena de prueba del ambiente ejecutada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Control Alexa: encender, apagar, dimear confirmado</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_06"><div class="cb"><span class="ci">✓</span></div><span class="it">Control por tecla física (M5 o inalámbrica) confirmado</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas suben y bajan correctamente</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostato: responde y muestra temperatura real</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Living</div><ul class="cl" data-s="3">
-          <li data-id="s3_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-Dim: dimmer funcional al 30% / 60% / 100%</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas: subida y bajada desde tecla y desde Alexa</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_11"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena "Cine" activa correctamente</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Bar / Cocina / Lavadero</div><ul class="cl" data-s="3">
-          <li data-id="s3_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Bar: Mini-Dim funcionando — integración con escena "Buenas tardes"</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Cocina: luces trabajo y ambiente — integración escena "Buen día"</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_14"><div class="cb"><span class="ci">✓</span></div><span class="it">Lavadero: dispositivos básicos operativos</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Quincho / Playroom</div><ul class="cl" data-s="3">
-          <li data-id="s3_15"><div class="cb"><span class="ci">✓</span></div><span class="it">Quincho: iluminación exterior/interior — incluido en escena exterior</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_16"><div class="cb"><span class="ci">✓</span></div><span class="it">Playroom: Mini-Dim + cortinas + Alexa operativos</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Habitaciones Comunes ×8</div><ul class="cl" data-s="3">
-          <li data-id="s3_17"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-Dim: luz principal controlada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_18"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-RBS: cortinas operativas — límites calibrados</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_19"><div class="cb"><span class="ci">✓</span></div><span class="it">Tecla inalámbrica: 1-3 suben / 4-6 bajan</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_20"><div class="cb"><span class="ci">✓</span></div><span class="it">Alexa sin cross-control con habitaciones adyacentes</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_21"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena "Buenas noches" apaga luces y baja cortinas</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Dormitorio Principal</div><ul class="cl" data-s="3">
-          <li data-id="s3_22"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación principal + ambientales funcionando</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_23"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas dormitorio y vestidor: subida/bajada perfecta</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_24"><div class="cb"><span class="ci">✓</span></div><span class="it">Baño: iluminación funcional</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_25"><div class="cb"><span class="ci">✓</span></div><span class="it">Alexa sin interferencia con habitaciones adyacentes</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-        <div class="sub"><div class="sub-t">Subsuelo / Cochera / Sala de Máquinas</div><ul class="cl" data-s="3">
-          <li data-id="s3_26"><div class="cb"><span class="ci">✓</span></div><span class="it">Relé Sonoff del ascensor: operativo y testeado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación funcional en subsuelo y cochera</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="s3_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Temperatura de sala de máquinas monitoreada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul>
-        <div class="sub"><div class="sub-t" style="color:var(--accent)">Detalle de Instalación por Habitación</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:.75rem;line-height:1.6">Completar para cada ambiente. Stock se descuenta automáticamente al marcar.</div>
-          <div id="sr-body"><!-- Rooms rendered by JS -->
-          </div>
-        </div>
-      </div>
+    <div class="section collapsed" id="sr">
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">05</span><span class="sec-t">Instalación por Habitación</span><span class="sec-st" id="stsr">0/0</span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box"><strong>Detalle de instalación:</strong> marcar al colocar cada dispositivo. El stock se descuenta automáticamente.</div>
+      <div id="sr-body"><!-- Rooms rendered by JS --></div>
     </div>
-
+  </div>
+ 
+  <div class="section collapsed" id="s3">
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">06</span><span class="sec-t">Check por Habitación</span><span class="sec-st" id="st3">0/0</span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box"><strong>Protocolo estándar:</strong> completar en orden para cada ambiente antes de pasar al siguiente.</div>
+      <div class="sub"><div class="sub-t">Protocolo Universal</div><ul class="cl" data-s="3">
+        <li data-id="s3_01"><div class="cb"><span class="ci">✓</span></div><span class="it">Identificar todos los Sonoff del ambiente (Mini-Dim y Mini-RBS)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_02"><div class="cb"><span class="ci">✓</span></div><span class="it">Cada dispositivo visible en eWeLink y responde desde app</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_03"><div class="cb"><span class="ci">✓</span></div><span class="it">AP asignado correcto — RSSI ≥ −65 dBm confirmado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_04"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena de prueba del ambiente ejecutada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Control Alexa: encender, apagar, dimear confirmado</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_06"><div class="cb"><span class="ci">✓</span></div><span class="it">Control por tecla física (M5 o inalámbrica) confirmado</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas suben y bajan correctamente</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostato: responde y muestra temperatura real</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Living</div><ul class="cl" data-s="3">
+        <li data-id="s3_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-Dim: dimmer funcional al 30% / 60% / 100%</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas: subida y bajada desde tecla y desde Alexa</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_11"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena "Cine" activa correctamente</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Bar / Cocina / Lavadero</div><ul class="cl" data-s="3">
+        <li data-id="s3_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Bar: Mini-Dim funcionando — integración con escena "Buenas tardes"</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Cocina: luces trabajo y ambiente — integración escena "Buen día"</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_14"><div class="cb"><span class="ci">✓</span></div><span class="it">Lavadero: dispositivos básicos operativos</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Quincho / Playroom</div><ul class="cl" data-s="3">
+        <li data-id="s3_15"><div class="cb"><span class="ci">✓</span></div><span class="it">Quincho: iluminación exterior/interior — incluido en escena exterior</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_16"><div class="cb"><span class="ci">✓</span></div><span class="it">Playroom: Mini-Dim + cortinas + Alexa operativos</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Habitaciones Comunes ×8</div><ul class="cl" data-s="3">
+        <li data-id="s3_17"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-Dim: luz principal controlada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_18"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-RBS: cortinas operativas — límites calibrados</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_19"><div class="cb"><span class="ci">✓</span></div><span class="it">Tecla inalámbrica: 1-3 suben / 4-6 bajan</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_20"><div class="cb"><span class="ci">✓</span></div><span class="it">Alexa sin cross-control con habitaciones adyacentes</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_21"><div class="cb"><span class="ci">✓</span></div><span class="it">Escena "Buenas noches" apaga luces y baja cortinas</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Dormitorio Principal</div><ul class="cl" data-s="3">
+        <li data-id="s3_22"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación principal + ambientales funcionando</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_23"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas dormitorio y vestidor: subida/bajada perfecta</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_24"><div class="cb"><span class="ci">✓</span></div><span class="it">Baño: iluminación funcional</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_25"><div class="cb"><span class="ci">✓</span></div><span class="it">Alexa sin interferencia con habitaciones adyacentes</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Subsuelo / Cochera / Sala de Máquinas</div><ul class="cl" data-s="3">
+        <li data-id="s3_26"><div class="cb"><span class="ci">✓</span></div><span class="it">Relé Sonoff del ascensor: operativo y testeado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación funcional en subsuelo y cochera</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Temperatura de sala de máquinas monitoreada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+    </div>
+  </div>
+ 
   <div class="section collapsed" id="s5">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">05</span><span class="sec-t">Domótica — Dispositivos</span><span class="sec-st" id="st5">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -892,7 +901,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s6">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">06</span><span class="sec-t">Escenas</span><span class="sec-st" id="st6">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -936,7 +945,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s7">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">07</span><span class="sec-t">Alexa / Control por Voz</span><span class="sec-st" id="st7">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -957,7 +966,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul></div>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s8">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">08</span><span class="sec-t">Estabilidad IoT</span><span class="sec-st" id="st8">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body"><ul class="cl" data-s="8">
@@ -972,7 +981,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s8_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Reconexión tras corte: ≤ 60s para el 95% de dispositivos</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
-
+ 
   <div class="section collapsed" id="s9">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">09</span><span class="sec-t">Contingencia</span><span class="sec-st" id="st9">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body"><ul class="cl" data-s="9">
@@ -985,7 +994,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s9_07"><div class="cb"><span class="ci">✓</span></div><span class="it">NVR en UPS — grabación continua ante corte</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
-
+ 
   <div class="section collapsed" id="s10">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">10</span><span class="sec-t">Plan de Implementación por Días</span><span class="sec-st" id="st10">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -1024,7 +1033,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </tbody></table>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s11">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">11</span><span class="sec-t">Validaciones Técnicas por Ambiente</span><span class="sec-st" id="st11">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body"><ul class="cl" data-s="11">
@@ -1039,7 +1048,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s11_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Subsuelo — relé ascensor + iluminación + temperatura sala de máquinas</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
-
+ 
   <div class="section collapsed" id="s12">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">12</span><span class="sec-t">Validaciones de Experiencia de Usuario</span><span class="sec-st" id="st12">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -1058,7 +1067,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s13">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">13</span><span class="sec-t">Diagnóstico Preventivo</span><span class="sec-st" id="st13">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -1080,7 +1089,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </ul>
       </div>
     </div>
-
+ 
   <div class="section collapsed" id="s14">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">14</span><span class="sec-t">Recomendaciones de Arquitectura</span><span class="sec-st" id="st14">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body"><ul class="cl" data-s="14">
@@ -1095,7 +1104,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s14_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Calendario de mantenimiento trimestral establecido con el cliente</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
-
+ 
   <div class="section collapsed" id="s15">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">15</span><span class="sec-t">Priorización de Tareas</span><span class="sec-st" id="st15">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
@@ -1113,15 +1122,15 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         </div>
       </div>
     </div>
-
+ 
   </div><!-- content -->
 </div><!-- main -->
-
+ 
 <footer>
   <div class="fl">NIXA</div>
   <div class="fm">Commissioning Bariloche · v<span id="footer-ver">3.2</span></div>
 </footer>
-
+ 
 <script>
 // ── FIREBASE INIT ──────────────────────────────────
 const firebaseConfig = {
@@ -1135,21 +1144,21 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
+ 
 // ── STATE ──────────────────────────────────────────
 const uid     = 'u_' + Math.random().toString(36).substr(2,9);
 let me        = null;
 let isSup     = false;
 let quiet     = true;
 const ADMIN_PASS  = '1734';
-const APP_VERSION = '3.4'; // ← versión de este archivo
+const APP_VERSION = '3.5'; // ← versión de este archivo
 const COLORS  = ['#00c8f0','#e8621a','#4ade80','#fbbf24','#f87171','#a78bfa','#fb7185','#34d399'];
 const checkers = {};
-
+ 
 function colorFor(n){ let h=0; for(const c of n) h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
 function initials(n){ return n.slice(0,2).toUpperCase(); }
 function fmtTime(ts){ if(!ts) return ''; const d=new Date(ts); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
-
+ 
 // ── TOAST ──────────────────────────────────────────
 function toast(msg, un=false){
   if(quiet) return;
@@ -1159,7 +1168,7 @@ function toast(msg, un=false){
   document.getElementById('toasts').appendChild(el);
   setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 4300);
 }
-
+ 
 // ── LOGIN ──────────────────────────────────────────
 function toggleAdmin(chk){
   const passWrap = document.getElementById('admin-pass-wrap');
@@ -1171,27 +1180,27 @@ function toggleAdmin(chk){
     setTimeout(()=>{ passInput.focus(); }, 100);
   }
 }
-
+ 
 function doLogin(){
   const name = document.getElementById('lname').value.trim();
   const isAdminChecked = document.getElementById('admin-check').checked;
   const err = document.getElementById('lerr');
   err.style.display = 'none';
-
+ 
   if(!name){ err.textContent='Ingresá tu nombre para continuar.'; err.style.display='block'; return; }
-
+ 
   if(isAdminChecked){
     const pass = document.getElementById('admin-pass').value;
     if(pass !== ADMIN_PASS){ err.textContent='Clave incorrecta.'; err.style.display='block'; return; }
     isSup = true;
   }
-
+ 
   me = { name, role: isSup ? 'Administrador' : 'Integrador', color: colorFor(name) };
-
+ 
   document.getElementById('login').style.display='none';
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
-
+ 
   if(isSup) {
     document.getElementById('admin-panel').style.display='block';
     // Escuchar versión mínima activa en tiempo real
@@ -1210,12 +1219,12 @@ function doLogin(){
       }
     });
   }
-
+ 
   // presence
   const presRef = db.ref('presence/'+uid);
   presRef.set({ name:me.name, role:me.role, color:me.color, ts:Date.now() });
   presRef.onDisconnect().remove();
-
+ 
   listenChecklist();
   listenPresence();
   listenNotes();
@@ -1224,21 +1233,21 @@ function doLogin(){
   listenRoomTasks();
   setTimeout(()=>{ quiet=false; }, 1800);
 }
-
+ 
 // ── SECTION TOGGLE ─────────────────────────────────
 function toggleSec(hdr){ hdr.parentElement.classList.toggle('collapsed'); }
-
+ 
 function openAndScroll(id){
   const sec = document.getElementById(id);
   if(!sec) return;
   sec.classList.remove('collapsed');
   setTimeout(()=>{ sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 50);
 }
-
+ 
 // ── CHECKLIST CLICKS ───────────────────────────────
 // Cache del estado actual de Firebase para validar permisos
 const checklistState = {};
-
+ 
 document.querySelectorAll('.cl').forEach(ul=>{
   ul.addEventListener('click', e=>{
     if(!me) return;
@@ -1248,7 +1257,7 @@ document.querySelectorAll('.cl').forEach(ul=>{
     if(!li) return;
     const id = li.dataset.id;
     const isChecked = li.classList.contains('checked');
-
+ 
     // Si está marcado y alguien quiere desmarcarlo — pedir confirmación siempre
     if(isChecked){
       const entry = checklistState[id];
@@ -1260,11 +1269,11 @@ document.querySelectorAll('.cl').forEach(ul=>{
       document.getElementById('confirm-modal').classList.add('open');
       return;
     }
-
+ 
     db.ref('checklist/'+id).set({ by:me.name, role:me.role, ts:Date.now() });
   });
 });
-
+ 
 function showBlockedToast(checkedBy){
   const el=document.createElement('div');
   el.className='toast';
@@ -1273,7 +1282,7 @@ function showBlockedToast(checkedBy){
   document.getElementById('toasts').appendChild(el);
   setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 4500);
 }
-
+ 
 // ── LISTEN CHECKLIST ───────────────────────────────
 function listenChecklist(){
   db.ref('checklist').on('value', snap=>{
@@ -1303,7 +1312,7 @@ function listenChecklist(){
     updateStats();
   });
 }
-
+ 
 // ── NOTES ──────────────────────────────────────────
 function toggleNote(btn){
   const li=btn.closest('li[data-id]');
@@ -1326,7 +1335,7 @@ function toggleNote(btn){
   }
   panel.classList.toggle('open');
 }
-
+ 
 function saveNote(id, btn){
   if(!me) return;
   const panel=btn.closest('.note-panel');
@@ -1334,7 +1343,7 @@ function saveNote(id, btn){
   db.ref('notes/'+id).set(val?{text:val,by:me.name,ts:Date.now()}:null);
   panel.classList.remove('open');
 }
-
+ 
 function listenNotes(){
   db.ref('notes').on('value', snap=>{
     const data=snap.val()||{};
@@ -1346,7 +1355,7 @@ function listenNotes(){
     });
   });
 }
-
+ 
 // ── PRESENCE ───────────────────────────────────────
 function listenPresence(){
   db.ref('presence').on('value', snap=>{
@@ -1365,12 +1374,12 @@ function listenPresence(){
     });
   });
 }
-
+ 
 // ── STATS ───────────────────────────────────────────
 function updateStats(){
   let total=0, done=0, critPend=0;
   const secStats=[];
-
+ 
   SECTIONS.forEach(([label, sid, npId, dnpId])=>{
     if(sid === 'sc'){
       // Components — handled by initComponents, just push placeholder
@@ -1382,12 +1391,13 @@ function updateStats(){
     // Count regular checklist items
     const items = sec.querySelectorAll('.cl li[data-id]');
     const chk   = sec.querySelectorAll('.cl li[data-id].checked');
-    // Count room tasks if this section contains the sr-body
+    // Count room tasks if this is the sr section
     const rtItems = sec.querySelectorAll('.room-task[data-rtid]');
     const rtChk   = sec.querySelectorAll('.room-task[data-rtid].checked');
     const t = items.length + rtItems.length;
     const d = chk.length  + rtChk.length;
-    const st  = document.getElementById('st'+sid.replace('s',''));
+    const stId = sid === 'sr' ? 'stsr' : 'st' + sid.replace('s','');
+    const st  = document.getElementById(stId);
     const np  = document.getElementById(npId);
     const dnp = document.getElementById(dnpId);
     if(st)  st.textContent  = d+'/'+t;
@@ -1396,20 +1406,20 @@ function updateStats(){
     total+=t; done+=d;
     secStats.push({label, t, d});
   });
-
+ 
   // Count critical pending
   document.querySelectorAll('.cl li[data-id]:not(.checked)').forEach(li=>{ if(li.querySelector('.tag.tc')) critPend++; });
-
+ 
   document.getElementById('gtotal').textContent = total;
   document.getElementById('gcount').textContent = done;
   document.getElementById('hfill').style.width  = (total>0?done/total*100:0)+'%';
-
+ 
   // 4 metric cards
   const spTotal=document.getElementById('sp-total'); if(spTotal) spTotal.textContent=total;
   const spDone =document.getElementById('sp-done');  if(spDone)  spDone.textContent=done;
   const spPct  =document.getElementById('sp-pct');   if(spPct)   spPct.textContent=(total>0?Math.round(done/total*100):0)+'%';
   const spCrit =document.getElementById('sp-crit');  if(spCrit)  spCrit.textContent=critPend;
-
+ 
   // Admin bars — from same SECTIONS array
   const barsEl = document.getElementById('sup-bars');
   if(barsEl){
@@ -1425,7 +1435,7 @@ function updateStats(){
         '</div>';
     });
   }
-
+ 
   // Checker ranking
   const cl = document.getElementById('sup-checker-list');
   if(cl){
@@ -1441,7 +1451,7 @@ function updateStats(){
     }
   }
 }
-
+ 
 // ── DRAWER ─────────────────────────────────────────
 function openDrawer(){
   document.getElementById('drawer').classList.add('open');
@@ -1451,7 +1461,7 @@ function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
 }
-
+ 
 // ── INFO DATA ───────────────────────────────────────
 // Descriptions keyed by data-id
 const INFO = {
@@ -1472,7 +1482,7 @@ const INFO = {
   s1_14:{tag:'Hikvision',title:'Configurar retención de grabación',steps:['En el NVR, ir a Almacenamiento → Configuración de grabación','Verificar el espacio disponible en disco','Calcular días de retención: capacidad / (bitrate × número de cámaras)','Configurar sobreescritura automática al llegar al límite de almacenamiento']},
   s1_15:{tag:'Acceso Remoto',title:'Verificar acceso remoto al NVR',steps:['Descargar la app iVMS-4200 o Hik-Connect en el celular','Agregar el NVR usando el código QR del dispositivo','Verificar conectividad con datos móviles (sin estar en la red local)','Confirmar que se puede ver video en vivo desde al menos 2 cámaras']},
   s1_16:{tag:'Failover',title:'Test de failover WAN con NVR',steps:['Con el NVR grabando normalmente, desconectar WAN1 del router','Esperar 60 segundos y verificar que el NVR sigue grabando (grabación local no depende de internet)','Verificar que el acceso remoto vía Hik-Connect se recupera cuando WAN2 toma el control','Reconectar WAN1 y confirmar normalidad']},
-
+ 
   // S2 - Commissioning
   s2_01:{tag:'Backup',title:'Backup de configuración Omada',steps:['Ingresar al OC300 con usuario administrador','Ir a Configuración del sistema → Backup','Descargar el archivo de backup (.cfg)','Guardarlo en Google Drive con fecha en el nombre: backup_omada_YYYYMMDD.cfg']},
   s2_02:{tag:'Backup',title:'Backup de configuración iHost',steps:['Acceder a la interfaz web del iHost (IP local)','Ir a Configuración → Exportar configuración','Descargar el archivo de backup','Guardarlo junto con el backup de Omada en la carpeta del proyecto']},
@@ -1486,7 +1496,7 @@ const INFO = {
   s2_10:{tag:'Inventario',title:'Listar Sonoff comisionados vs. pendientes',steps:['Abrir eWeLink y contar los dispositivos registrados','Comparar contra el listado total del proyecto (40 Mini-Dim + 36 Mini-RBS + relés)','Crear dos columnas: Comisionado / Pendiente','Marcar los pendientes con su ubicación física para priorizar el trabajo del día']},
   s2_11:{tag:'Alexa',title:'Listar todas las Alexa y su estado',steps:['Abrir la app Alexa en el celular del administrador','Ir a Dispositivos → Echo y Alexa — contar que sean 12','Verificar que cada una aparece como "En línea"','Revisar si alguna tiene rutinas o grupos configurados que puedan interferir con los nuevos']},
   s2_12:{tag:'Firmware',title:'Confirmar firmware de Sonoff instalados',steps:['En eWeLink, ir a cada dispositivo → Más → Información del dispositivo','Anotar la versión de firmware actual','Comparar con la versión estable más reciente en la web de Sonoff/eWeLink','Actualizar los que tengan versión desactualizada ANTES de configurar escenas']},
-
+ 
   // S3 - Por Habitación
   s3_01:{tag:'Protocolo',title:'Identificar dispositivos del ambiente',steps:['Ingresar al ambiente físicamente','Identificar cada interruptor, cortina motorizada y termostato','Abrir eWeLink y verificar que cada dispositivo tiene nombre único y descriptivo','Anotar en el parte: lista de dispositivos de este ambiente y sus IDs']},
   s3_02:{tag:'Protocolo',title:'Verificar respuesta desde app',steps:['Con la app eWeLink abierta, probar encender y apagar cada luz del ambiente','Probar subir y bajar cada cortina','Verificar que el estado en la app cambia inmediatamente (menos de 2 segundos)','Si hay delay mayor, verificar RSSI del dispositivo con el AP']},
@@ -1500,14 +1510,14 @@ const INFO = {
   s3_19:{tag:'Cortinas',title:'Teclas inalámbricas: 1-3 suben / 4-6 bajan',steps:['Presionar botón 1 del control inalámbrico — la cortina debe subir','Presionar botón 4 — la cortina debe bajar','Verificar botones 2, 3 (subir) y 5, 6 (bajar) uno por uno','Si algún botón no responde, verificar el pairing en eWeLink → Dispositivo → Control remoto']},
   s3_20:{tag:'Alexa',title:'Sin cross-control entre habitaciones',steps:['Pararse en la habitación y decir: "Alexa, enciende las luces"','Verificar que SOLO se encienden las luces de ESA habitación','Ir a la habitación contigua y repetir','Si Alexa controla luces de otras habitaciones: corregir los grupos en la app Alexa']},
   s3_26:{tag:'Ascensor',title:'Relé Sonoff del ascensor',steps:['Identificar el relé Sonoff conectado al control del ascensor en sala de máquinas','Desde eWeLink, activar el relé por 2 segundos (simula el botón de llamada)','Verificar que el ascensor responde y baja al subsuelo','Configurar en eWeLink: pulso de 2 segundos, no switch permanente','Testear la escena "Llegué" completa que incluye este paso']},
-
+ 
   // S4 - WiFi
   s4_01:{tag:'RF — Canal 1',title:'AP1 → Canal 1, 20 MHz, Zona 1',steps:['Ingresar al OC300 → Puntos de acceso → AP1','Ir a Configuración de radio → 2.4 GHz','Cambiar modo a Manual → Canal 1 → Ancho 20 MHz','Deshabilitar auto-channel para esta radio','Aplicar y esperar reconexión del AP (30-60 segundos)']},
   s4_07:{tag:'RF',title:'Deshabilitar auto-channel en APs IoT',steps:['En OC300, ir a Configuración de sitio → WiFi','Verificar que la función "Auto Channel" está desactivada para los SSID de IoT','Verificar que cada AP tiene canal fijo asignado manualmente','Esto evita que los APs cambien de canal y desconecten dispositivos IoT']},
   s4_08:{tag:'SSID IoT',title:'Configurar SSID_IoT_Z1 con VLAN',link:'https://support.omadanetworks.com/es/document/13319/',steps:['En OC300 → Configuración del sitio → Redes inalámbricas → WLAN → Crear nuevo SSID','Nombre: SSID_IoT_Z1 — Frecuencia: solo 2.4 GHz','En Configuración avanzada, asignar VLAN ID: 30 (IoT)','Fast Roaming: DESACTIVADO — Band Steering: DESACTIVADO','Asignar el SSID únicamente a los APs de Zona 1 (living, bar, cocina) usando el grupo de AP correspondiente','Guardar y verificar que el SSID aparece en un celular cuando estás en esa zona']},
   s4_13:{tag:'RF',title:'Fast Roaming OFF en SSID IoT',link:'https://support.omadanetworks.com/es/document/13319/',steps:['En OC300 → Configuración del sitio → Redes inalámbricas → WLAN → editar cada SSID IoT','En Configuración avanzada buscar "Fast Roaming" o "802.11r"','Confirmar que está DESACTIVADO — los Sonoff no necesitan roaming entre APs','Los dispositivos IoT deben permanecer fijos en su AP más cercano','Si está activado, los dispositivos pueden conectarse a APs lejanos y perder respuesta']},
   s4_17:{tag:'Validación RF',title:'Verificar con WiFi Analyzer',steps:['Descargar WiFi Analyzer en Android o equivalente en iOS','Pararse en cada zona y ver qué AP tiene mayor señal','Verificar que el AP de esa zona es el más fuerte (menos negativo en dBm)','Si hay un AP lejano que "sangra" hacia otras zonas, reducir su potencia en OC300']},
-
+ 
   // S5 - Domótica
   s5_01:{tag:'Mini-Dim',title:'Nomenclatura de dispositivos en eWeLink',steps:['En eWeLink, ir a cada Mini-Dim','Cambiar el nombre siguiendo el formato: [Ambiente]-[Circuito]','Ejemplos: Living-PrincipalA, Hab1-Ambiente, DormPpal-Cabecera','El nombre debe ser único, descriptivo y pronunciable para Alexa']},
   s5_04:{tag:'Mini-Dim',title:'Mini-Dim conectado al circuito real',steps:['Verificar que el cable de carga (L) del Mini-Dim va directo a la luminaria','El M5 se conecta solo a las entradas S1/S2 del Mini-Dim (señal de pulso)','El M5 NO controla la luz directamente — solo envía señal al Mini-Dim','Verificar que al apagar el M5 de la pared, la luz sigue siendo controlable por app']},
@@ -1522,7 +1532,7 @@ const INFO = {
   s5_16:{tag:'Mini-RBS',title:'Verificar sin cross-pairing',steps:['Presionar botón del control inalámbrico de Hab1 — solo debe moverse la cortina de Hab1','Presionar botón del control de Hab2 — solo debe moverse la cortina de Hab2','Si hay cross-control: desemparejar el control incorrecto en eWeLink y re-parear el correcto','Documentar qué control está emparejado a qué cortina']},
   s5_18:{tag:'iHost',title:'Verificar iHost con IP fija',steps:['Acceder al router Omada → DHCP → Reservas','Agregar reserva para la MAC del iHost con la IP deseada en VLAN 10','Reiniciar el iHost y verificar que toma la IP reservada','Desde esa IP, acceder a la interfaz web del iHost y confirmar que todos los Sonoff son visibles']},
   s5_19:{tag:'iHost',title:'Test offline: iHost sin internet',steps:['Desconectar el cable WAN del router (o desactivar ambas WAN en Omada)','Esperar 30 segundos','Intentar controlar un dispositivo Sonoff desde la interfaz local del iHost','Ejecutar una automatización configurada localmente','Todo debe funcionar sin depender de los servidores de eWeLink']},
-
+ 
   // S6 - Escenas
   s6_01:{tag:'Escena Llegué',title:'Luces de ingreso al 60%',steps:['En iHost o eWeLink, crear/editar la escena "Llegué"','Primer paso: encender luces del ingreso al 60%','Verificar que los dispositivos asignados son los correctos (solo ingreso, no toda la casa)','El delay con el siguiente paso debe ser 0 segundos (simultáneo) o máximo 1 segundo']},
   s6_03:{tag:'Escena Llegué',title:'Termostato → 23°C al llegar',steps:['En la escena "Llegué", agregar acción de termostato','Setpoint: 23°C (o el que prefiera el cliente)','Verificar que la electroválvula abre y el sistema de calefacción responde','En invierno barilochense esto es crítico — validar con el cliente el setpoint ideal']},
@@ -1530,48 +1540,48 @@ const INFO = {
   s6_05:{tag:'Escena Llegué',title:'Ejecución local desde iHost',steps:['En iHost, verificar que la escena "Llegué" está configurada como automatización LOCAL','Desconectar internet y ejecutar la escena — debe funcionar igual','Si la escena solo existe en eWeLink cloud, duplicarla en iHost','La escena debe ejecutarse completa en menos de 3 segundos']},
   s6_15:{tag:'Buenas Noches',title:'Apagar luces de habitaciones',steps:['En la escena "Buenas noches", listar TODOS los Mini-Dim de habitaciones','Acción: apagar (brillo 0%) con delay progresivo si se prefiere','Verificar que la acción incluye habitaciones comunes, dormitorio principal y pasillos (al 5%)','No incluir luces exteriores en esta escena']},
   s6_16:{tag:'Buenas Noches',title:'Bajar cortinas de habitaciones',steps:['En la escena "Buenas noches", agregar acción para cada Mini-RBS de habitaciones','Acción: bajar cortina completamente (0%)','Verificar que los motores no se activan todos al mismo tiempo para evitar pico de corriente','Agregar delay de 2 segundos entre grupos de cortinas si hay muchas simultáneas']},
-
+ 
   // S7 - Alexa
   s7_01:{tag:'Alexa',title:'Todas las Alexa en la misma cuenta',steps:['Abrir la app Alexa en el celular del administrador','Ir a Dispositivos → Echo y Alexa','Contar que aparecen las 12 unidades','Si alguna aparece en otra cuenta: hacer factory reset y configurarla con la cuenta del proyecto']},
   s7_02:{tag:'Alexa',title:'Skill eWeLink y dispositivos importados',steps:['En la app Alexa → Más → Skills y juegos → Buscar "eWeLink"','Verificar que el skill está habilitado y la cuenta eWeLink está vinculada','Ir a Dispositivos → Todos los dispositivos y verificar que aparecen los Sonoff','Si faltan dispositivos: en eWeLink app → Perfil → Vincular con Alexa → Re-discover']},
   s7_04:{tag:'Alexa',title:'Crear grupos de habitación en Alexa',steps:['En app Alexa → Dispositivos → Agregar → Grupo','Crear un grupo por habitación (ej: "Living", "Habitación 1", "Cocina")','Agregar todos los dispositivos del ambiente al grupo','Agregar el Echo/Alexa de esa habitación al mismo grupo','Esto permite decir "Alexa, apaga las luces" desde cualquier Alexa y controlar solo esa habitación']},
   s7_05:{tag:'Alexa',title:'Verificar que cada Alexa controla solo su habitación',steps:['Pararse en el living y decir: "Alexa, enciende las luces"','Verificar que SOLO se encienden las luces del living','Ir a otra habitación y repetir','Si Alexa controla luces de otros ambientes: revisar los grupos — puede haber dispositivos asignados al grupo incorrecto']},
-
+ 
   // S8 - Estabilidad
   s8_01:{tag:'Stress Test',title:'Ejecutar todas las escenas simultáneamente',steps:['Preparar: una persona en la app, otra observando la casa','Ejecutar todas las escenas en ráfaga rápida (2 segundos entre cada una)','Observar si algún dispositivo no responde o se queda "colgado"','Medir tiempo de respuesta promedio — objetivo: menos de 2 segundos por acción','Documentar cualquier fallo para revisión posterior']},
   s8_03:{tag:'Stress Test',title:'Test de desconexión WAN',steps:['Desconectar el cable WAN del router (o deshabilitar ambas WAN en Omada)','Esperar 30 segundos','Intentar activar la escena "Llegué" — debe funcionar vía iHost local','Controlar una luz desde la app dentro de la red local — debe funcionar','Confirmar que Alexa responde comandos de voz que van a iHost local']},
   s8_04:{tag:'Estabilidad',title:'Test de corte de luz y reconexión',steps:['Cortar el suministro eléctrico de un circuito con dispositivos Sonoff (usando el disyuntor)','Esperar 5 segundos y restaurar la electricidad','Medir tiempo hasta que los dispositivos Sonoff vuelven a aparecer en la app','Objetivo: menos de 60 segundos para el 95% de los dispositivos','Verificar que recuperan el último estado conocido']},
   s8_05:{tag:'Red',title:'DHCP Reservation para todos los IoT',steps:['En Omada → DHCP → Reservas de IP','Para cada dispositivo Sonoff, agregar una reserva (MAC → IP fija)','Esto evita que el Sonoff cambie de IP y pierda la conexión con iHost','Verificar que el lease time de la VLAN IoT es de al menos 24 horas']},
-
+ 
   // S9 - Contingencia
   s9_01:{tag:'Contingencia',title:'Hoja de emergencia en sala de máquinas',steps:['Crear un documento con: IPs de todos los equipos críticos, usuario/contraseña de acceso local, pasos para reiniciar OC300, pasos para reiniciar iHost','Imprimirlo en tamaño A4, plastificarlo','Colgarlo o pegarlo en lugar visible dentro de la sala de máquinas','Incluir el número de contacto de NIXA para emergencias']},
   s9_02:{tag:'Acceso Remoto',title:'Test de acceso remoto al OC300',steps:['Salir de la red local (usar datos móviles)','Acceder al OC300 via Omada Cloud o VPN configurada','Verificar que se puede ver el estado de los APs y modificar configuración','Si no conecta: configurar acceso cloud en OC300 → Settings → Cloud Access']},
   s9_05:{tag:'UPS',title:'Router y equipos core en UPS',steps:['Verificar que el router, OC300 y switches principales están enchufados al UPS (no a tomacorriente común)','Desconectar el UPS de la red eléctrica y medir con cronómetro cuánto tiempo aguanta','Objetivo: mínimo 30 minutos de autonomía','Si la autonomía es menor, considerar agregar baterías o un UPS de mayor capacidad']},
-
+ 
   // S11 - Validaciones
   s11_01:{tag:'Validación',title:'Living — Validación completa',steps:['Mini-Dim: verificar dimmer en 30%, 60%, 100% y que las escenas de tecla funcionan','Cortinas: subida y bajada completa desde app, tecla y Alexa','Alexa: "Enciende las luces", "Baja las cortinas", "Pon las luces al 40%"','Cámara: verificar que el canal del living está activo y grabando en el NVR','Escena "Cine": todas las luces bajan y cortinas cierran correctamente']},
-
+ 
   // S12 - Experiencia usuario
   s12_01:{tag:'UX',title:'"Alexa, llegué" → todo en ≤5 segundos',steps:['Preparar: salir del living y volver','Decir: "Alexa, llegué" al entrar','Medir con cronómetro desde el comando hasta la última acción de la escena','Objetivo: toda la secuencia completada en 5 segundos o menos','Si es más lento: verificar la latencia de la escena en iHost y optimizar el orden de acciones']},
   s12_02:{tag:'UX',title:'Tecla física → respuesta ≤1 segundo',steps:['Presionar la tecla física del M5 o inalámbrica','Medir tiempo hasta que la luz cambia de estado','Objetivo: menos de 1 segundo','Si hay delay: verificar RSSI del Mini-Dim y latencia WiFi local','Un delay mayor a 2 segundos en tecla física es inaceptable para un usuario residencial']},
   s12_05:{tag:'UX',title:'Recuperación automática tras corte de luz',steps:['Cortar la alimentación eléctrica de la zona de prueba','Esperar 10 segundos','Restaurar la electricidad','Medir tiempo hasta que los dispositivos vuelven a responder','El cliente no debe tener que llamar al técnico ni reiniciar nada manualmente']},
-
+ 
   // S13 - Diagnóstico
   s13_01:{tag:'Diagnóstico',title:'Sticky Clients — validación y mitigación',steps:['En OC300 → Clientes, verificar que cada Sonoff está conectado al AP más cercano físicamente','Si alguno está en AP incorrecto: el SSID IoT de esa zona no está bien configurado','Verificar potencia RF del AP — si está muy alta, los dispositivos pueden "ver" APs lejanos','La solución es reducir la potencia del AP para que el dispositivo solo "vea" el AP correcto']},
   s13_03:{tag:'Diagnóstico',title:'Eliminar dependencia del cloud',steps:['Listar todas las escenas críticas (Llegué, Buenas noches, corte de luz)','Para cada una, verificar que existe en iHost como automatización LOCAL','Si solo existe en eWeLink, duplicarla en iHost','Test final: desconectar internet y verificar que todas las escenas críticas funcionan']},
-
+ 
   // S14 - Arquitectura
   s14_01:{tag:'Principio',title:'Local first — Cloud como backup',steps:['Revisar que las automatizaciones más importantes estén en iHost','El cloud de eWeLink es útil para: acceso remoto, notificaciones, Alexa','El cloud de eWeLink NO debe ser el único camino para encender/apagar luces','Regla: si se corta internet, la casa debe seguir siendo funcional al 100%']},
   s14_04:{tag:'Principio',title:'Un nombre = un dispositivo',steps:['Revisar todos los dispositivos en eWeLink','Buscar nombres genéricos como "Luz 1", "Switch", "Device"','Renombrar siguiendo el formato: [Ambiente]-[Función] ej: DormPpal-LuzPrincipal','Nombres claros evitan errores de Alexa y hacen el sistema mantenible por cualquier técnico']},
-
+ 
   // S15 - Sin steps específicos (lista de prioridades)
   default:{tag:'Commissioning',title:'Tarea de commissioning',steps:['Ejecutar esta tarea siguiendo el protocolo estándar del proyecto','Documentar resultado en el parte diario','Notificar al supervisor si hay algún impedimento para completarla','Marcar como completada solo cuando esté 100% verificada']}
 };
-
+ 
 function getInfo(id){
   return INFO[id] || INFO.default;
 }
-
+ 
 function showInfo(id, titleText){
   const info = getInfo(id);
   document.getElementById('info-tag').textContent = info.tag;
@@ -1590,14 +1600,14 @@ function showInfo(id, titleText){
   document.getElementById('info-body').innerHTML = html;
   document.getElementById('info-modal').classList.add('open');
 }
-
+ 
 function closeInfo(e){
   if(e.target === document.getElementById('info-modal')) closeInfoBtn();
 }
 function closeInfoBtn(){
   document.getElementById('info-modal').classList.remove('open');
 }
-
+ 
 // ── INJECT INFO BUTTONS (skip s0 herramientas and components) ──
 function injectInfoButtons(){
   document.querySelectorAll('.cl li[data-id]').forEach(li=>{
@@ -1618,29 +1628,30 @@ function injectInfoButtons(){
     else li.insertBefore(btn, li.querySelector('.im'));
   });
 }
-
+ 
 // ── SINGLE SOURCE OF TRUTH — section order ──────────
 // [ label, elementId, navId, dnpId ]  — drives sidebar, drawer AND admin bars
 const SECTIONS = [
-  ['Herramientas',      's0',  'np0',  'dnp0'],
-  ['Componentes',       'sc',  'npsc', 'dnpsc'],  // special — handled separately
-  ['Infraestructura',   's1',  'np1',  'dnp1'],
-  ['Commissioning',     's2',  'np2',  'dnp2'],
-  ['RF / WiFi',         's4',  'np4',  'dnp4'],
-  ['Domótica',          's5',  'np5',  'dnp5'],
-  ['Check por Habitación', 's3', 'np3', 'dnp3'],
-  ['Escenas',           's6',  'np6',  'dnp6'],
-  ['Alexa / Voz',       's7',  'np7',  'dnp7'],
-  ['Estabilidad IoT',   's8',  'np8',  'dnp8'],
-  ['Contingencia',      's9',  'np9',  'dnp9'],
-  ['Plan por Días',     's10', 'np10', 'dnp10'],
-  ['Validaciones',      's11', 'np11', 'dnp11'],
-  ['Experiencia',       's12', 'np12', 'dnp12'],
-  ['Diagnóstico',       's13', 'np13', 'dnp13'],
-  ['Arquitectura',      's14', 'np14', 'dnp14'],
-  ['Prioridades',       's15', 'np15', 'dnp15'],
+  ['Herramientas',           's0',  'np0',  'dnp0'],
+  ['Componentes',            'sc',  'npsc', 'dnpsc'],
+  ['Infraestructura',        's1',  'np1',  'dnp1'],
+  ['Commissioning',          's2',  'np2',  'dnp2'],
+  ['RF / WiFi',              's4',  'np4',  'dnp4'],
+  ['Instalación x Habitación','sr', 'npsr', 'dnpsr'],
+  ['Check por Habitación',   's3',  'np3',  'dnp3'],
+  ['Domótica',               's5',  'np5',  'dnp5'],
+  ['Escenas',                's6',  'np6',  'dnp6'],
+  ['Alexa / Voz',            's7',  'np7',  'dnp7'],
+  ['Estabilidad IoT',        's8',  'np8',  'dnp8'],
+  ['Contingencia',           's9',  'np9',  'dnp9'],
+  ['Plan por Días',          's10', 'np10', 'dnp10'],
+  ['Validaciones',           's11', 'np11', 'dnp11'],
+  ['Experiencia',            's12', 'np12', 'dnp12'],
+  ['Diagnóstico',            's13', 'np13', 'dnp13'],
+  ['Arquitectura',           's14', 'np14', 'dnp14'],
+  ['Prioridades',            's15', 'np15', 'dnp15'],
 ];
-
+ 
 function buildNavFromSections(){
   // Build sidebar
   const sidebar = document.querySelector('.sidebar');
@@ -1661,10 +1672,10 @@ function buildNavFromSections(){
     });
   }
 }
-
-
+ 
+ 
 let pendingUncheck = null; // { id, li, stockCid, qty }
-
+ 
 function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); pendingUncheck=null; }
 function confirmUncheck(){
   if(!pendingUncheck) return;
@@ -1684,7 +1695,7 @@ function confirmUncheck(){
     });
   }
 }
-
+ 
 // ── ROOMS DEFINITION ───────────────────────────────
 // Tasks definition: [label, stockCid or null, hasQty]
 const ROOM_TASKS = [
@@ -1702,9 +1713,9 @@ const ROOM_TASKS = [
   ['Instalar HDMI extender (balun RJ45)', 'c_12', true],
   ['Colocar cable HDMI prearmado', 'c_11', true],
 ];
-
+ 
 const ROOM_TASKS_NO_TV = ROOM_TASKS.filter((_,i) => i < 10); // sin TV, HDMI extender y cable HDMI
-
+ 
 const ROOMS = [
   { id:'r_h1',  name:'Habitación 1',       tasks: ROOM_TASKS },
   { id:'r_h2',  name:'Habitación 2',       tasks: ROOM_TASKS },
@@ -1721,13 +1732,13 @@ const ROOMS = [
   { id:'r_ba',  name:'Bar',                tasks: ROOM_TASKS },
   { id:'r_qu',  name:'Quincho',            tasks: ROOM_TASKS },
 ];
-
+ 
 // Map stockCid → component name for display
 const STOCK_NAMES = {
   'c_01':'Mini-Dim','c_02':'Mini-RBS','c_03':'R5',
   'c_11':'HDMI cable','c_12':'HDMI extender','c_13':'Relé 220V'
 };
-
+ 
 function buildRooms(){
   const body = document.getElementById('sr-body');
   if(!body) return;
@@ -1735,14 +1746,14 @@ function buildRooms(){
   const nb = body.querySelector('.note-box');
   body.innerHTML = '';
   if(nb) body.appendChild(nb);
-
+ 
   ROOMS.forEach(room=>{
     const wrap = document.createElement('div');
     wrap.className = 'sub';
     wrap.innerHTML = '<div class="sub-t">'+room.name+'</div>';
     const grid = document.createElement('div');
     grid.style.cssText = 'display:flex;flex-direction:column;gap:.2rem;';
-
+ 
     room.tasks.forEach((task, ti)=>{
       const [label, stockCid, hasQty] = task;
       const taskId = room.id+'_t'+ti;
@@ -1750,7 +1761,7 @@ function buildRooms(){
       row.className = 'room-task';
       row.dataset.rtid = taskId;
       row.dataset.stockCid = stockCid || '';
-
+ 
       let qtyHtml = '';
       if(hasQty){
         qtyHtml = `<div class="rt-qty">
@@ -1761,30 +1772,30 @@ function buildRooms(){
         </div>
         <span class="stock-tag" title="Descuenta ${STOCK_NAMES[stockCid]||'stock'}">−${STOCK_NAMES[stockCid]||'stock'}</span>`;
       }
-
+ 
       row.innerHTML = `
         <div class="rt-cb"><span class="rt-ci">✓</span></div>
         <span class="rt-label">${label}</span>
         ${qtyHtml}
         <button class="rt-note-btn">nota</button>
         <div class="rt-meta"><span class="rt-by">—</span><span class="rt-time"></span></div>`;
-
+ 
       grid.appendChild(row);
     });
-
+ 
     wrap.appendChild(grid);
     body.appendChild(wrap);
   });
-
+ 
   // Attach events after rendering
   attachRoomEvents();
 }
-
+ 
 function attachRoomEvents(){
   document.querySelectorAll('.room-task').forEach(row=>{
     const taskId  = row.dataset.rtid;
     const stockCid = row.dataset.stockCid;
-
+ 
     // Checkbox click
     const cb = row.querySelector('.rt-cb');
     const lbl = row.querySelector('.rt-label');
@@ -1820,7 +1831,7 @@ function attachRoomEvents(){
         }
       });
     });
-
+ 
     // Qty buttons
     row.querySelectorAll('.rt-qty-btn').forEach(btn=>{
       btn.addEventListener('click', e=>{
@@ -1832,7 +1843,7 @@ function attachRoomEvents(){
         valEl.textContent = Math.max(0, cur + (btn.dataset.dir==='+' ? 1 : -1));
       });
     });
-
+ 
     // Qty direct edit
     const valEl = row.querySelector('.rt-qty-val');
     if(valEl){
@@ -1840,7 +1851,7 @@ function attachRoomEvents(){
       valEl.addEventListener('blur', ()=>{ valEl.contentEditable='false'; valEl.classList.remove('editing'); const v=Math.max(0,parseInt(valEl.textContent)||0); valEl.textContent=v; });
       valEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){e.preventDefault();valEl.blur();} if(!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight/.test(e.key)) e.preventDefault(); });
     }
-
+ 
     // Note button
     const nb = row.querySelector('.rt-note-btn');
     if(nb){
@@ -1851,16 +1862,16 @@ function attachRoomEvents(){
     }
   });
 }
-
+ 
 // ── ROOM STATE ─────────────────────────────────────
 const roomState = {};
-
+ 
 function listenRoomTasks(){
   db.ref('room_tasks').on('value', snap=>{
     const data = snap.val() || {};
     Object.keys(roomState).forEach(k=>delete roomState[k]);
     Object.assign(roomState, data);
-
+ 
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const id = row.dataset.rtid;
       const e = data[id];
@@ -1883,7 +1894,7 @@ function listenRoomTasks(){
     });
     updateRoomStats();
   });
-
+ 
   // Room notes
   db.ref('room_notes').on('value', snap=>{
     const data = snap.val() || {};
@@ -1895,7 +1906,7 @@ function listenRoomTasks(){
     });
   });
 }
-
+ 
 function updateRoomStats(){
   const total = document.querySelectorAll('.room-task[data-rtid]').length;
   const done  = document.querySelectorAll('.room-task[data-rtid].checked').length;
@@ -1903,7 +1914,7 @@ function updateRoomStats(){
   const npsr  = document.getElementById('npsr'); if(npsr) npsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
   const dnpsr = document.getElementById('dnpsr'); if(dnpsr) dnpsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
 }
-
+ 
 function toggleRoomNote(row, taskId){
   let panel = row.nextElementSibling;
   if(!panel || !panel.classList.contains('note-panel')){
@@ -1946,7 +1957,7 @@ function initComponents(){
     if(npsc)  npsc.textContent  = total > 0 ? total+' uds' : '—';
     if(dnpsc) dnpsc.textContent = total > 0 ? total+' uds' : '—';
   });
-
+ 
   // Listen to component notes
   db.ref('comp_notes').on('value', snap=>{
     const data = snap.val() || {};
@@ -1958,11 +1969,11 @@ function initComponents(){
       else          { nb.classList.remove('has-note'); nb.title = ''; }
     });
   });
-
+ 
   // Click handlers for + / - buttons
   document.querySelectorAll('.comp-row').forEach(row=>{
     const cid = row.dataset.cid;
-
+ 
     // +/- buttons
     row.querySelectorAll('.comp-btn').forEach(btn=>{
       btn.addEventListener('click', e=>{
@@ -1975,7 +1986,7 @@ function initComponents(){
         db.ref('components/'+cid).set({ qty: newVal, by: me.name, ts: Date.now() });
       });
     });
-
+ 
     // Tap on number to edit directly
     const valEl = row.querySelector('.comp-val');
     if(valEl){
@@ -2003,7 +2014,7 @@ function initComponents(){
         if(!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight/.test(e.key)) e.preventDefault();
       });
     }
-
+ 
     // Note button
     const nb = row.querySelector('.comp-note-btn');
     if(nb){
@@ -2014,7 +2025,7 @@ function initComponents(){
     }
   });
 }
-
+ 
 function toggleCompNote(row, cid){
   let panel = row.nextElementSibling;
   if(!panel || !panel.classList.contains('comp-note-panel')){
@@ -2041,28 +2052,28 @@ function toggleCompNote(row, cid){
   }
   panel.classList.toggle('open');
 }
-
+ 
 // ── VERSION CHECK + INIT ────────────────────────────
 function parseVer(v){ const p=String(v).split('.').map(Number); return p[0]*1000+(p[1]||0); }
-
+ 
 window.addEventListener('load',()=>{
   injectInfoButtons();
   buildNavFromSections();
-
+ 
   // Set dynamic version labels
   const vl = document.getElementById('ver-label');
   if(vl) vl.textContent = APP_VERSION;
   const fv = document.getElementById('footer-ver');
   if(fv) fv.textContent = APP_VERSION;
-
+ 
   // Leer versión mínima requerida desde Firebase
   db.ref('config/minVersion').once('value').then(snap=>{
     const minVersion = snap.val() || '1.0';
     const myVer = parseVer(APP_VERSION);
     const minVer = parseVer(minVersion);
-
+ 
     document.getElementById('loading').style.display='none';
-
+ 
     if(myVer < minVer){
       // Versión desactualizada — bloquear acceso
       document.getElementById('my-version-label').textContent = 'v' + APP_VERSION;
@@ -2072,12 +2083,12 @@ window.addEventListener('load',()=>{
       sc.style.display = 'flex';
       return;
     }
-
+ 
     // Versión OK — escribir la versión mínima actual si el admin la subió por primera vez
     if(isSup || !snap.exists()){
       db.ref('config/minVersion').set(APP_VERSION);
     }
-
+ 
     document.getElementById('login').style.display='flex';
     updateStats();
   }).catch(()=>{
@@ -2087,7 +2098,7 @@ window.addEventListener('load',()=>{
     updateStats();
   });
 });
-
+ 
 // ── ADMIN: FORZAR VERSIÓN MÍNIMA ───────────────────
 // El admin puede llamar esta función para que todos
 // con versiones viejas queden bloqueados automáticamente
@@ -2096,7 +2107,7 @@ function forceMinVersion(){
     toast('<b>Versión mínima actualizada</b> <span>a v'+APP_VERSION+'. Los archivos viejos quedarán bloqueados.</span>');
   });
 }
-
+ 
 // expose globals needed by inline handlers
 window.toggleAdmin=toggleAdmin;
 window.doLogin=doLogin;
