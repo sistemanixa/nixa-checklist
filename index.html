@@ -11,6 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
+
 :root {
   --bg:      #08090c;
   --s1:      #0f1117;
@@ -29,8 +30,8 @@
   --checked: rgba(0,200,240,.05);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 
 /* ── LOADING ─────────────────────────── */
 #loading{
@@ -93,11 +94,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 /* ── HEADER ──────────────────────────── */
 header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(8,9,12,.96);backdrop-filter:blur(24px);
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(8,9,12,.98);backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
   height:56px;display:flex;align-items:center;padding:0 1.5rem;gap:1.25rem;
 }
+body{padding-top:56px;}
 .h-mark{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;letter-spacing:.04em;color:var(--text);white-space:nowrap;}
 .h-sep{width:1px;height:20px;background:var(--border2);}
 .h-prog{flex:1;display:flex;align-items:center;gap:.75rem;max-width:300px;}
@@ -122,6 +124,14 @@ header{
 .h-me{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);border:1px solid var(--border2);padding:.2rem .6rem;display:flex;align-items:center;gap:.38rem;}
 .h-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── STATS CARDS ─────────────────────── */
+.stats-panel{max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;}
+.stat-card{background:var(--s1);border:1px solid var(--border);padding:.85rem 1rem;}
+.stat-num{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);line-height:1;}
+.stat-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:.35rem;}
+@media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
 
 /* ── SUPERVISOR PANEL ─────────────────── */
 #sup-panel{max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;}
@@ -373,6 +383,26 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 .comp-save{background:var(--accent);color:var(--bg);border:none;font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;padding:.26rem .65rem;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;}
 .comp-cancel{background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.6rem;padding:.26rem .55rem;cursor:pointer;}
 .comp-updated-by{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--muted);margin-left:.25rem;white-space:nowrap;}
+
+/* ── ROOM TASKS ──────────────────────── */
+.room-task{display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;border:1px solid transparent;transition:background .12s,border-color .12s;cursor:pointer;}
+.room-task:hover{background:var(--s2);border-color:var(--border);}
+.room-task.checked{background:var(--checked);border-color:rgba(0,200,240,.08);}
+.rt-cb{width:14px;height:14px;min-width:14px;border:1.5px solid var(--dim);display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;flex-shrink:0;}
+.room-task.checked .rt-cb{background:var(--accent);border-color:var(--accent);}
+.rt-ci{display:none;color:var(--bg);font-size:.55rem;font-weight:700;}
+.room-task.checked .rt-ci{display:block;}
+.rt-label{font-size:.75rem;color:var(--text);flex:1;line-height:1.4;}
+.room-task.checked .rt-label{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--dim);}
+.rt-meta{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--dim);text-align:right;min-width:50px;}
+.rt-note-btn{background:none;border:none;cursor:pointer;color:var(--dim);font-size:.55rem;font-family:'DM Mono',monospace;padding:.1rem .2rem;flex-shrink:0;}
+.rt-note-btn:hover{color:var(--muted);}
+.rt-note-btn.has-note{color:var(--yellow);}
+.rt-qty{display:flex;align-items:center;gap:.25rem;flex-shrink:0;}
+.rt-qty-btn{background:var(--s3);border:1px solid var(--border2);color:var(--text);width:20px;height:20px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+.rt-qty-btn:hover{border-color:var(--accent);color:var(--accent);}
+.rt-qty-val{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);min-width:1.2rem;text-align:center;}
+.stock-tag{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--accent2);border:1px solid rgba(232,98,26,.2);padding:.05rem .25rem;flex-shrink:0;}
 .info-btn{
   background:none;border:none;cursor:pointer;flex-shrink:0;
   width:16px;height:16px;border-radius:50%;border:1px solid var(--dim);
@@ -452,6 +482,21 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 }
 .h-burger span{display:block;width:18px;height:1.5px;background:var(--muted);}
 
+/* ── MOBILE DRAWER ───────────────────── */
+#drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;backdrop-filter:blur(4px);}
+#drawer-overlay.open{display:block;}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--s1);border-right:1px solid var(--border2);z-index:501;transform:translateX(-100%);transition:transform .25s ease;overflow-y:auto;padding-top:56px;}
+#drawer.open{transform:translateX(0);}
+#drawer .sb-head{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:.8rem 1.1rem .6rem;border-bottom:1px solid var(--border);}
+#drawer .nav-item{display:flex;align-items:center;gap:.5rem;padding:.5rem 1.1rem;text-decoration:none;font-size:.72rem;font-weight:500;color:var(--muted);border-left:2px solid transparent;transition:all .12s;cursor:pointer;}
+#drawer .nav-item:hover{background:var(--s2);color:var(--text);border-left-color:var(--accent);}
+#drawer .ni-n{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);min-width:.9rem;}
+#drawer .ni-p{margin-left:auto;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);}
+
+/* hamburger */
+.h-burger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:.3rem;}
+.h-burger span{display:block;width:18px;height:1.5px;background:var(--muted);}
+
 @media(max-width:800px){
   .main{grid-template-columns:1fr;}
   .sidebar{display:none;}
@@ -460,26 +505,17 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   .h-bar{max-width:80px;}
   .info-box{border-radius:0;}
 }
+
 </style>
 </head>
 <body>
 
-<!-- PANTALLA VERSION DESACTUALIZADA -->
-<div id="outdated-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:4000;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;">
+<!-- OUTDATED VERSION -->
+<div id="outdated-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;">
   <div style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:800;color:var(--text)">NIXA</div>
-  <div style="width:48px;height:48px;border-radius:50%;background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem">⚠</div>
-  <div>
-    <div style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:.5rem">Versión desactualizada</div>
-    <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);line-height:1.8;max-width:320px">
-      Tu archivo no es la versión más reciente del sistema.<br>
-      <span id="outdated-msg"></span>
-    </div>
-  </div>
-  <div style="background:var(--s1);border:1px solid var(--border2);padding:1rem 1.5rem;max-width:320px;width:100%">
-    <div style="font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem">Qué hacer</div>
-    <div style="font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--text);line-height:1.6">Pedile el archivo actualizado al administrador del proyecto y reemplazá este.</div>
-  </div>
-  <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--dim)">Tu versión: <span id="my-version-label"></span></div>
+  <div style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text)">Versión desactualizada</div>
+  <div id="outdated-msg" style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);max-width:300px;line-height:1.8"></div>
+  <div style="font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted)">Pedile el archivo actualizado al administrador.</div>
 </div>
 
 <!-- LOADING -->
@@ -501,7 +537,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="login-divider"></div>
 
     <label class="lbl">Nombre</label>
-    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter') document.getElementById('admin-check').checked ? document.getElementById('admin-pass').focus() : doLogin()"/>
+    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off"/>
 
     <label class="admin-toggle">
       <input type="checkbox" id="admin-check" onchange="toggleAdmin(this)"/>
@@ -510,7 +546,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 
     <div id="admin-pass-wrap">
       <label class="lbl">Clave de administrador</label>
-      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0" onkeydown="if(event.key==='Enter') doLogin()"/>
+      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0"/>
     </div>
 
     <div style="height:1.1rem"></div>
@@ -522,35 +558,11 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <!-- TOASTS -->
 <div id="toasts"></div>
 
-<!-- MOBILE DRAWER -->
-<div id="drawer-overlay" onclick="closeDrawer()"></div>
-<div id="drawer">
-  <div class="sb-head">Índice</div>
-  <a class="nav-item" onclick="openAndScroll('s0');closeDrawer()"><span class="ni-n">00</span>Herramientas<span class="ni-p" id="dnp0">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('sc');closeDrawer()"><span class="ni-n">●</span>Componentes<span class="ni-p" id="dnpsc">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s1');closeDrawer()"><span class="ni-n">01</span>Infraestructura<span class="ni-p" id="dnp1">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s2');closeDrawer()"><span class="ni-n">02</span>Commissioning<span class="ni-p" id="dnp2">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s4');closeDrawer()"><span class="ni-n">03</span>RF / WiFi<span class="ni-p" id="dnp4">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s5');closeDrawer()"><span class="ni-n">04</span>Domótica<span class="ni-p" id="dnp5">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s3');closeDrawer()"><span class="ni-n">05</span>Check por Habitación<span class="ni-p" id="dnp3">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('sr');closeDrawer()"><span class="ni-n">06</span>Check por Habitación (detalle)<span class="ni-p" id="dnpsr">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s6');closeDrawer()"><span class="ni-n">07</span>Escenas<span class="ni-p" id="dnp6">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s7');closeDrawer()"><span class="ni-n">08</span>Alexa / Voz<span class="ni-p" id="dnp7">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s8');closeDrawer()"><span class="ni-n">09</span>Estabilidad IoT<span class="ni-p" id="dnp8">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s9');closeDrawer()"><span class="ni-n">10</span>Contingencia<span class="ni-p" id="dnp9">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s10');closeDrawer()"><span class="ni-n">11</span>Plan por Días<span class="ni-p" id="dnp10">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s11');closeDrawer()"><span class="ni-n">12</span>Validaciones<span class="ni-p" id="dnp11">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s12');closeDrawer()"><span class="ni-n">13</span>Experiencia<span class="ni-p" id="dnp12">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s13');closeDrawer()"><span class="ni-n">14</span>Diagnóstico<span class="ni-p" id="dnp13">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s14');closeDrawer()"><span class="ni-n">15</span>Arquitectura<span class="ni-p" id="dnp14">—</span></a>
-  <a class="nav-item" onclick="openAndScroll('s15');closeDrawer()"><span class="ni-n">16</span>Prioridades<span class="ni-p" id="dnp15">—</span></a>
-</div>
-
-<!-- CONFIRM UNCHECK MODAL -->
+<!-- CONFIRM MODAL -->
 <div id="confirm-modal">
   <div class="confirm-box">
     <div class="confirm-title">¿Desmarcar este ítem?</div>
-    <div class="confirm-sub" id="confirm-sub">Esta acción deshará el progreso registrado.</div>
+    <div class="confirm-sub" id="confirm-sub" style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:1.1rem;line-height:1.6">Esta acción deshará el progreso registrado.</div>
     <div class="confirm-btns">
       <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
       <button class="confirm-yes" onclick="confirmUncheck()">Sí, desmarcar</button>
@@ -558,15 +570,9 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   </div>
 </div>
 
-<!-- INFO MODAL -->
-<div id="info-modal" onclick="closeInfo(event)">
-  <div class="info-box">
-    <button class="info-close" onclick="closeInfoBtn()">✕</button>
-    <div class="info-tag" id="info-tag"></div>
-    <div class="info-title" id="info-title"></div>
-    <div class="info-body" id="info-body"></div>
-  </div>
-</div>
+<!-- MOBILE DRAWER -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer"><div class="sb-head">Índice</div></div>
 
 <!-- HEADER -->
 <header>
@@ -588,32 +594,21 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   </div>
 </header>
 
-<!-- SUPERVISOR PANEL -->
-<!-- PANEL TODOS — 4 cards visibles para todos -->
-<div id="sup-panel" style="display:block;max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;">
-  <div class="sup-inner">
-    <div class="sup-title">Estado general del proyecto</div>
-    <div class="sup-grid">
-      <div class="sup-card"><div class="sup-num" id="sp-total">0</div><div class="sup-label">Total ítems</div></div>
-      <div class="sup-card"><div class="sup-num" id="sp-done">0</div><div class="sup-label">Completados</div></div>
-      <div class="sup-card"><div class="sup-num" id="sp-pct">0%</div><div class="sup-label">Avance</div></div>
-      <div class="sup-card"><div class="sup-num" id="sp-crit">0</div><div class="sup-label">Críticos pend.</div></div>
-    </div>
+<!-- STATS CARDS -->
+<div class="stats-panel" id="stats-panel" style="display:none">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="sp-total">0</div><div class="stat-label">Total ítems</div></div>
+    <div class="stat-card"><div class="stat-num" id="sp-done">0</div><div class="stat-label">Completados</div></div>
+    <div class="stat-card"><div class="stat-num" id="sp-pct">0%</div><div class="stat-label">Avance</div></div>
+    <div class="stat-card"><div class="stat-num" id="sp-crit" style="color:var(--red)">0</div><div class="stat-label">Críticos pend.</div></div>
   </div>
 </div>
 
-<!-- PANEL ADMIN — barras + actividad solo para admin -->
-<div id="admin-panel" style="display:none;max-width:1160px;margin:.75rem auto 0;padding:0 1.25rem;">
+<!-- SUPERVISOR PANEL -->
+<div id="sup-panel">
   <div class="sup-inner">
-    <div class="sup-bar-wrap" id="sup-bars"></div>
     <div class="sup-title">Actividad por técnico</div>
     <div id="sup-checker-list"><div class="sup-empty">Sin actividad aún</div></div>
-    <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border)">
-      <button onclick="resetAllChecks()" style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--red);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem .9rem;cursor:pointer;">
-        ⚠ Resetear todos los checks
-      </button>
-      <div style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);margin-top:.35rem">Solo usar si hay datos corruptos. No se puede deshacer.</div>
-    </div>
   </div>
 </div>
 
@@ -634,96 +629,70 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <!-- MAIN -->
 <div class="main">
 
-  <nav class="sidebar">
-    <div class="sb-head">Índice</div>
-    <a class="nav-item" onclick="openAndScroll('s0')"><span class="ni-n">00</span>Herramientas<span class="ni-p" id="np0">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('sc')"><span class="ni-n">●</span>Componentes<span class="ni-p" id="npsc">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s1')"><span class="ni-n">01</span>Infraestructura<span class="ni-p" id="np1">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s2')"><span class="ni-n">02</span>Commissioning<span class="ni-p" id="np2">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s4')"><span class="ni-n">03</span>RF / WiFi<span class="ni-p" id="np4">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s5')"><span class="ni-n">04</span>Domótica<span class="ni-p" id="np5">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s3')"><span class="ni-n">05</span>Check por Habitación<span class="ni-p" id="np3">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('sr')"><span class="ni-n">06</span>Check por Habitación (detalle)<span class="ni-p" id="npsr">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s6')"><span class="ni-n">07</span>Escenas<span class="ni-p" id="np6">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s7')"><span class="ni-n">08</span>Alexa / Voz<span class="ni-p" id="np7">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s8')"><span class="ni-n">09</span>Estabilidad IoT<span class="ni-p" id="np8">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s9')"><span class="ni-n">10</span>Contingencia<span class="ni-p" id="np9">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s10')"><span class="ni-n">11</span>Plan por Días<span class="ni-p" id="np10">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s11')"><span class="ni-n">12</span>Validaciones<span class="ni-p" id="np11">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s12')"><span class="ni-n">13</span>Experiencia<span class="ni-p" id="np12">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s13')"><span class="ni-n">14</span>Diagnóstico<span class="ni-p" id="np13">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s14')"><span class="ni-n">15</span>Arquitectura<span class="ni-p" id="np14">—</span></a>
-    <a class="nav-item" onclick="openAndScroll('s15')"><span class="ni-n">16</span>Prioridades<span class="ni-p" id="np15">—</span></a>
-  </nav>
+  <nav class="sidebar" id="sidebar"><div class="sb-head">Índice</div></nav>
 
   <div class="content">
 
   <div class="section collapsed" id="s0">
-      <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">00</span><span class="sec-t">Check de Herramientas</span><span class="sec-st" id="st0">0/0</span><span class="sec-chev">▼</span></div>
-      <div class="sec-body">
-        <div class="note-box"><strong>Verificar antes de salir a obra.</strong> Tachar cada ítem confirmando que está en el bolso/vehículo. No arrancar sin completar esta sección.</div>
-  
-        <div class="sub"><div class="sub-t">Herramientas Manuales</div><ul class="cl" data-s="0">
-          <li data-id="h_01"><div class="cb"><span class="ci">✓</span></div><span class="it">Escaleras</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_02"><div class="cb"><span class="ci">✓</span></div><span class="it">Busca polo / detector de tensión</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_03"><div class="cb"><span class="ci">✓</span></div><span class="it">Pela cables</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_04"><div class="cb"><span class="ci">✓</span></div><span class="it">Alicate</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Cinta aisladora</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-  
-        <div class="sub"><div class="sub-t">Herramientas de Red</div><ul class="cl" data-s="0">
-          <li data-id="h_06"><div class="cb"><span class="ci">✓</span></div><span class="it">Crimpadora de red (RJ45)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas de red Cat 5e</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas de red Cat 6</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Cable UTP Cat 5e</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Cable UTP Cat 6</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_11"><div class="cb"><span class="ci">✓</span></div><span class="it">Tester de red (cable tester RJ45)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Crimpadora de fichas TIF (punchdown)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-          <li data-id="h_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas TIF / keystone</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
-        </ul></div>
-      </div>
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">00</span><span class="sec-t">Check de Herramientas</span><span class="sec-st" id="st0">0/0</span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box"><strong>Verificar antes de salir a obra.</strong> No arrancar sin completar esta sección.</div>
+      <div class="sub"><div class="sub-t">Herramientas Manuales</div><ul class="cl" data-s="0">
+        <li data-id="h_01"><div class="cb"><span class="ci">✓</span></div><span class="it">Escaleras</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_02"><div class="cb"><span class="ci">✓</span></div><span class="it">Busca polo / detector de tensión</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_03"><div class="cb"><span class="ci">✓</span></div><span class="it">Pela cables</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_04"><div class="cb"><span class="ci">✓</span></div><span class="it">Alicate</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Cinta aisladora</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
+      <div class="sub"><div class="sub-t">Herramientas de Red</div><ul class="cl" data-s="0">
+        <li data-id="h_06"><div class="cb"><span class="ci">✓</span></div><span class="it">Crimpadora de red (RJ45)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas de red Cat 5e</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas de red Cat 6</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Cable UTP Cat 5e</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Cable UTP Cat 6</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_11"><div class="cb"><span class="ci">✓</span></div><span class="it">Tester de red (cable tester RJ45)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Crimpadora de fichas TIF (punchdown)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Fichas TIF / keystone</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+      </ul></div>
     </div>
+  </div>
 
   <div class="section collapsed" id="sc">
-      <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">●</span><span class="sec-t">Componentes en Stock</span><span class="sec-st" id="stsc">—</span><span class="sec-chev">▼</span></div>
-      <div class="sec-body">
-        <div class="note-box"><strong>Llevar cuenta de cuántas unidades de cada componente hay en obra.</strong> Usar + / − para ajustar. Tocar el número para editar directamente. Sincronizado en tiempo real para todos los técnicos.</div>
-  
-        <div class="sub"><div class="sub-t">Dispositivos Sonoff</div>
-          <div class="comp-grid" data-cg="sonoff">
-            <div class="comp-row" data-cid="c_01"><span class="comp-name">Sonoff Mini-Dim (dimmer iluminación)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_02"><span class="comp-name">Sonoff Mini-RBS (control de cortinas)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_03"><span class="comp-name">Sonoff R5 (control remoto inalámbrico)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_04"><span class="comp-name">Sonoff CH4 Pro (4 canales WiFi)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_15"><span class="comp-name">Sonoff CH4 (4 canales WiFi)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_05"><span class="comp-name">Relé WiFi (MINIR4 / Basic)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-          </div>
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">●</span><span class="sec-t">Componentes en Stock</span><span class="sec-st" id="stsc">—</span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box"><strong>Stock en obra.</strong> Usar + / − para ajustar. Sincronizado en tiempo real.</div>
+      <div class="sub"><div class="sub-t">Dispositivos Sonoff</div>
+        <div class="comp-grid">
+          <div class="comp-row" data-cid="c_01"><span class="comp-name">Sonoff Mini-Dim</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_02"><span class="comp-name">Sonoff Mini-RBS</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_03"><span class="comp-name">Sonoff R5</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_04"><span class="comp-name">Sonoff CH4 Pro</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_05"><span class="comp-name">Relé WiFi (MINIR4)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
         </div>
-  
-        <div class="sub"><div class="sub-t">Sensores Zigbee</div>
-          <div class="comp-grid" data-cg="zigbee">
-            <div class="comp-row" data-cid="c_08"><span class="comp-name">Sensores Zigbee (movimiento / apertura)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_09"><span class="comp-name">Relé Zigbee</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_10"><span class="comp-name">Termómetro Zigbee</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-          </div>
+      </div>
+      <div class="sub"><div class="sub-t">Video / HDMI</div>
+        <div class="comp-grid">
+          <div class="comp-row" data-cid="c_11"><span class="comp-name">Cable HDMI prearmado</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_12"><span class="comp-name">Extensor HDMI (balun RJ45)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_14"><span class="comp-name">Splitter HDMI × 4</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
         </div>
-  
-        <div class="sub"><div class="sub-t">Video / HDMI</div>
-          <div class="comp-grid" data-cg="hdmi">
-            <div class="comp-row" data-cid="c_11"><span class="comp-name">Cable HDMI prearmado</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_12"><span class="comp-name">Extensor HDMI por RJ45 (balun)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_14"><span class="comp-name">Splitter HDMI × 4 canales</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-          </div>
-        </div>
-
-        <div class="sub"><div class="sub-t">Eléctrico</div>
-          <div class="comp-grid" data-cg="electrico">
-            <div class="comp-row" data-cid="c_13"><span class="comp-name">Relé 220V riel DIN</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-            <div class="comp-row" data-cid="c_16"><span class="comp-name"><a href="https://www.casablanco.com/DETALLE/CONECTOR-RAPIDO-4--POLOS-REUTILIZABLE-PCT-214/ITEM_ID=188764/casablanco-electricidad.aspx" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;">Conector rápido 4 polos reutilizable PCT-214 <span style="font-size:.55rem;color:var(--accent)">↗</span></a></span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
-          </div>
+      </div>
+      <div class="sub"><div class="sub-t">Eléctrico</div>
+        <div class="comp-grid">
+          <div class="comp-row" data-cid="c_13"><span class="comp-name">Relé 220V riel DIN</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_16"><span class="comp-name">Conector rápido 4 polos PCT-214</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="section collapsed" id="sr">
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">SR</span><span class="sec-t">Instalación por Habitación</span><span class="sec-st" id="stsr">0/0</span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box"><strong>Marcá cada tarea al completarla.</strong> Los componentes usados se descuentan del stock automáticamente.</div>
+      <div id="sr-body"></div>
+    </div>
+  </div>
 
   <div class="section collapsed" id="s1">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">01</span><span class="sec-t">Infraestructura Macro</span><span class="sec-st" id="st1">0/0</span><span class="sec-chev">▼</span></div>
@@ -1132,7 +1101,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 
 <footer>
   <div class="fl">NIXA</div>
-  <div class="fm">Commissioning Bariloche · v<span id="footer-ver">3.2</span></div>
+  <div class="fm">Documento vivo — v3.0 · Firebase Compat SDK · Android + iOS</div>
 </footer>
 
 <script>
@@ -1154,10 +1123,14 @@ const uid     = 'u_' + Math.random().toString(36).substr(2,9);
 let me        = null;
 let isSup     = false;
 let quiet     = true;
-const ADMIN_PASS  = '1734';
-const APP_VERSION = '4.2'; // ← versión de este archivo
+const APP_VERSION = '1.0';
+const ADMIN_PASS = '1734';
 const COLORS  = ['#00c8f0','#e8621a','#4ade80','#fbbf24','#f87171','#a78bfa','#fb7185','#34d399'];
 const checkers = {};
+let pendingUncheck = null;
+
+function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); pendingUncheck=null; }
+function confirmUncheck(){ if(!pendingUncheck) return; db.ref('checklist/'+pendingUncheck).set(null); closeConfirm(); }
 
 function colorFor(n){ let h=0; for(const c of n) h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
 function initials(n){ return n.slice(0,2).toUpperCase(); }
@@ -1190,39 +1163,29 @@ function doLogin(){
   const isAdminChecked = document.getElementById('admin-check').checked;
   const err = document.getElementById('lerr');
   err.style.display = 'none';
-
   if(!name){ err.textContent='Ingresá tu nombre para continuar.'; err.style.display='block'; return; }
-
   if(isAdminChecked){
     const pass = document.getElementById('admin-pass').value;
     if(pass !== ADMIN_PASS){ err.textContent='Clave incorrecta.'; err.style.display='block'; return; }
     isSup = true;
   }
-
   me = { name, role: isSup ? 'Administrador' : 'Integrador', color: colorFor(name) };
-
   document.getElementById('login').style.display='none';
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
-
+  document.getElementById('stats-panel').style.display='block';
   if(isSup) {
-    document.getElementById('admin-panel').style.display='block';
-    document.body.classList.add('is-sup');
+    document.getElementById('sup-panel').style.display='block';
     db.ref('config/minVersion').once('value').then(snap=>{
-      const current = snap.val() || '1.0';
-      if(parseVer(APP_VERSION) > parseVer(current)){
-        db.ref('config/minVersion').set(APP_VERSION).then(()=>{
-          toast('<b>Versión mínima actualizada</b> <span>a v'+APP_VERSION+'</span>');
-        });
+      const cur = snap.val() || '1.0';
+      if(parseVer(APP_VERSION) > parseVer(cur)){
+        db.ref('config/minVersion').set(APP_VERSION);
       }
     });
   }
-
-  // presence
   const presRef = db.ref('presence/'+uid);
   presRef.set({ name:me.name, role:me.role, color:me.color, ts:Date.now() });
   presRef.onDisconnect().remove();
-
   listenChecklist();
   listenPresence();
   listenNotes();
@@ -1235,69 +1198,40 @@ function doLogin(){
 // ── SECTION TOGGLE ─────────────────────────────────
 function toggleSec(hdr){ hdr.parentElement.classList.toggle('collapsed'); }
 
-function openAndScroll(id){
-  const sec = document.getElementById(id);
-  if(!sec) return;
-  sec.classList.remove('collapsed');
-  setTimeout(()=>{ sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 50);
-}
-
-// ── CHECKLIST STATE CACHE ──────────────────────────
-// Populated by listenChecklist, used by delegated click handler
-const checklistState = {};
-
-function showBlockedToast(checkedBy){
-  const el=document.createElement('div');
-  el.className='toast';
-  el.style.borderLeftColor='var(--red)';
-  el.innerHTML='<span style="color:var(--red)">✕</span> Este ítem fue marcado por <b>'+checkedBy+'</b>. Solo un administrador puede desmarcarlo.';
-  document.getElementById('toasts').appendChild(el);
-  setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 4500);
-}
-
-
-// ── CHECKLIST STATE ────────────────────────────────
-const checklistState = {};
-let notesState = {};
-
 // ── CHECKLIST CLICKS ───────────────────────────────
-document.addEventListener('click', e=>{
-  if(!me) return;
-  if(e.target.closest('.note-btn')){ toggleNote(e.target.closest('.note-btn')); return; }
-  if(e.target.closest('.info-btn')) return;
-  const li = e.target.closest('.cl li[data-id]');
-  if(!li) return;
-  const id = li.dataset.id;
-  const isChecked = li.classList.contains('checked');
-  if(isChecked){
-    const entry = checklistState[id];
-    const checkedBy = entry ? entry.by : null;
-    if(!isSup && checkedBy && checkedBy !== me.name){ showBlockedToast(checkedBy); return; }
-    pendingUncheck = { id, li: null, stockCid: null, qty: 0 };
-    document.getElementById('confirm-sub').textContent = 'Vas a desmarcar este ítem. ¿Estás seguro?';
-    document.getElementById('confirm-modal').classList.add('open');
-    return;
-  }
-  db.ref('checklist/'+id).set({ by:me.name, role:me.role, ts:Date.now() });
+document.querySelectorAll('.cl').forEach(ul=>{
+  ul.addEventListener('click', e=>{
+    if(!me) return;
+    if(e.target.closest('.note-btn')){ toggleNote(e.target.closest('.note-btn')); return; }
+    const li=e.target.closest('li[data-id]');
+    if(!li) return;
+    const isChecked=li.classList.contains('checked');
+    if(isChecked){
+      pendingUncheck = li.dataset.id;
+      document.getElementById('confirm-modal').classList.add('open');
+      return;
+    }
+    db.ref('checklist/'+li.dataset.id).set({ by:me.name, role:me.role, ts:Date.now() });
+  });
 });
 
 // ── LISTEN CHECKLIST ───────────────────────────────
 function listenChecklist(){
   db.ref('checklist').on('value', snap=>{
-    const data = snap.val() || {};
-    Object.keys(checklistState).forEach(k=>delete checklistState[k]);
-    Object.assign(checklistState, data);
+    const data=snap.val()||{};
     Object.keys(checkers).forEach(k=>delete checkers[k]);
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-      const id = li.dataset.id;
-      const e  = data[id];
-      const was = li.classList.contains('checked');
+      const id=li.dataset.id;
+      const e=data[id];
+      const was=li.classList.contains('checked');
       if(e){
         li.classList.add('checked');
-        const nm=li.querySelector('.im .ic'); if(nm) nm.textContent=e.by||'—';
-        const tm=li.querySelector('.im .itime'); if(tm) tm.textContent=fmtTime(e.ts);
-        if(!was && e.by !== me?.name) toast('<b>'+e.by+'</b> <span>completó: '+(li.querySelector('.it')?.textContent||'').slice(0,40)+'…</span>');
-        checkers[e.by] = (checkers[e.by]||0)+1;
+        const nm=li.querySelector('.im .ic');
+        const tm=li.querySelector('.im .itime');
+        if(nm) nm.textContent=e.by||'—';
+        if(tm) tm.textContent=fmtTime(e.ts);
+        if(!was && e.by!==me?.name) toast('<b>'+e.by+'</b> <span>completó: '+li.querySelector('.it').textContent.slice(0,40)+'…</span>');
+        checkers[e.by]=(checkers[e.by]||0)+1;
       } else {
         li.classList.remove('checked');
         const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
@@ -1310,21 +1244,21 @@ function listenChecklist(){
 
 // ── NOTES ──────────────────────────────────────────
 function toggleNote(btn){
-  const li = btn.closest('li[data-id]');
-  let panel = li.nextElementSibling;
-  if(!panel || !panel.classList.contains('note-panel')){
-    panel = document.createElement('div');
-    panel.className = 'note-panel';
-    const id = li.dataset.id;
-    panel.innerHTML =
-      '<textarea class="note-input" placeholder="Agregar nota..."></textarea>'+
+  const li=btn.closest('li[data-id]');
+  let panel=li.nextElementSibling;
+  if(!panel||!panel.classList.contains('note-panel')){
+    panel=document.createElement('div');
+    panel.className='note-panel';
+    const id=li.dataset.id;
+    panel.innerHTML=
+      '<textarea class="note-input" placeholder="Agregar nota para este ítem..."></textarea>'+
       '<div class="note-actions">'+
-        '<button class="note-cancel" onclick="this.closest('.note-panel').classList.remove('open')">Cancelar</button>'+
-        '<button class="note-save" onclick="saveNote(''+id+'',this)">Guardar</button>'+
+        '<button class="note-cancel" onclick="this.closest(\'.note-panel\').classList.remove(\'open\')">Cancelar</button>'+
+        '<button class="note-save" onclick="saveNote(\''+id+'\',this)">Guardar</button>'+
       '</div>';
     li.after(panel);
     db.ref('notes/'+id).once('value').then(s=>{
-      if(s.val()) panel.querySelector('.note-input').value = s.val().text||'';
+      if(s.val()) panel.querySelector('.note-input').value=s.val().text||'';
     });
   }
   panel.classList.toggle('open');
@@ -1332,292 +1266,348 @@ function toggleNote(btn){
 
 function saveNote(id, btn){
   if(!me) return;
-  const panel = btn.closest('.note-panel');
-  const val = panel.querySelector('.note-input').value.trim();
-  db.ref('notes/'+id).set(val ? {text:val, by:me.name, ts:Date.now()} : null);
+  const panel=btn.closest('.note-panel');
+  const val=panel.querySelector('.note-input').value.trim();
+  db.ref('notes/'+id).set(val?{text:val,by:me.name,ts:Date.now()}:null);
   panel.classList.remove('open');
 }
 
 function listenNotes(){
   db.ref('notes').on('value', snap=>{
-    notesState = snap.val() || {};
+    const data=snap.val()||{};
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-      const nb = li.querySelector('.note-btn'); if(!nb) return;
-      const e  = notesState[li.dataset.id];
+      const nb=li.querySelector('.note-btn'); if(!nb) return;
+      const e=data[li.dataset.id];
       if(e){ nb.classList.add('has-note'); nb.title=e.by+': '+e.text; }
-      else  { nb.classList.remove('has-note'); nb.title=''; }
+      else { nb.classList.remove('has-note'); nb.title=''; }
     });
   });
 }
 
+// ── PRESENCE ───────────────────────────────────────
+function listenPresence(){
+  db.ref('presence').on('value', snap=>{
+    const data=snap.val()||{};
+    const box=document.getElementById('online-users');
+    box.innerHTML='';
+    Object.entries(data).forEach(([id,u])=>{
+      if(id===uid) return;
+      const av=document.createElement('div');
+      av.className='uav';
+      av.style.background=u.color||'#00c8f0';
+      av.style.color='#08090c';
+      av.textContent=initials(u.name);
+      av.setAttribute('data-tip',u.name+' · '+u.role);
+      box.appendChild(av);
+    });
+  });
+}
 
-// ── SINGLE SOURCE OF TRUTH — section order ──────────
-// [ label, elementId, navId, dnpId ]  — drives sidebar, drawer AND admin bars
+// ── STATS ───────────────────────────────────────────
+function updateStats(){
+  let total=0, done=0;
+  const secIds = ['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14','s15'];
+  secIds.forEach(sid=>{
+    const sec=document.getElementById(sid); if(!sec) return;
+    const items=sec.querySelectorAll('.cl li[data-id]');
+    const chk=sec.querySelectorAll('.cl li[data-id].checked');
+    const t=items.length, d=chk.length;
+    const num = sid.replace('s','');
+    const st=document.getElementById('st'+num); if(st) st.textContent=d+'/'+t;
+    const np=document.getElementById('np'+num); if(np) np.textContent=t>0?Math.round(d/t*100)+'%':'—';
+    const dnp=document.getElementById('dnp'+num); if(dnp) dnp.textContent=t>0?Math.round(d/t*100)+'%':'—';
+    total+=t; done+=d;
+  });
+  document.getElementById('gtotal').textContent=total;
+  document.getElementById('gcount').textContent=done;
+  document.getElementById('hfill').style.width=(total>0?done/total*100:0)+'%';
+
+  // stat cards
+  const pct = total>0 ? Math.round(done/total*100) : 0;
+  const critPend = document.querySelectorAll('.cl li[data-id]:not(.checked) .tag.tc').length;
+  const spTotal = document.getElementById('sp-total'); if(spTotal) spTotal.textContent=total;
+  const spDone  = document.getElementById('sp-done');  if(spDone)  spDone.textContent=done;
+  const spPct   = document.getElementById('sp-pct');   if(spPct)   spPct.textContent=pct+'%';
+  const spCrit  = document.getElementById('sp-crit');  if(spCrit)  spCrit.textContent=critPend;
+  if(isSup){
+    const cl=document.getElementById('sup-checker-list');
+    const sorted=Object.entries(checkers).sort((a,b)=>b[1]-a[1]);
+    if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; return; }
+    cl.innerHTML=sorted.map(([name,count])=>
+      '<div class="sup-checker-row">'+
+        '<span><span class="sup-checker-name">'+name+'</span></span>'+
+        '<span class="sup-checker-count">'+count+' ítems</span>'+
+      '</div>'
+    ).join('');
+  }
+}
+
+// ── INIT ───────────────────────────────────────────
+function parseVer(v){ const p=String(v).split('.').map(Number); return p[0]*1000+(p[1]||0); }
+
+window.addEventListener('load',()=>{
+  buildNavFromSections();
+
+  // Mostrar login después de 1 segundo siempre
+  setTimeout(()=>{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('login').style.display='flex';
+    updateStats();
+  }, 1000);
+
+  // Verificar versión en background — solo bloquea si es vieja
+  db.ref('config/minVersion').once('value').then(snap=>{
+    const min = snap.val() || '1.0';
+    if(parseVer(APP_VERSION) < parseVer(min)){
+      document.getElementById('loading').style.display='none';
+      document.getElementById('login').style.display='none';
+      document.getElementById('outdated-screen').style.display='flex';
+      document.getElementById('outdated-msg').textContent =
+        'Tu archivo es v'+APP_VERSION+'. Se requiere v'+min+' o superior.';
+    }
+  }).catch(()=>{ /* sin conexión — login ya visible */ });
+});
+
+// ── COMPONENTS ─────────────────────────────────────
+function initComponents(){
+  db.ref('components').on('value', snap=>{
+    const data = snap.val() || {};
+    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
+      const cid = row.dataset.cid;
+      const entry = data[cid] || { qty: 0, by: null };
+      const valEl = row.querySelector('.comp-val');
+      const byEl  = row.querySelector('.comp-updated-by');
+      if(valEl) valEl.textContent = entry.qty ?? 0;
+      if(byEl)  byEl.textContent  = (entry.by && entry.qty > 0) ? '· '+entry.by : '';
+    });
+    const total = Object.values(data).reduce((a,v)=>a+(v.qty||0), 0);
+    const npsc  = document.getElementById('npsc');
+    const dnpsc = document.getElementById('dnpsc');
+    if(npsc)  npsc.textContent  = total > 0 ? total+' uds' : '—';
+    if(dnpsc) dnpsc.textContent = total > 0 ? total+' uds' : '—';
+  });
+
+  db.ref('comp_notes').on('value', snap=>{
+    const data = snap.val() || {};
+    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
+      const nb = row.querySelector('.comp-note-btn'); if(!nb) return;
+      const e  = data[row.dataset.cid];
+      if(e){ nb.classList.add('has-note'); nb.title = e.by+': '+e.text; }
+      else  { nb.classList.remove('has-note'); nb.title = ''; }
+    });
+  });
+
+  document.querySelectorAll('.comp-row').forEach(row=>{
+    const cid = row.dataset.cid;
+
+    row.querySelectorAll('.comp-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(!me) return;
+        const valEl = row.querySelector('.comp-val');
+        const newVal = Math.max(0, (parseInt(valEl.textContent)||0) + (btn.dataset.dir==='+' ? 1 : -1));
+        db.ref('components/'+cid).set({ qty: newVal, by: me.name, ts: Date.now() });
+      });
+    });
+
+    const valEl = row.querySelector('.comp-val');
+    if(valEl){
+      valEl.addEventListener('click', e=>{ e.stopPropagation(); if(!me) return; valEl.contentEditable='true'; valEl.classList.add('editing'); valEl.focus(); const r=document.createRange(); r.selectNodeContents(valEl); window.getSelection().removeAllRanges(); window.getSelection().addRange(r); });
+      valEl.addEventListener('blur', ()=>{ valEl.contentEditable='false'; valEl.classList.remove('editing'); const v=Math.max(0,parseInt(valEl.textContent)||0); if(me) db.ref('components/'+cid).set({ qty: v, by: me.name, ts: Date.now() }); });
+      valEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){e.preventDefault();valEl.blur();} if(!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight/.test(e.key)) e.preventDefault(); });
+    }
+
+    const nb = row.querySelector('.comp-note-btn');
+    if(nb){
+      nb.addEventListener('click', e=>{
+        e.stopPropagation();
+        let panel = row.nextElementSibling;
+        if(!panel || !panel.classList.contains('comp-note-panel')){
+          panel = document.createElement('div');
+          panel.className = 'comp-note-panel';
+          panel.innerHTML =
+            '<textarea class="comp-note-input" placeholder="Nota para este componente..."></textarea>'+
+            '<div class="comp-note-actions">'+
+              '<button class="comp-cancel">Cancelar</button>'+
+              '<button class="comp-save">Guardar</button>'+
+            '</div>';
+          row.after(panel);
+          db.ref('comp_notes/'+cid).once('value').then(s=>{ if(s.val()) panel.querySelector('.comp-note-input').value=s.val().text||''; });
+          panel.querySelector('.comp-cancel').addEventListener('click',()=>panel.classList.remove('open'));
+          panel.querySelector('.comp-save').addEventListener('click',()=>{
+            if(!me) return;
+            const val = panel.querySelector('.comp-note-input').value.trim();
+            db.ref('comp_notes/'+cid).set(val?{text:val,by:me.name,ts:Date.now()}:null);
+            panel.classList.remove('open');
+          });
+        }
+        panel.classList.toggle('open');
+      });
+    }
+  });
+}
+
+// ── NAV — FUENTE ÚNICA DE VERDAD ───────────────────
+// [ id, num, label ]
 const SECTIONS = [
-  ['Herramientas',           's0',  'np0',  'dnp0'],
-  ['Componentes',            'sc',  'npsc', 'dnpsc'],
-  ['Infraestructura',        's1',  'np1',  'dnp1'],
-  ['Commissioning',          's2',  'np2',  'dnp2'],
-  ['RF / WiFi',              's4',  'np4',  'dnp4'],
-  ['Instalación x Habitación','sr', 'npsr', 'dnpsr'],
-  ['Check por Habitación',   's3',  'np3',  'dnp3'],
-  ['Domótica',               's5',  'np5',  'dnp5'],
-  ['Escenas',                's6',  'np6',  'dnp6'],
-  ['Alexa / Voz',            's7',  'np7',  'dnp7'],
-  ['Estabilidad IoT',        's8',  'np8',  'dnp8'],
-  ['Contingencia',           's9',  'np9',  'dnp9'],
-  ['Plan por Días',          's10', 'np10', 'dnp10'],
-  ['Validaciones',           's11', 'np11', 'dnp11'],
-  ['Experiencia',            's12', 'np12', 'dnp12'],
-  ['Diagnóstico',            's13', 'np13', 'dnp13'],
-  ['Arquitectura',           's14', 'np14', 'dnp14'],
-  ['Prioridades',            's15', 'np15', 'dnp15'],
+  ['s0',  '00', 'Herramientas'],
+  ['sc',  '●',  'Componentes'],
+  ['sr',  'SR', 'Por Habitación'],
+  ['s1',  '01', 'Infraestructura'],
+  ['s2',  '02', 'Commissioning'],
+  ['s3',  '03', 'Check Habitación'],
+  ['s4',  '04', 'RF / WiFi'],
+  ['s5',  '05', 'Domótica'],
+  ['s6',  '06', 'Escenas'],
+  ['s7',  '07', 'Alexa / Voz'],
+  ['s8',  '08', 'Estabilidad IoT'],
+  ['s9',  '09', 'Contingencia'],
+  ['s10', '10', 'Plan por Días'],
+  ['s11', '11', 'Validaciones'],
+  ['s12', '12', 'Experiencia'],
+  ['s13', '13', 'Diagnóstico'],
+  ['s14', '14', 'Arquitectura'],
+  ['s15', '15', 'Prioridades'],
 ];
 
 function buildNavFromSections(){
-  // Build sidebar
-  const sidebar = document.querySelector('.sidebar');
-  if(sidebar){
-    sidebar.innerHTML = '<div class="sb-head">Índice</div>';
-    SECTIONS.forEach(([label, sid, npId, dnpId], i)=>{
-      const num = sid === 'sc' ? '●' : String(i-1).padStart(2,'0');
-      sidebar.innerHTML += `<a class="nav-item" onclick="openAndScroll('${sid}')"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="${npId}">—</span></a>`;
-    });
-  }
-  // Build drawer
-  const drawer = document.getElementById('drawer');
-  if(drawer){
-    drawer.innerHTML = '<div class="sb-head">Índice</div>';
-    SECTIONS.forEach(([label, sid, npId, dnpId], i)=>{
-      const num = sid === 'sc' ? '●' : String(i-1).padStart(2,'0');
-      drawer.innerHTML += `<a class="nav-item" onclick="openAndScroll('${sid}');closeDrawer()"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="${dnpId}">—</span></a>`;
-    });
-  }
+  const sidebar = document.getElementById('sidebar');
+  const drawer  = document.getElementById('drawer');
+  sidebar.innerHTML = '<div class="sb-head">Índice</div>';
+  drawer.innerHTML  = '<div class="sb-head">Índice</div>';
+  SECTIONS.forEach(([id, num, label])=>{
+    sidebar.innerHTML +=
+      `<a class="nav-item" href="#${id}"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="np${id}">—</span></a>`;
+    drawer.innerHTML +=
+      `<a class="nav-item" href="#${id}" onclick="closeDrawer()"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="dnp${id}">—</span></a>`;
+  });
 }
 
-
-let pendingUncheck = null; // { id, li, stockCid, qty }
-
-function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); pendingUncheck=null; }
-function confirmUncheck(){
-  if(!pendingUncheck) return;
-  const {id, stockCid, qty} = pendingUncheck;
-  closeConfirm();
-  // Determine if it's a room task or regular checklist item
-  if(document.querySelector('.room-task[data-rtid="'+id+'"]')){
-    db.ref('room_tasks/'+id).set(null);
-  } else {
-    db.ref('checklist/'+id).set(null);
-  }
-  // Restore stock if applicable
-  if(stockCid && qty > 0){
-    db.ref('components/'+stockCid).once('value').then(s=>{
-      const cur = s.val()?.qty || 0;
-      db.ref('components/'+stockCid).set({ qty: cur + qty, by: me.name, ts: Date.now() });
-    });
-  }
-}
-
-// ── ROOMS DEFINITION ───────────────────────────────
-// Tasks definition: [label, stockCid or null, hasQty]
+// ── ROOMS ───────────────────────────────────────────
 const ROOM_TASKS = [
-  ['Configurar en AP cercano', null, false],
-  ['Actualizar todos los firmware', null, false],
-  ['Montar correctamente pantalla termostato Sonoff', null, false],
-  ['Cortinas Mini-RBS instaladas', 'c_02', true],
-  ['Relé 220V instalado', 'c_13', true],
-  ['Mini-Dim instalado', 'c_01', true],
-  ['R5 para cortina instalado', 'c_03', true],
-  ['R5 para luces instalado', 'c_03', true],
-  ['Escenas locales en iHost para los R5', null, false],
-  ['Controlar por comando de voz con Alexa', null, false],
-  ['Montar TV con brazo y configurar', null, false],
-  ['Instalar HDMI extender (balun RJ45)', 'c_12', true],
-  ['Colocar cable HDMI prearmado', 'c_11', true],
+  ['Configurar en AP cercano',              null,  false],
+  ['Actualizar firmware',                   null,  false],
+  ['Mini-Dim instalado',                    'c_01', true],
+  ['Mini-RBS instalado (cortinas)',         'c_02', true],
+  ['R5 para cortina instalado',            'c_03', true],
+  ['R5 para luces instalado',              'c_03', true],
+  ['Escenas locales en iHost para los R5', null,  false],
+  ['Controlar por voz con Alexa',          null,  false],
+  ['Instalar HDMI extender (balun RJ45)',   'c_12', true],
+  ['Colocar cable HDMI prearmado',          'c_11', true],
 ];
 
-const ROOM_TASKS_NO_TV = ROOM_TASKS.filter((_,i) => i < 10); // sin TV, HDMI extender y cable HDMI
+const STOCK_NAMES = { 'c_01':'Mini-Dim','c_02':'Mini-RBS','c_03':'R5','c_11':'HDMI cable','c_12':'HDMI extender' };
 
 const ROOMS = [
-  { id:'r_h1',  name:'Habitación 1',       tasks: ROOM_TASKS },
-  { id:'r_h2',  name:'Habitación 2',       tasks: ROOM_TASKS },
-  { id:'r_h3',  name:'Habitación 3',       tasks: ROOM_TASKS },
-  { id:'r_h4',  name:'Habitación 4',       tasks: ROOM_TASKS },
-  { id:'r_h5',  name:'Habitación 5',       tasks: ROOM_TASKS },
-  { id:'r_h6',  name:'Habitación 6',       tasks: ROOM_TASKS },
-  { id:'r_h7',  name:'Habitación 7',       tasks: ROOM_TASKS },
-  { id:'r_h8',  name:'Habitación 8',       tasks: ROOM_TASKS },
-  { id:'r_hp',  name:'Habitación Principal', tasks: ROOM_TASKS_NO_TV },
-  { id:'r_lv',  name:'Living',             tasks: ROOM_TASKS_NO_TV },
-  { id:'r_co',  name:'Cocina',             tasks: ROOM_TASKS },
-  { id:'r_pl',  name:'Playroom',           tasks: ROOM_TASKS },
-  { id:'r_ba',  name:'Bar',                tasks: ROOM_TASKS },
-  { id:'r_qu',  name:'Quincho',            tasks: ROOM_TASKS },
+  { id:'r_h1', name:'Habitación 1' }, { id:'r_h2', name:'Habitación 2' },
+  { id:'r_h3', name:'Habitación 3' }, { id:'r_h4', name:'Habitación 4' },
+  { id:'r_h5', name:'Habitación 5' }, { id:'r_h6', name:'Habitación 6' },
+  { id:'r_h7', name:'Habitación 7' }, { id:'r_h8', name:'Habitación 8' },
+  { id:'r_hp', name:'Habitación Principal' }, { id:'r_lv', name:'Living' },
+  { id:'r_co', name:'Cocina' },       { id:'r_pl', name:'Playroom' },
+  { id:'r_ba', name:'Bar' },          { id:'r_qu', name:'Quincho' },
 ];
 
-// Map stockCid → component name for display
-const STOCK_NAMES = {
-  'c_01':'Mini-Dim','c_02':'Mini-RBS','c_03':'R5',
-  'c_11':'HDMI cable','c_12':'HDMI extender','c_13':'Relé 220V'
-};
+const roomState = {};
 
 function buildRooms(){
   const body = document.getElementById('sr-body');
   if(!body) return;
-  // Keep note-box, clear rest
-  const nb = body.querySelector('.note-box');
   body.innerHTML = '';
-  if(nb) body.appendChild(nb);
-
   ROOMS.forEach(room=>{
     const wrap = document.createElement('div');
     wrap.className = 'sub';
     wrap.innerHTML = '<div class="sub-t">'+room.name+'</div>';
     const grid = document.createElement('div');
-    grid.style.cssText = 'display:flex;flex-direction:column;gap:.2rem;';
-
-    room.tasks.forEach((task, ti)=>{
-      const [label, stockCid, hasQty] = task;
+    grid.style.cssText = 'display:flex;flex-direction:column;gap:.15rem;';
+    ROOM_TASKS.forEach(([label, stockCid, hasQty], ti)=>{
       const taskId = room.id+'_t'+ti;
       const row = document.createElement('div');
       row.className = 'room-task';
       row.dataset.rtid = taskId;
       row.dataset.stockCid = stockCid || '';
-
       let qtyHtml = '';
       if(hasQty){
-        qtyHtml = `<div class="rt-qty">
-          <span class="rt-qty-label">cant.</span>
-          <button class="rt-qty-btn" data-dir="-">−</button>
-          <span class="rt-qty-val" contenteditable="false">0</span>
-          <button class="rt-qty-btn" data-dir="+">+</button>
-        </div>
-        <span class="stock-tag" title="Descuenta ${STOCK_NAMES[stockCid]||'stock'}">−${STOCK_NAMES[stockCid]||'stock'}</span>`;
+        qtyHtml = '<div class="rt-qty"><button class="rt-qty-btn" data-dir="-">−</button><span class="rt-qty-val">0</span><button class="rt-qty-btn" data-dir="+">+</button></div>'+
+                  '<span class="stock-tag">−'+(STOCK_NAMES[stockCid]||'stock')+'</span>';
       }
-
-      row.innerHTML = `
-        <div class="rt-cb"><span class="rt-ci">✓</span></div>
-        <span class="rt-label">${label}</span>
-        ${qtyHtml}
-        <button class="rt-note-btn">nota</button>
-        <div class="rt-meta"><span class="rt-by">—</span><span class="rt-time"></span></div>`;
-
+      row.innerHTML = '<div class="rt-cb"><span class="rt-ci">✓</span></div><span class="rt-label">'+label+'</span>'+qtyHtml+'<button class="rt-note-btn">nota</button><div class="rt-meta"></div>';
       grid.appendChild(row);
     });
-
     wrap.appendChild(grid);
     body.appendChild(wrap);
   });
-
-  // Attach events after rendering
   attachRoomEvents();
 }
 
 function attachRoomEvents(){
   document.querySelectorAll('.room-task').forEach(row=>{
-    const taskId  = row.dataset.rtid;
+    const taskId   = row.dataset.rtid;
     const stockCid = row.dataset.stockCid;
-
-    // Checkbox click
-    const cb = row.querySelector('.rt-cb');
-    const lbl = row.querySelector('.rt-label');
-    [cb, lbl].forEach(el=>{
-      el.addEventListener('click', e=>{
-        e.stopPropagation();
-        if(!me) return;
-        const isChecked = row.classList.contains('checked');
-        if(isChecked){
-          // Confirm before uncheck
-          const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
-          const entry = roomState[taskId];
-          const checkedBy = entry?.by || null;
-          if(!isSup && checkedBy && checkedBy !== me.name){ showBlockedToast(checkedBy); return; }
-          pendingUncheck = { id: taskId, li: row, stockCid: stockCid||null, qty };
-          const sub = stockCid && qty>0
-            ? `Esto restaurará ${qty} unidad(es) de ${STOCK_NAMES[stockCid]||'stock'} al inventario.`
-            : 'Esta acción deshará el progreso registrado.';
-          document.getElementById('confirm-sub').textContent = sub;
-          document.getElementById('confirm-modal').classList.add('open');
-        } else {
-          // Mark as done
-          const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
-          db.ref('room_tasks/'+taskId).set({ by:me.name, role:me.role, ts:Date.now(), qty });
-          // Deduct stock
-          if(stockCid && qty > 0){
-            db.ref('components/'+stockCid).once('value').then(s=>{
-              const cur = s.val()?.qty || 0;
-              const newQty = Math.max(0, cur - qty);
-              db.ref('components/'+stockCid).set({ qty: newQty, by: me.name, ts: Date.now() });
-            });
-          }
-        }
-      });
+    // checkbox
+    row.querySelector('.rt-cb').addEventListener('click', e=>{
+      e.stopPropagation();
+      if(!me) return;
+      if(row.classList.contains('checked')){ db.ref('room_tasks/'+taskId).set(null); return; }
+      const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
+      db.ref('room_tasks/'+taskId).set({ by:me.name, ts:Date.now(), qty });
+      if(stockCid && qty > 0){
+        db.ref('components/'+stockCid).once('value').then(s=>{
+          const cur = s.val()?.qty || 0;
+          db.ref('components/'+stockCid).set({ qty: Math.max(0, cur-qty), by:me.name, ts:Date.now() });
+        });
+      }
     });
-
-    // Qty buttons
+    row.querySelector('.rt-label').addEventListener('click', e=>{ e.stopPropagation(); row.querySelector('.rt-cb').click(); });
+    // qty buttons
     row.querySelectorAll('.rt-qty-btn').forEach(btn=>{
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        if(!me || row.classList.contains('checked')) return;
-        const valEl = row.querySelector('.rt-qty-val');
-        if(!valEl) return;
-        let cur = parseInt(valEl.textContent)||0;
-        valEl.textContent = Math.max(0, cur + (btn.dataset.dir==='+' ? 1 : -1));
-      });
+      btn.addEventListener('click', e=>{ e.stopPropagation(); if(!me||row.classList.contains('checked')) return; const v=row.querySelector('.rt-qty-val'); v.textContent=Math.max(0,(parseInt(v.textContent)||0)+(btn.dataset.dir==='+'?1:-1)); });
     });
-
-    // Qty direct edit
-    const valEl = row.querySelector('.rt-qty-val');
-    if(valEl){
-      valEl.addEventListener('click', e=>{ e.stopPropagation(); if(row.classList.contains('checked')) return; valEl.contentEditable='true'; valEl.classList.add('editing'); valEl.focus(); const r=document.createRange(); r.selectNodeContents(valEl); window.getSelection().removeAllRanges(); window.getSelection().addRange(r); });
-      valEl.addEventListener('blur', ()=>{ valEl.contentEditable='false'; valEl.classList.remove('editing'); const v=Math.max(0,parseInt(valEl.textContent)||0); valEl.textContent=v; });
-      valEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){e.preventDefault();valEl.blur();} if(!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight/.test(e.key)) e.preventDefault(); });
-    }
-
-    // Note button
+    // note button
     const nb = row.querySelector('.rt-note-btn');
-    if(nb){
-      nb.addEventListener('click', e=>{
-        e.stopPropagation();
-        toggleRoomNote(row, taskId);
-      });
-    }
+    nb.addEventListener('click', e=>{
+      e.stopPropagation();
+      let panel = row.nextElementSibling;
+      if(!panel||!panel.classList.contains('comp-note-panel')){
+        panel = document.createElement('div');
+        panel.className = 'comp-note-panel';
+        panel.innerHTML = '<textarea class="comp-note-input" placeholder="Nota..."></textarea><div class="comp-note-actions"><button class="comp-cancel">Cancelar</button><button class="comp-save">Guardar</button></div>';
+        row.after(panel);
+        db.ref('room_notes/'+taskId).once('value').then(s=>{ if(s.val()) panel.querySelector('.comp-note-input').value=s.val().text||''; });
+        panel.querySelector('.comp-cancel').addEventListener('click',()=>panel.classList.remove('open'));
+        panel.querySelector('.comp-save').addEventListener('click',()=>{ if(!me) return; const val=panel.querySelector('.comp-note-input').value.trim(); db.ref('room_notes/'+taskId).set(val?{text:val,by:me.name,ts:Date.now()}:null); panel.classList.remove('open'); });
+      }
+      panel.classList.toggle('open');
+    });
   });
 }
-
-// ── ROOM STATE ─────────────────────────────────────
-const roomState = {};
 
 function listenRoomTasks(){
   db.ref('room_tasks').on('value', snap=>{
     const data = snap.val() || {};
     Object.keys(roomState).forEach(k=>delete roomState[k]);
     Object.assign(roomState, data);
-
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
-      const id = row.dataset.rtid;
-      const e = data[id];
-      const was = row.classList.contains('checked');
+      const e = data[row.dataset.rtid];
       if(e){
         row.classList.add('checked');
-        const byEl = row.querySelector('.rt-by');
-        const tmEl = row.querySelector('.rt-time');
-        if(byEl) byEl.textContent = e.by || '—';
-        if(tmEl) tmEl.textContent = fmtTime(e.ts);
-        // Show saved qty
-        const valEl = row.querySelector('.rt-qty-val');
-        if(valEl && e.qty != null) valEl.textContent = e.qty;
-        if(!was && e.by !== me?.name) toast('<b>'+e.by+'</b> <span>completó: '+row.querySelector('.rt-label').textContent+'</span>');
+        const m = row.querySelector('.rt-meta');
+        if(m) m.textContent = (e.by||'')+(e.qty?' ×'+e.qty:'');
+        const v = row.querySelector('.rt-qty-val');
+        if(v && e.qty != null) v.textContent = e.qty;
       } else {
         row.classList.remove('checked');
-        const byEl=row.querySelector('.rt-by'); if(byEl) byEl.textContent='—';
-        const tmEl=row.querySelector('.rt-time'); if(tmEl) tmEl.textContent='';
+        const m = row.querySelector('.rt-meta'); if(m) m.textContent='';
       }
     });
-    updateRoomStats();
+    // update sr stats
+    const total = document.querySelectorAll('.room-task[data-rtid]').length;
+    const done  = document.querySelectorAll('.room-task[data-rtid].checked').length;
+    const stsr  = document.getElementById('stsr'); if(stsr) stsr.textContent=done+'/'+total;
+    const npsr  = document.getElementById('npsr'); if(npsr) npsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
+    const dnpsr = document.getElementById('dnpsr'); if(dnpsr) dnpsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
   });
-
-  // Room notes
   db.ref('room_notes').on('value', snap=>{
     const data = snap.val() || {};
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
@@ -1629,266 +1619,15 @@ function listenRoomTasks(){
   });
 }
 
-function updateRoomStats(){
-  const total = document.querySelectorAll('.room-task[data-rtid]').length;
-  const done  = document.querySelectorAll('.room-task[data-rtid].checked').length;
-  const stsr  = document.getElementById('stsr'); if(stsr) stsr.textContent=done+'/'+total;
-  const npsr  = document.getElementById('npsr'); if(npsr) npsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
-  const dnpsr = document.getElementById('dnpsr'); if(dnpsr) dnpsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
-}
-
-function toggleRoomNote(row, taskId){
-  let panel = row.nextElementSibling;
-  if(!panel || !panel.classList.contains('note-panel')){
-    panel = document.createElement('div');
-    panel.className = 'note-panel';
-    panel.innerHTML =
-      '<textarea class="note-input" placeholder="Agregar nota..."></textarea>'+
-      '<div class="note-actions">'+
-        '<button class="note-cancel">Cancelar</button>'+
-        '<button class="note-save">Guardar</button>'+
-      '</div>';
-    row.after(panel);
-    db.ref('room_notes/'+taskId).once('value').then(s=>{ if(s.val()) panel.querySelector('.note-input').value=s.val().text||''; });
-    panel.querySelector('.note-cancel').addEventListener('click',()=>panel.classList.remove('open'));
-    panel.querySelector('.note-save').addEventListener('click',()=>{
-      if(!me) return;
-      const val = panel.querySelector('.note-input').value.trim();
-      db.ref('room_notes/'+taskId).set(val?{text:val,by:me.name,ts:Date.now()}:null);
-      panel.classList.remove('open');
-    });
-  }
-  panel.classList.toggle('open');
-}
-function initComponents(){
-  // Listen to all component quantities from Firebase
-  db.ref('components').on('value', snap=>{
-    const data = snap.val() || {};
-    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
-      const cid = row.dataset.cid;
-      const entry = data[cid] || { qty: 0, by: null };
-      const valEl = row.querySelector('.comp-val');
-      const byEl  = row.querySelector('.comp-updated-by');
-      if(valEl) valEl.textContent = entry.qty ?? 0;
-      if(byEl)  byEl.textContent  = (entry.by && entry.qty > 0) ? '· '+entry.by : '';
-    });
-    // Update sidebar count (total components tracked)
-    const npsc  = document.getElementById('npsc');
-    const dnpsc = document.getElementById('dnpsc');
-    const total = Object.values(data).reduce((a,v)=>a+(v.qty||0),0);
-    if(npsc)  npsc.textContent  = total > 0 ? total+' uds' : '—';
-    if(dnpsc) dnpsc.textContent = total > 0 ? total+' uds' : '—';
-  });
-
-  // Listen to component notes
-  db.ref('comp_notes').on('value', snap=>{
-    const data = snap.val() || {};
-    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
-      const cid = row.dataset.cid;
-      const nb  = row.querySelector('.comp-note-btn');
-      if(!nb) return;
-      if(data[cid]){ nb.classList.add('has-note'); nb.title = data[cid].by+': '+data[cid].text; }
-      else          { nb.classList.remove('has-note'); nb.title = ''; }
-    });
-  });
-
-  // Click handlers for + / - buttons
-  document.querySelectorAll('.comp-row').forEach(row=>{
-    const cid = row.dataset.cid;
-
-    // +/- buttons
-    row.querySelectorAll('.comp-btn').forEach(btn=>{
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        if(!me) return;
-        const valEl = row.querySelector('.comp-val');
-        let current = parseInt(valEl.textContent) || 0;
-        const dir = btn.dataset.dir;
-        const newVal = Math.max(0, current + (dir === '+' ? 1 : -1));
-        db.ref('components/'+cid).set({ qty: newVal, by: me.name, ts: Date.now() });
-      });
-    });
-
-    // Tap on number to edit directly
-    const valEl = row.querySelector('.comp-val');
-    if(valEl){
-      valEl.addEventListener('click', e=>{
-        e.stopPropagation();
-        if(!me) return;
-        valEl.contentEditable = 'true';
-        valEl.classList.add('editing');
-        valEl.focus();
-        // Select all text
-        const range = document.createRange();
-        range.selectNodeContents(valEl);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-      });
-      valEl.addEventListener('blur', ()=>{
-        valEl.contentEditable = 'false';
-        valEl.classList.remove('editing');
-        const newVal = Math.max(0, parseInt(valEl.textContent) || 0);
-        if(me) db.ref('components/'+cid).set({ qty: newVal, by: me.name, ts: Date.now() });
-      });
-      valEl.addEventListener('keydown', e=>{
-        if(e.key === 'Enter'){ e.preventDefault(); valEl.blur(); }
-        // Only allow numbers
-        if(!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight/.test(e.key)) e.preventDefault();
-      });
-    }
-
-    // Note button
-    const nb = row.querySelector('.comp-note-btn');
-    if(nb){
-      nb.addEventListener('click', e=>{
-        e.stopPropagation();
-        toggleCompNote(row, cid);
-      });
-    }
-  });
-}
-
-function toggleCompNote(row, cid){
-  let panel = row.nextElementSibling;
-  if(!panel || !panel.classList.contains('comp-note-panel')){
-    panel = document.createElement('div');
-    panel.className = 'comp-note-panel';
-    panel.innerHTML =
-      '<textarea class="comp-note-input" placeholder="Agregar nota para este componente..."></textarea>'+
-      '<div class="comp-note-actions">'+
-        '<button class="comp-cancel">Cancelar</button>'+
-        '<button class="comp-save">Guardar</button>'+
-      '</div>';
-    row.after(panel);
-    // Load existing note
-    db.ref('comp_notes/'+cid).once('value').then(s=>{
-      if(s.val()) panel.querySelector('.comp-note-input').value = s.val().text || '';
-    });
-    panel.querySelector('.comp-cancel').addEventListener('click', ()=> panel.classList.remove('open'));
-    panel.querySelector('.comp-save').addEventListener('click', ()=>{
-      if(!me) return;
-      const val = panel.querySelector('.comp-note-input').value.trim();
-      db.ref('comp_notes/'+cid).set(val ? { text: val, by: me.name, ts: Date.now() } : null);
-      panel.classList.remove('open');
-    });
-  }
-  panel.classList.toggle('open');
-}
-
-// ── VERSION CHECK + INIT ────────────────────────────
-function parseVer(v){ const p=String(v).split('.').map(Number); return p[0]*1000+(p[1]||0); }
-
-window.addEventListener('load',()=>{
-  buildNavFromSections(); // Build nav immediately from SECTIONS array
-
-  // Set dynamic version labels
-  const vl = document.getElementById('ver-label');
-  if(vl) vl.textContent = APP_VERSION;
-  const fv = document.getElementById('footer-ver');
-  if(fv) fv.textContent = APP_VERSION;
-
-  // Leer versión mínima requerida desde Firebase
-  db.ref('config/minVersion').once('value').then(snap=>{
-    const minVersion = snap.val() || '1.0';
-    const myVer = parseVer(APP_VERSION);
-    const minVer = parseVer(minVersion);
-
-    document.getElementById('loading').style.display='none';
-
-    if(myVer < minVer){
-      // Versión desactualizada — bloquear acceso
-      document.getElementById('my-version-label').textContent = 'v' + APP_VERSION;
-      document.getElementById('outdated-msg').textContent =
-        'Se requiere la versión ' + minVersion + ' o superior. Tu archivo es la versión ' + APP_VERSION + '.';
-      const sc = document.getElementById('outdated-screen');
-      sc.style.display = 'flex';
-      return;
-    }
-
-    // Versión OK — escribir la versión mínima actual si el admin la subió por primera vez
-    if(isSup || !snap.exists()){
-      db.ref('config/minVersion').set(APP_VERSION);
-    }
-
-    document.getElementById('login').style.display='flex';
-    updateStats();
-  }).catch(()=>{
-    // Si no hay conexión, igual dejar pasar (fallback offline)
-    document.getElementById('loading').style.display='none';
-    document.getElementById('login').style.display='flex';
-    updateStats();
-  });
-});
-
-// ── ADMIN: FORZAR VERSIÓN MÍNIMA ───────────────────
-// El admin puede llamar esta función para que todos
-// con versiones viejas queden bloqueados automáticamente
-function forceMinVersion(){
-  db.ref('config/minVersion').set(APP_VERSION).then(()=>{
-    toast('<b>Versión mínima actualizada</b> <span>a v'+APP_VERSION+'. Los archivos viejos quedarán bloqueados.</span>');
-  });
-}
-
-// expose globals needed by inline handlers
+// expose globals
 window.toggleAdmin=toggleAdmin;
 window.doLogin=doLogin;
 window.toggleSec=toggleSec;
-window.openAndScroll=openAndScroll;
 window.saveNote=saveNote;
-window.closeInfo=closeInfo;
-window.closeInfoBtn=closeInfoBtn;
-window.openDrawer=openDrawer;
-window.closeDrawer=closeDrawer;
-window.forceMinVersion=forceMinVersion;
-// ── INFO MODAL ─────────────────────────────────────
-function closeInfo(e){
-  if(e.target === document.getElementById('info-modal')) closeInfoBtn();
-}
-function closeInfoBtn(){
-  document.getElementById('info-modal').classList.remove('open');
-}
-
-// ── DRAWER ─────────────────────────────────────────
-function openDrawer(){
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawer-overlay').classList.add('open');
-}
-function closeDrawer(){
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('drawer-overlay').classList.remove('open');
-}
-
-// ── RESET ALL CHECKS ───────────────────────────────
-function resetAllChecks(){
-  if(!isSup) return;
-  if(!confirm('¿Resetear TODOS los checks? Esto borrará todo el avance. No se puede deshacer.')) return;
-  db.ref('checklist').set(null).then(()=>{
-    document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
-      li.classList.remove('checked');
-      const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
-      const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
-    });
-    Object.keys(checklistState).forEach(k=>delete checklistState[k]);
-    Object.keys(checkers).forEach(k=>delete checkers[k]);
-    updateStats();
-    toast('<b>Checks reseteados</b>');
-  });
-}
-
-window.toggleAdmin=toggleAdmin;
-window.doLogin=doLogin;
-window.toggleSec=toggleSec;
-window.openAndScroll=openAndScroll;
-window.openDrawer=openDrawer;
-window.closeDrawer=closeDrawer;
-window.saveNote=saveNote;
-window.closeInfo=closeInfo;
-window.closeInfoBtn=closeInfoBtn;
 window.closeConfirm=closeConfirm;
 window.confirmUncheck=confirmUncheck;
-window.buildNavFromSections=buildNavFromSections;
-window.forceMinVersion=forceMinVersion;
-window.resetAllChecks=resetAllChecks;
+window.openDrawer=function(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawer-overlay').classList.add('open'); };
+window.closeDrawer=function(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); };
 </script>
 </body>
-</html>
+  </html>
