@@ -180,51 +180,6 @@ header{
 .rt-note-btn.has-note{color:var(--yellow);}
 .stock-tag{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:.06em;white-space:nowrap;margin-top:3px;flex-shrink:0;}
 
-/* ── DYNAMIC ITEMS ───────────────────── */
-.add-item-btn{
-  display:none;width:100%;margin-top:.6rem;
-  background:none;border:1px dashed var(--border2);
-  color:var(--dim);font-family:'DM Mono',monospace;font-size:.58rem;
-  letter-spacing:.1em;text-transform:uppercase;padding:.5rem;
-  cursor:pointer;transition:all .15s;
-}
-.add-item-btn:hover{border-color:var(--accent);color:var(--accent);}
-body.is-sup .add-item-btn{display:block;}
-
-.add-item-row{
-  display:none;padding:.5rem .6rem;background:var(--s2);
-  border:1px solid var(--border2);margin-top:.3rem;gap:.5rem;
-  align-items:center;
-}
-.add-item-row.open{display:flex;}
-.add-item-input{
-  flex:1;background:var(--s1);border:1px solid var(--border2);
-  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.8rem;
-  padding:.4rem .6rem;outline:none;
-}
-.add-item-input:focus{border-color:var(--accent);}
-.add-item-tag-sel{
-  background:var(--s1);border:1px solid var(--border2);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:.55rem;padding:.4rem .4rem;
-  outline:none;cursor:pointer;
-}
-.add-item-ok{
-  background:var(--accent);color:var(--bg);border:none;
-  font-family:'DM Mono',monospace;font-size:.6rem;font-weight:700;
-  padding:.4rem .75rem;cursor:pointer;letter-spacing:.06em;
-}
-.add-item-cancel{
-  background:none;border:1px solid var(--border2);color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:.6rem;padding:.4rem .55rem;cursor:pointer;
-}
-.del-item-btn{
-  display:none;background:none;border:none;color:var(--dim);
-  font-size:.7rem;cursor:pointer;padding:.1rem .3rem;
-  flex-shrink:0;transition:color .15s;margin-top:1px;
-}
-.del-item-btn:hover{color:var(--red);}
-body.is-sup .del-item-btn{display:block;}
-
 /* ── CONFIRM UNCHECK MODAL ───────────── */
 #confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
 #confirm-modal.open{display:flex;}
@@ -1200,7 +1155,7 @@ let me        = null;
 let isSup     = false;
 let quiet     = true;
 const ADMIN_PASS  = '1734';
-const APP_VERSION = '4.0'; // ← versión de este archivo
+const APP_VERSION = '4.2'; // ← versión de este archivo
 const COLORS  = ['#00c8f0','#e8621a','#4ade80','#fbbf24','#f87171','#a78bfa','#fb7185','#34d399'];
 const checkers = {};
 
@@ -1261,7 +1216,6 @@ function doLogin(){
         });
       }
     });
-    migrateItemsIfNeeded();
   }
 
   // presence
@@ -1269,9 +1223,9 @@ function doLogin(){
   presRef.set({ name:me.name, role:me.role, color:me.color, ts:Date.now() });
   presRef.onDisconnect().remove();
 
-  // Dynamic items system — replaces static listenChecklist
-  listenItemsDB();
+  listenChecklist();
   listenPresence();
+  listenNotes();
   initComponents();
   buildRooms();
   listenRoomTasks();
@@ -1301,879 +1255,16 @@ function showBlockedToast(checkedBy){
   setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 4500);
 }
 
-// ── CHECKLIST STATE CACHE ──────────────────────────
+
+// ── CHECKLIST STATE ────────────────────────────────
+const checklistState = {};
 let notesState = {};
 
-// Apply current checklist state to DOM — called after re-render
-function applyChecklistState(){
-  // Don't run if state cache is empty (not yet loaded from Firebase)
-  if(Object.keys(checklistState).length === 0) return;
-  Object.keys(checkers).forEach(k=>delete checkers[k]);
-  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-    const id = li.dataset.id;
-    const e  = checklistState[id];
-    if(e){
-      li.classList.add('checked');
-      const nm=li.querySelector('.im .ic'); if(nm) nm.textContent=e.by||'—';
-      const tm=li.querySelector('.im .itime'); if(tm) tm.textContent=fmtTime(e.ts);
-      checkers[e.by]=(checkers[e.by]||0)+1;
-    } else {
-      // Only remove checked if item was previously checked (avoids clearing on fresh render)
-      if(li.classList.contains('checked')){
-        li.classList.remove('checked');
-        const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
-        const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
-      }
-    }
-  });
-}
-
-// Apply current notes state to DOM — called after re-render
-function applyNotesState(){
-  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-    const nb=li.querySelector('.note-btn'); if(!nb) return;
-    const e=notesState[li.dataset.id];
-    if(e){ nb.classList.add('has-note'); nb.title=e.by+': '+e.text; }
-    else  { nb.classList.remove('has-note'); nb.title=''; }
-  });
-}
-
-// ── LISTEN CHECKLIST ───────────────────────────────
-function listenChecklist(){
-  // Use child events — only process the changed item, not all 190
-  db.ref('checklist').on('child_added', snap=>{
-    const id = snap.key;
-    const e  = snap.val();
-    checklistState[id] = e;
-    const li = document.querySelector(`.cl li[data-id="${id}"]`);
-    if(!li) return;
-    const was = li.classList.contains('checked');
-    li.classList.add('checked');
-    const nm=li.querySelector('.im .ic'); if(nm) nm.textContent=e.by||'—';
-    const tm=li.querySelector('.im .itime'); if(tm) tm.textContent=fmtTime(e.ts);
-    if(!was && e.by !== me?.name){
-      toast('<b>'+e.by+'</b> <span>completó: '+(li.querySelector('.it')?.textContent||'').slice(0,40)+'…</span>');
-    }
-    checkers[e.by] = (checkers[e.by]||0)+1;
-    updateStats();
-  });
-
-  db.ref('checklist').on('child_removed', snap=>{
-    const id = snap.key;
-    delete checklistState[id];
-    const li = document.querySelector(`.cl li[data-id="${id}"]`);
-    if(!li) return;
-    li.classList.remove('checked');
-    const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
-    const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
-    const prev = snap.val()?.by;
-    if(prev && checkers[prev]) checkers[prev] = Math.max(0, checkers[prev]-1);
-    updateStats();
-  });
-
-  db.ref('checklist').on('child_changed', snap=>{
-    const id = snap.key;
-    const e  = snap.val();
-    checklistState[id] = e;
-    const li = document.querySelector(`.cl li[data-id="${id}"]`);
-    if(!li) return;
-    li.classList.add('checked');
-    const nm=li.querySelector('.im .ic'); if(nm) nm.textContent=e.by||'—';
-    const tm=li.querySelector('.im .itime'); if(tm) tm.textContent=fmtTime(e.ts);
-    updateStats();
-  });
-}
-
-// ── NOTES ──────────────────────────────────────────
-function toggleNote(btn){
-  const li=btn.closest('li[data-id]');
-  let panel=li.nextElementSibling;
-  if(!panel||!panel.classList.contains('note-panel')){
-    panel=document.createElement('div');
-    panel.className='note-panel';
-    const id=li.dataset.id;
-    panel.innerHTML=
-      '<textarea class="note-input" placeholder="Agregar nota para este ítem..."></textarea>'+
-      '<div class="note-actions">'+
-        '<button class="note-cancel" onclick="this.closest(\'.note-panel\').classList.remove(\'open\')">Cancelar</button>'+
-        '<button class="note-save" onclick="saveNote(\''+id+'\',this)">Guardar</button>'+
-      '</div>';
-    li.after(panel);
-    db.ref('notes/'+id).once('value').then(s=>{
-      if(s.val()) panel.querySelector('.note-input').value=s.val().text||'';
-    });
-  }
-  panel.classList.toggle('open');
-}
-
-function saveNote(id, btn){
-  if(!me) return;
-  const panel=btn.closest('.note-panel');
-  const val=panel.querySelector('.note-input').value.trim();
-  db.ref('notes/'+id).set(val?{text:val,by:me.name,ts:Date.now()}:null);
-  panel.classList.remove('open');
-}
-
-function listenNotes(){
-  db.ref('notes').on('value', snap=>{
-    notesState = snap.val()||{};
-    applyNotesState();
-  });
-}
-
-// ── PRESENCE ───────────────────────────────────────
-function listenPresence(){
-  db.ref('presence').on('value', snap=>{
-    const data=snap.val()||{};
-    const box=document.getElementById('online-users');
-    box.innerHTML='';
-    Object.entries(data).forEach(([id,u])=>{
-      if(id===uid) return;
-      const av=document.createElement('div');
-      av.className='uav';
-      av.style.background=u.color||'#00c8f0';
-      av.style.color='#08090c';
-      av.textContent=initials(u.name);
-      av.setAttribute('data-tip',u.name+' · '+u.role);
-      box.appendChild(av);
-    });
-  });
-}
-
-// ── STATS ───────────────────────────────────────────
-function updateStats(){
-  let total=0, done=0, critPend=0;
-  const secStats=[];
-
-  SECTIONS.forEach(([label, sid, npId, dnpId])=>{
-    if(sid === 'sc'){
-      // Components — handled by initComponents, just push placeholder
-      secStats.push({label, t:0, d:0, isComp:true});
-      return;
-    }
-    const sec = document.getElementById(sid);
-    if(!sec){ secStats.push({label, t:0, d:0}); return; }
-    // Count regular checklist items
-    const items = sec.querySelectorAll('.cl li[data-id]');
-    const chk   = sec.querySelectorAll('.cl li[data-id].checked');
-    // Count room tasks if this is the sr section
-    const rtItems = sec.querySelectorAll('.room-task[data-rtid]');
-    const rtChk   = sec.querySelectorAll('.room-task[data-rtid].checked');
-    const t = items.length + rtItems.length;
-    const d = chk.length  + rtChk.length;
-    const stId = sid === 'sr' ? 'stsr' : 'st' + sid.replace('s','');
-    const st  = document.getElementById(stId);
-    const np  = document.getElementById(npId);
-    const dnp = document.getElementById(dnpId);
-    if(st)  st.textContent  = d+'/'+t;
-    if(np)  np.textContent  = t>0 ? Math.round(d/t*100)+'%' : '—';
-    if(dnp) dnp.textContent = t>0 ? Math.round(d/t*100)+'%' : '—';
-    total+=t; done+=d;
-    secStats.push({label, t, d});
-  });
-
-  // Count critical pending
-  document.querySelectorAll('.cl li[data-id]:not(.checked)').forEach(li=>{ if(li.querySelector('.tag.tc')) critPend++; });
-
-  document.getElementById('gtotal').textContent = total;
-  document.getElementById('gcount').textContent = done;
-  document.getElementById('hfill').style.width  = (total>0?done/total*100:0)+'%';
-
-  // 4 metric cards
-  const spTotal=document.getElementById('sp-total'); if(spTotal) spTotal.textContent=total;
-  const spDone =document.getElementById('sp-done');  if(spDone)  spDone.textContent=done;
-  const spPct  =document.getElementById('sp-pct');   if(spPct)   spPct.textContent=(total>0?Math.round(done/total*100):0)+'%';
-  const spCrit =document.getElementById('sp-crit');  if(spCrit)  spCrit.textContent=critPend;
-
-  // Admin bars — from same SECTIONS array
-  const barsEl = document.getElementById('sup-bars');
-  if(barsEl){
-    barsEl.innerHTML='';
-    secStats.forEach(({label, t, d, isComp}, i)=>{
-      if(isComp) return; // skip components in bars
-      const pct = t>0 ? Math.round(d/t*100) : 0;
-      const fc  = pct===100?'fill-g':pct>60?'fill-m':pct>30?'fill-h':'fill-c';
-      barsEl.innerHTML +=
-        '<div class="sup-bar-row">'+
-        '<div class="sup-bar-label"><span>'+label+'</span><span>'+d+'/'+t+'</span></div>'+
-        '<div class="sup-bar-track"><div class="sup-bar-fill '+fc+'" style="width:'+pct+'%"></div></div>'+
-        '</div>';
-    });
-  }
-
-  // Checker ranking
-  const cl = document.getElementById('sup-checker-list');
-  if(cl){
-    const sorted=Object.entries(checkers).sort((a,b)=>b[1]-a[1]);
-    if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; }
-    else {
-      cl.innerHTML=sorted.map(([name,count])=>
-        '<div class="sup-checker-row">'+
-          '<span class="sup-checker-name">'+name+'</span>'+
-          '<span class="sup-checker-count">'+count+' ítems</span>'+
-        '</div>'
-      ).join('');
-    }
-  }
-}
-
-// ── DRAWER ─────────────────────────────────────────
-function openDrawer(){
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawer-overlay').classList.add('open');
-}
-function closeDrawer(){
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('drawer-overlay').classList.remove('open');
-}
-
-// ── INFO DATA ───────────────────────────────────────
-// Descriptions keyed by data-id
-const INFO = {
-  // S1 - Infraestructura
-  s1_01:{tag:'Red Física',title:'Continuidad y etiquetado de cables',steps:['Usar tester de red para verificar continuidad en cada cable patch y estructurado','Confirmar que cada cable tiene etiqueta en ambos extremos (panel y dispositivo)','Registrar en planilla: número de cable, origen, destino, resultado del test']},
-  s1_02:{tag:'Red Física',title:'Identificación de puertos de switch',steps:['Acceder físicamente a cada switch','Verificar que cada puerto tiene etiqueta visible (papel o rotuladora)','El rótulo debe indicar: número de puerto, dispositivo conectado, VLAN asignada']},
-  s1_03:{tag:'Red Física',title:'Documentar plano de red actualizado',steps:['Fotografiar o diagramar cada switch con sus conexiones reales actuales','Incluir: número de puerto, dispositivo, IP, VLAN','Subir el documento a Google Drive o Notion del proyecto']},
-  s1_04:{tag:'Omada OC300',title:'Verificar firmware del OC300',steps:['Ingresar a la interfaz web del OC300','Ir a Configuración → Actualización de firmware','Comparar versión instalada con la última estable en el sitio de TP-Link','Si hay actualización disponible, hacerla en horario de bajo tráfico']},
-  s1_05:{tag:'Router Dual WAN',title:'Configurar y testear failover WAN',link:'https://support.omadanetworks.com/es/document/13198/',steps:['En el controlador Omada, ir a Configuración de red → Ajustes de red → Internet → Load Balancing','Habilitar "Link Backup" y seleccionar WAN1 como primaria y WAN2 como backup','En modo Failover elegir: "Activar enlace de respaldo cuando falle cualquier WAN primaria"','En Recover Mode: "Always Link Primary" (vuelve a WAN1 cuando se recupera)','Configurar Online Detection: el router hace ping continuo para detectar caída de WAN','Test: desconectar cable de WAN1 — el tráfico debe conmutar a WAN2 en menos de 60 segundos','Reconectar WAN1 y verificar que vuelve a ser primaria automáticamente']},
-  s1_06:{tag:'Switches PoE',title:'Verificar presupuesto PoE',steps:['Ingresar al panel del switch PoE (Omada SDN)','Revisar la sección PoE: consumo actual vs presupuesto máximo','Asegurarse de que el consumo total no supera el 80% del presupuesto','Si hay margen justo, planificar redistribución de carga PoE']},
-  s1_07:{tag:'Eléctrico',title:'Verificar UPS en sala de máquinas',steps:['Confirmar que el UPS está encendido y en estado "On Battery" cuando se desconecta la red','Verificar autonomía estimada en la pantalla del UPS','Confirmar que router, switches core, OC300 e iHost están conectados al UPS','Hacer test de corte: desconectar el UPS de la red y medir cuánto tiempo aguanta']},
-  s1_08:{tag:'Documentación',title:'Documentar IPs fijos de equipos críticos',steps:['Acceder al panel DHCP del router Omada','Listar todas las reservas DHCP existentes','Agregar reservas para: NVR, iHost, OC300, cada AP (por MAC address)','Registrar la tabla de IPs en el documento del proyecto']},
-  s1_09:{tag:'VLANs — ACL',title:'Aislar VLAN IoT: reglas de firewall ACL',link:'https://support.omadanetworks.com/es/document/13151/',steps:['Primero crear la VLAN IoT: Configuración → Redes cableadas → LAN → +Crear nueva LAN (VLAN ID 30, nombre "IoT")','Ir a Configuración → Seguridad de red → ACL → ACL de puerta de enlace','Crear regla 1: Origen = VLAN 30 (IoT) → Destino = VLAN 20 (Clientes) → Acción = Denegar','Crear regla 2: Origen = VLAN 10 (Admin) → Destino = Todas → Acción = Permitir','Test: desde un dispositivo IoT hacer ping a un dispositivo cliente — debe fallar','Test inverso: desde un dispositivo cliente hacer ping a un Sonoff — debe funcionar (acceso unidireccional)']},
-  s1_10:{tag:'VLANs',title:'iHost se comunica con VLAN IoT',link:'https://support.omadanetworks.com/es/document/109101/',steps:['En Omada, crear regla ACL que permite tráfico desde VLAN 10 (Admin, donde está iHost) hacia VLAN 30 (IoT)','Verificar que iHost tiene IP reservada en VLAN 10 (Configuración de red → DHCP → Reservas)','Desde la interfaz de iHost, hacer un escaneo de dispositivos — los Sonoff en VLAN 30 deben aparecer','Testear: encender y apagar un Sonoff desde iHost y verificar que responde']},
-  s1_11:{tag:'Alexa / mDNS',title:'Configurar mDNS relay para Alexa con Sonoff',link:'https://support.omadanetworks.com/es/document/13309/',steps:['En Omada SDN, ir a Configuración del sitio → Redes inalámbricas → WLAN','Editar el SSID de clientes (donde está Alexa) y el SSID IoT (donde están los Sonoff)','En la configuración avanzada del SSID, habilitar "mDNS" o "Multicast Enhancement"','Alternativamente: ir a Configuración → Redes cableadas → LAN → habilitar mDNS Proxy entre VLAN 20 y VLAN 30','Verificar: Alexa debe poder descubrir los Sonoff aunque estén en distinta VLAN','Guía oficial completa de Omada para Alexa: ver documentación en el link de esta tarea']},
-  s1_12:{tag:'Hikvision',title:'32 cámaras activas y grabando',steps:['Acceder al NVR Hikvision desde su interfaz web o pantalla local','Ir a la sección de canales y verificar que los 32 están activos (sin fondo negro)','Confirmar que el ícono de grabación está activo en cada canal','Reproducir grabación de los últimos 5 minutos en al menos 3 cámaras distintas']},
-  s1_13:{tag:'Hikvision',title:'Domos TandemVu con PTZ operativo',steps:['Seleccionar cada domo en el NVR','Usar los controles de PTZ para mover pan, tilt y zoom','Verificar que el movimiento es fluido y llega a los extremos del rango','Confirmar que los presets de posición (si los hay) funcionan correctamente']},
-  s1_14:{tag:'Hikvision',title:'Configurar retención de grabación',steps:['En el NVR, ir a Almacenamiento → Configuración de grabación','Verificar el espacio disponible en disco','Calcular días de retención: capacidad / (bitrate × número de cámaras)','Configurar sobreescritura automática al llegar al límite de almacenamiento']},
-  s1_15:{tag:'Acceso Remoto',title:'Verificar acceso remoto al NVR',steps:['Descargar la app iVMS-4200 o Hik-Connect en el celular','Agregar el NVR usando el código QR del dispositivo','Verificar conectividad con datos móviles (sin estar en la red local)','Confirmar que se puede ver video en vivo desde al menos 2 cámaras']},
-  s1_16:{tag:'Failover',title:'Test de failover WAN con NVR',steps:['Con el NVR grabando normalmente, desconectar WAN1 del router','Esperar 60 segundos y verificar que el NVR sigue grabando (grabación local no depende de internet)','Verificar que el acceso remoto vía Hik-Connect se recupera cuando WAN2 toma el control','Reconectar WAN1 y confirmar normalidad']},
-
-  // S2 - Commissioning
-  s2_01:{tag:'Backup',title:'Backup de configuración Omada',steps:['Ingresar al OC300 con usuario administrador','Ir a Configuración del sistema → Backup','Descargar el archivo de backup (.cfg)','Guardarlo en Google Drive con fecha en el nombre: backup_omada_YYYYMMDD.cfg']},
-  s2_02:{tag:'Backup',title:'Backup de configuración iHost',steps:['Acceder a la interfaz web del iHost (IP local)','Ir a Configuración → Exportar configuración','Descargar el archivo de backup','Guardarlo junto con el backup de Omada en la carpeta del proyecto']},
-  s2_03:{tag:'Backup',title:'Export de automatizaciones eWeLink',steps:['Abrir la app eWeLink en el celular','Las escenas no tienen export directo: fotografiar o anotar cada escena existente','Registrar: nombre de escena, dispositivos incluidos, condiciones de activación','Guardar las capturas en la carpeta del proyecto en Drive']},
-  s2_04:{tag:'Seguridad',title:'Fotografiar tableros eléctricos',steps:['Fotografiar el tablero principal con las etiquetas de cada disyuntor','Fotografiar cada tablero secundario (si existe)','Anotar qué circuito controla qué zona','Estas fotos son la referencia de seguridad antes de cualquier intervención eléctrica']},
-  s2_05:{tag:'Coordinación',title:'Confirmar horarios con el cliente',steps:['Contactar al encargado o propietario antes de comenzar','Definir horarios en que NO se puede trabajar (descanso, reuniones, comidas)','Acordar horario de almuerzo y fin de jornada','Registrar los horarios acordados en el parte diario']},
-  s2_06:{tag:'Herramientas',title:'Verificar equipo de herramientas',steps:['Tester de red (cable tester) para continuidad','Voltímetro / multímetro para circuitos eléctricos','Laptop con acceso a Omada SDN y eWeLink Web','Tablet o celular adicional para testear como usuario final','Destornilladores, pelacables y herramienta de crimpado']},
-  s2_07:{tag:'Baseline',title:'Medir velocidad WAN antes de cambios',steps:['Conectar un dispositivo a la red (WiFi o cable)','Ir a fast.com o speedtest.net','Registrar: velocidad de bajada, subida, latencia — para WAN1','Repetir con WAN2 activa (deshabilitar WAN1 temporalmente)','Guardar los resultados: serán el baseline de referencia']},
-  s2_08:{tag:'Baseline',title:'Documentar dispositivos por SSID',steps:['Ingresar al OC300 → Clientes','Filtrar por cada SSID y contar dispositivos','Registrar: SSID, cantidad de dispositivos, nombres o MACs visibles','Esta lista es el punto de partida para detectar sticky clients después de los cambios']},
-  s2_09:{tag:'WiFi IoT',title:'Identificar sticky clients IoT',steps:['En OC300, ir a Clientes y filtrar por SSID IoT','Revisar la columna de AP al que está conectado cada dispositivo','Identificar dispositivos Sonoff que están conectados a un AP lejano (señal débil)','Anotar: MAC del dispositivo, AP actual, AP correcto según ubicación física']},
-  s2_10:{tag:'Inventario',title:'Listar Sonoff comisionados vs. pendientes',steps:['Abrir eWeLink y contar los dispositivos registrados','Comparar contra el listado total del proyecto (40 Mini-Dim + 36 Mini-RBS + relés)','Crear dos columnas: Comisionado / Pendiente','Marcar los pendientes con su ubicación física para priorizar el trabajo del día']},
-  s2_11:{tag:'Alexa',title:'Listar todas las Alexa y su estado',steps:['Abrir la app Alexa en el celular del administrador','Ir a Dispositivos → Echo y Alexa — contar que sean 12','Verificar que cada una aparece como "En línea"','Revisar si alguna tiene rutinas o grupos configurados que puedan interferir con los nuevos']},
-  s2_12:{tag:'Firmware',title:'Confirmar firmware de Sonoff instalados',steps:['En eWeLink, ir a cada dispositivo → Más → Información del dispositivo','Anotar la versión de firmware actual','Comparar con la versión estable más reciente en la web de Sonoff/eWeLink','Actualizar los que tengan versión desactualizada ANTES de configurar escenas']},
-
-  // S3 - Por Habitación
-  s3_01:{tag:'Protocolo',title:'Identificar dispositivos del ambiente',steps:['Ingresar al ambiente físicamente','Identificar cada interruptor, cortina motorizada y termostato','Abrir eWeLink y verificar que cada dispositivo tiene nombre único y descriptivo','Anotar en el parte: lista de dispositivos de este ambiente y sus IDs']},
-  s3_02:{tag:'Protocolo',title:'Verificar respuesta desde app',steps:['Con la app eWeLink abierta, probar encender y apagar cada luz del ambiente','Probar subir y bajar cada cortina','Verificar que el estado en la app cambia inmediatamente (menos de 2 segundos)','Si hay delay mayor, verificar RSSI del dispositivo con el AP']},
-  s3_03:{tag:'WiFi',title:'Verificar AP correcto y RSSI',steps:['En OC300, buscar el dispositivo Sonoff por nombre o MAC','Verificar a qué AP está conectado','Usar WiFi Analyzer para medir la señal del AP correcto en esa ubicación','El objetivo es RSSI ≥ −65 dBm. Si es menor, ajustar potencia del AP o reubicar el SSID']},
-  s3_04:{tag:'Protocolo',title:'Ejecutar escena de prueba del ambiente',steps:['En eWeLink, crear una escena simple: "Prueba [Ambiente]" que encienda todas las luces al 50%','Ejecutarla desde la app y verificar que todos los dispositivos responden','Verificar que no hay dispositivos de otros ambientes que se activen por error','Eliminar la escena de prueba al finalizar']},
-  s3_05:{tag:'Alexa',title:'Verificar control por voz en el ambiente',steps:['Con la Alexa del ambiente, decir: "Alexa, enciende las luces"','Verificar que solo se encienden las luces DE ESE AMBIENTE','Decir: "Alexa, baja las luces al 40%" y verificar dimmer','Decir: "Alexa, apaga las luces" y confirmar que apagan']},
-  s3_06:{tag:'Físico',title:'Verificar control por tecla física',steps:['Presionar cada tecla del M5 o inalámbrica del ambiente','Verificar que la respuesta es inmediata (menos de 1 segundo)','Para tecla 1 simple: la luz debe ir al 60%','Para tecla 1 mantenida: la luz debe ir al 100%','Para tecla 4 simple: la luz al 30%. Mantenida: al 10%']},
-  s3_07:{tag:'Cortinas',title:'Verificar subida y bajada de cortinas',steps:['Desde app, enviar comando de subida completa — esperar que el motor llegue al tope','Verificar que el motor se detiene solo (límite configurado)','Enviar comando de bajada completa — mismo procedimiento','Si el motor no se detiene solo, calibrar los límites en la configuración del Mini-RBS']},
-  s3_08:{tag:'Termostato',title:'Verificar termostato del ambiente',steps:['En eWeLink, verificar que el termostato muestra temperatura real (similar a un termómetro manual)','Cambiar el setpoint y verificar que la electroválvula abre o cierra','Esperar 2-3 minutos y verificar que la temperatura local cambia','Si la lectura no coincide, verificar la calibración del sensor']},
-  s3_09:{tag:'Living',title:'Dimmer del Living al 30/60/100%',steps:['En app, enviar comando de brillo al 30% — verificar visualmente','Enviar al 60% — verificar','Enviar al 100% — verificar','Confirmar que no hay parpadeo ni "dropout" en ningún nivel','Si hay parpadeo: puede ser incompatibilidad LED — ver sección Diagnóstico']},
-  s3_19:{tag:'Cortinas',title:'Teclas inalámbricas: 1-3 suben / 4-6 bajan',steps:['Presionar botón 1 del control inalámbrico — la cortina debe subir','Presionar botón 4 — la cortina debe bajar','Verificar botones 2, 3 (subir) y 5, 6 (bajar) uno por uno','Si algún botón no responde, verificar el pairing en eWeLink → Dispositivo → Control remoto']},
-  s3_20:{tag:'Alexa',title:'Sin cross-control entre habitaciones',steps:['Pararse en la habitación y decir: "Alexa, enciende las luces"','Verificar que SOLO se encienden las luces de ESA habitación','Ir a la habitación contigua y repetir','Si Alexa controla luces de otras habitaciones: corregir los grupos en la app Alexa']},
-  s3_26:{tag:'Ascensor',title:'Relé Sonoff del ascensor',steps:['Identificar el relé Sonoff conectado al control del ascensor en sala de máquinas','Desde eWeLink, activar el relé por 2 segundos (simula el botón de llamada)','Verificar que el ascensor responde y baja al subsuelo','Configurar en eWeLink: pulso de 2 segundos, no switch permanente','Testear la escena "Llegué" completa que incluye este paso']},
-
-  // S4 - WiFi
-  s4_01:{tag:'RF — Canal 1',title:'AP1 → Canal 1, 20 MHz, Zona 1',steps:['Ingresar al OC300 → Puntos de acceso → AP1','Ir a Configuración de radio → 2.4 GHz','Cambiar modo a Manual → Canal 1 → Ancho 20 MHz','Deshabilitar auto-channel para esta radio','Aplicar y esperar reconexión del AP (30-60 segundos)']},
-  s4_07:{tag:'RF',title:'Deshabilitar auto-channel en APs IoT',steps:['En OC300, ir a Configuración de sitio → WiFi','Verificar que la función "Auto Channel" está desactivada para los SSID de IoT','Verificar que cada AP tiene canal fijo asignado manualmente','Esto evita que los APs cambien de canal y desconecten dispositivos IoT']},
-  s4_08:{tag:'SSID IoT',title:'Configurar SSID_IoT_Z1 con VLAN',link:'https://support.omadanetworks.com/es/document/13319/',steps:['En OC300 → Configuración del sitio → Redes inalámbricas → WLAN → Crear nuevo SSID','Nombre: SSID_IoT_Z1 — Frecuencia: solo 2.4 GHz','En Configuración avanzada, asignar VLAN ID: 30 (IoT)','Fast Roaming: DESACTIVADO — Band Steering: DESACTIVADO','Asignar el SSID únicamente a los APs de Zona 1 (living, bar, cocina) usando el grupo de AP correspondiente','Guardar y verificar que el SSID aparece en un celular cuando estás en esa zona']},
-  s4_13:{tag:'RF',title:'Fast Roaming OFF en SSID IoT',link:'https://support.omadanetworks.com/es/document/13319/',steps:['En OC300 → Configuración del sitio → Redes inalámbricas → WLAN → editar cada SSID IoT','En Configuración avanzada buscar "Fast Roaming" o "802.11r"','Confirmar que está DESACTIVADO — los Sonoff no necesitan roaming entre APs','Los dispositivos IoT deben permanecer fijos en su AP más cercano','Si está activado, los dispositivos pueden conectarse a APs lejanos y perder respuesta']},
-  s4_17:{tag:'Validación RF',title:'Verificar con WiFi Analyzer',steps:['Descargar WiFi Analyzer en Android o equivalente en iOS','Pararse en cada zona y ver qué AP tiene mayor señal','Verificar que el AP de esa zona es el más fuerte (menos negativo en dBm)','Si hay un AP lejano que "sangra" hacia otras zonas, reducir su potencia en OC300']},
-
-  // S5 - Domótica
-  s5_01:{tag:'Mini-Dim',title:'Nomenclatura de dispositivos en eWeLink',steps:['En eWeLink, ir a cada Mini-Dim','Cambiar el nombre siguiendo el formato: [Ambiente]-[Circuito]','Ejemplos: Living-PrincipalA, Hab1-Ambiente, DormPpal-Cabecera','El nombre debe ser único, descriptivo y pronunciable para Alexa']},
-  s5_04:{tag:'Mini-Dim',title:'Mini-Dim conectado al circuito real',steps:['Verificar que el cable de carga (L) del Mini-Dim va directo a la luminaria','El M5 se conecta solo a las entradas S1/S2 del Mini-Dim (señal de pulso)','El M5 NO controla la luz directamente — solo envía señal al Mini-Dim','Verificar que al apagar el M5 de la pared, la luz sigue siendo controlable por app']},
-  s5_06:{tag:'Mini-Dim',title:'Test de rango de dimmer 1%-100%',steps:['Desde app, llevar el brillo al 1% — verificar que la luz queda muy tenue pero sin parpadear','Llevar al 50% — verificar nivel medio estable','Llevar al 100% — verificar máxima intensidad','Llevar a 30% y mantener unos segundos — verificar estabilidad','Si hay parpadeo en rangos bajos: puede ser LED no dimmable o carga mínima del dimmer']},
-  s5_07:{tag:'LED',title:'Compatibilidad LED dimmable',steps:['Verificar que las lámparas instaladas dicen "dimmable" en su caja o ficha técnica','Si no hay información disponible, testear: si parpadea o zumba al dimar, no es compatible','Las lámparas LED no dimmables pueden dañar el Mini-Dim con el tiempo','Solución: reemplazar por LED dimmable o ajustar la carga mínima del Mini-Dim']},
-  s5_08:{tag:'Escenas Tecla',title:'Tecla 1 simple → 60%',steps:['En eWeLink, ir al Mini-Dim → Configuración de escenas de tecla','Seleccionar Tecla 1 → Pulsación corta','Acción: Brillo → 60%','Guardar y testear: presionar tecla 1 brevemente — la luz debe ir al 60% inmediatamente']},
-  s5_09:{tag:'Escenas Tecla',title:'Tecla 1 mantenida → 100%',steps:['En eWeLink, ir al Mini-Dim → Configuración de escenas de tecla','Seleccionar Tecla 1 → Pulsación larga (≥1.5 segundos)','Acción: Brillo → 100%','Guardar y testear: mantener tecla 1 presionada — la luz debe ir al 100%']},
-  s5_10:{tag:'Escenas Tecla',title:'Tecla 4 simple → 30%',steps:['En eWeLink, ir al Mini-Dim → Configuración de escenas de tecla','Seleccionar Tecla 4 → Pulsación corta','Acción: Brillo → 30%','Guardar y testear: presionar tecla 4 brevemente — la luz debe ir al 30%']},
-  s5_11:{tag:'Escenas Tecla',title:'Tecla 4 mantenida → 10%',steps:['En eWeLink, ir al Mini-Dim → Configuración de escenas de tecla','Seleccionar Tecla 4 → Pulsación larga','Acción: Brillo → 10%','Guardar y testear: mantener tecla 4 presionada — la luz debe bajar al 10% (modo nocturno)']},
-  s5_12:{tag:'Mini-RBS',title:'Nomenclatura de cortinas',steps:['En eWeLink, ir a cada Mini-RBS','Cambiar el nombre: [Ambiente]-Cortina','Ejemplos: Living-Cortina, Hab1-Cortina, DormPpal-Cortina','Asignarlo a la habitación correcta dentro de la app']},
-  s5_13:{tag:'Mini-RBS',title:'Calibrar límites de cortina',steps:['En eWeLink, ir al Mini-RBS → Configuración','Abrir completamente la cortina manualmente hasta el tope superior','Presionar "Guardar límite superior"','Bajar completamente la cortina hasta el tope inferior','Presionar "Guardar límite inferior"','Testear: el motor debe detenerse solo en ambos extremos']},
-  s5_16:{tag:'Mini-RBS',title:'Verificar sin cross-pairing',steps:['Presionar botón del control inalámbrico de Hab1 — solo debe moverse la cortina de Hab1','Presionar botón del control de Hab2 — solo debe moverse la cortina de Hab2','Si hay cross-control: desemparejar el control incorrecto en eWeLink y re-parear el correcto','Documentar qué control está emparejado a qué cortina']},
-  s5_18:{tag:'iHost',title:'Verificar iHost con IP fija',steps:['Acceder al router Omada → DHCP → Reservas','Agregar reserva para la MAC del iHost con la IP deseada en VLAN 10','Reiniciar el iHost y verificar que toma la IP reservada','Desde esa IP, acceder a la interfaz web del iHost y confirmar que todos los Sonoff son visibles']},
-  s5_19:{tag:'iHost',title:'Test offline: iHost sin internet',steps:['Desconectar el cable WAN del router (o desactivar ambas WAN en Omada)','Esperar 30 segundos','Intentar controlar un dispositivo Sonoff desde la interfaz local del iHost','Ejecutar una automatización configurada localmente','Todo debe funcionar sin depender de los servidores de eWeLink']},
-
-  // S6 - Escenas
-  s6_01:{tag:'Escena Llegué',title:'Luces de ingreso al 60%',steps:['En iHost o eWeLink, crear/editar la escena "Llegué"','Primer paso: encender luces del ingreso al 60%','Verificar que los dispositivos asignados son los correctos (solo ingreso, no toda la casa)','El delay con el siguiente paso debe ser 0 segundos (simultáneo) o máximo 1 segundo']},
-  s6_03:{tag:'Escena Llegué',title:'Termostato → 23°C al llegar',steps:['En la escena "Llegué", agregar acción de termostato','Setpoint: 23°C (o el que prefiera el cliente)','Verificar que la electroválvula abre y el sistema de calefacción responde','En invierno barilochense esto es crítico — validar con el cliente el setpoint ideal']},
-  s6_04:{tag:'Escena Llegué',title:'Llamar ascensor al subsuelo',steps:['En la escena "Llegué", agregar acción sobre el relé del ascensor','Configurar: activar el relé por 2 segundos (simula presión del botón)','El ascensor debe bajar al subsuelo automáticamente','Verificar que el timing es correcto: no activar el relé hasta que alguien esté físicamente en el edificio']},
-  s6_05:{tag:'Escena Llegué',title:'Ejecución local desde iHost',steps:['En iHost, verificar que la escena "Llegué" está configurada como automatización LOCAL','Desconectar internet y ejecutar la escena — debe funcionar igual','Si la escena solo existe en eWeLink cloud, duplicarla en iHost','La escena debe ejecutarse completa en menos de 3 segundos']},
-  s6_15:{tag:'Buenas Noches',title:'Apagar luces de habitaciones',steps:['En la escena "Buenas noches", listar TODOS los Mini-Dim de habitaciones','Acción: apagar (brillo 0%) con delay progresivo si se prefiere','Verificar que la acción incluye habitaciones comunes, dormitorio principal y pasillos (al 5%)','No incluir luces exteriores en esta escena']},
-  s6_16:{tag:'Buenas Noches',title:'Bajar cortinas de habitaciones',steps:['En la escena "Buenas noches", agregar acción para cada Mini-RBS de habitaciones','Acción: bajar cortina completamente (0%)','Verificar que los motores no se activan todos al mismo tiempo para evitar pico de corriente','Agregar delay de 2 segundos entre grupos de cortinas si hay muchas simultáneas']},
-
-  // S7 - Alexa
-  s7_01:{tag:'Alexa',title:'Todas las Alexa en la misma cuenta',steps:['Abrir la app Alexa en el celular del administrador','Ir a Dispositivos → Echo y Alexa','Contar que aparecen las 12 unidades','Si alguna aparece en otra cuenta: hacer factory reset y configurarla con la cuenta del proyecto']},
-  s7_02:{tag:'Alexa',title:'Skill eWeLink y dispositivos importados',steps:['En la app Alexa → Más → Skills y juegos → Buscar "eWeLink"','Verificar que el skill está habilitado y la cuenta eWeLink está vinculada','Ir a Dispositivos → Todos los dispositivos y verificar que aparecen los Sonoff','Si faltan dispositivos: en eWeLink app → Perfil → Vincular con Alexa → Re-discover']},
-  s7_04:{tag:'Alexa',title:'Crear grupos de habitación en Alexa',steps:['En app Alexa → Dispositivos → Agregar → Grupo','Crear un grupo por habitación (ej: "Living", "Habitación 1", "Cocina")','Agregar todos los dispositivos del ambiente al grupo','Agregar el Echo/Alexa de esa habitación al mismo grupo','Esto permite decir "Alexa, apaga las luces" desde cualquier Alexa y controlar solo esa habitación']},
-  s7_05:{tag:'Alexa',title:'Verificar que cada Alexa controla solo su habitación',steps:['Pararse en el living y decir: "Alexa, enciende las luces"','Verificar que SOLO se encienden las luces del living','Ir a otra habitación y repetir','Si Alexa controla luces de otros ambientes: revisar los grupos — puede haber dispositivos asignados al grupo incorrecto']},
-
-  // S8 - Estabilidad
-  s8_01:{tag:'Stress Test',title:'Ejecutar todas las escenas simultáneamente',steps:['Preparar: una persona en la app, otra observando la casa','Ejecutar todas las escenas en ráfaga rápida (2 segundos entre cada una)','Observar si algún dispositivo no responde o se queda "colgado"','Medir tiempo de respuesta promedio — objetivo: menos de 2 segundos por acción','Documentar cualquier fallo para revisión posterior']},
-  s8_03:{tag:'Stress Test',title:'Test de desconexión WAN',steps:['Desconectar el cable WAN del router (o deshabilitar ambas WAN en Omada)','Esperar 30 segundos','Intentar activar la escena "Llegué" — debe funcionar vía iHost local','Controlar una luz desde la app dentro de la red local — debe funcionar','Confirmar que Alexa responde comandos de voz que van a iHost local']},
-  s8_04:{tag:'Estabilidad',title:'Test de corte de luz y reconexión',steps:['Cortar el suministro eléctrico de un circuito con dispositivos Sonoff (usando el disyuntor)','Esperar 5 segundos y restaurar la electricidad','Medir tiempo hasta que los dispositivos Sonoff vuelven a aparecer en la app','Objetivo: menos de 60 segundos para el 95% de los dispositivos','Verificar que recuperan el último estado conocido']},
-  s8_05:{tag:'Red',title:'DHCP Reservation para todos los IoT',steps:['En Omada → DHCP → Reservas de IP','Para cada dispositivo Sonoff, agregar una reserva (MAC → IP fija)','Esto evita que el Sonoff cambie de IP y pierda la conexión con iHost','Verificar que el lease time de la VLAN IoT es de al menos 24 horas']},
-
-  // S9 - Contingencia
-  s9_01:{tag:'Contingencia',title:'Hoja de emergencia en sala de máquinas',steps:['Crear un documento con: IPs de todos los equipos críticos, usuario/contraseña de acceso local, pasos para reiniciar OC300, pasos para reiniciar iHost','Imprimirlo en tamaño A4, plastificarlo','Colgarlo o pegarlo en lugar visible dentro de la sala de máquinas','Incluir el número de contacto de NIXA para emergencias']},
-  s9_02:{tag:'Acceso Remoto',title:'Test de acceso remoto al OC300',steps:['Salir de la red local (usar datos móviles)','Acceder al OC300 via Omada Cloud o VPN configurada','Verificar que se puede ver el estado de los APs y modificar configuración','Si no conecta: configurar acceso cloud en OC300 → Settings → Cloud Access']},
-  s9_05:{tag:'UPS',title:'Router y equipos core en UPS',steps:['Verificar que el router, OC300 y switches principales están enchufados al UPS (no a tomacorriente común)','Desconectar el UPS de la red eléctrica y medir con cronómetro cuánto tiempo aguanta','Objetivo: mínimo 30 minutos de autonomía','Si la autonomía es menor, considerar agregar baterías o un UPS de mayor capacidad']},
-
-  // S11 - Validaciones
-  s11_01:{tag:'Validación',title:'Living — Validación completa',steps:['Mini-Dim: verificar dimmer en 30%, 60%, 100% y que las escenas de tecla funcionan','Cortinas: subida y bajada completa desde app, tecla y Alexa','Alexa: "Enciende las luces", "Baja las cortinas", "Pon las luces al 40%"','Cámara: verificar que el canal del living está activo y grabando en el NVR','Escena "Cine": todas las luces bajan y cortinas cierran correctamente']},
-
-  // S12 - Experiencia usuario
-  s12_01:{tag:'UX',title:'"Alexa, llegué" → todo en ≤5 segundos',steps:['Preparar: salir del living y volver','Decir: "Alexa, llegué" al entrar','Medir con cronómetro desde el comando hasta la última acción de la escena','Objetivo: toda la secuencia completada en 5 segundos o menos','Si es más lento: verificar la latencia de la escena en iHost y optimizar el orden de acciones']},
-  s12_02:{tag:'UX',title:'Tecla física → respuesta ≤1 segundo',steps:['Presionar la tecla física del M5 o inalámbrica','Medir tiempo hasta que la luz cambia de estado','Objetivo: menos de 1 segundo','Si hay delay: verificar RSSI del Mini-Dim y latencia WiFi local','Un delay mayor a 2 segundos en tecla física es inaceptable para un usuario residencial']},
-  s12_05:{tag:'UX',title:'Recuperación automática tras corte de luz',steps:['Cortar la alimentación eléctrica de la zona de prueba','Esperar 10 segundos','Restaurar la electricidad','Medir tiempo hasta que los dispositivos vuelven a responder','El cliente no debe tener que llamar al técnico ni reiniciar nada manualmente']},
-
-  // S13 - Diagnóstico
-  s13_01:{tag:'Diagnóstico',title:'Sticky Clients — validación y mitigación',steps:['En OC300 → Clientes, verificar que cada Sonoff está conectado al AP más cercano físicamente','Si alguno está en AP incorrecto: el SSID IoT de esa zona no está bien configurado','Verificar potencia RF del AP — si está muy alta, los dispositivos pueden "ver" APs lejanos','La solución es reducir la potencia del AP para que el dispositivo solo "vea" el AP correcto']},
-  s13_03:{tag:'Diagnóstico',title:'Eliminar dependencia del cloud',steps:['Listar todas las escenas críticas (Llegué, Buenas noches, corte de luz)','Para cada una, verificar que existe en iHost como automatización LOCAL','Si solo existe en eWeLink, duplicarla en iHost','Test final: desconectar internet y verificar que todas las escenas críticas funcionan']},
-
-  // S14 - Arquitectura
-  s14_01:{tag:'Principio',title:'Local first — Cloud como backup',steps:['Revisar que las automatizaciones más importantes estén en iHost','El cloud de eWeLink es útil para: acceso remoto, notificaciones, Alexa','El cloud de eWeLink NO debe ser el único camino para encender/apagar luces','Regla: si se corta internet, la casa debe seguir siendo funcional al 100%']},
-  s14_04:{tag:'Principio',title:'Un nombre = un dispositivo',steps:['Revisar todos los dispositivos en eWeLink','Buscar nombres genéricos como "Luz 1", "Switch", "Device"','Renombrar siguiendo el formato: [Ambiente]-[Función] ej: DormPpal-LuzPrincipal','Nombres claros evitan errores de Alexa y hacen el sistema mantenible por cualquier técnico']},
-
-  // S15 - Sin steps específicos (lista de prioridades)
-  default:{tag:'Commissioning',title:'Tarea de commissioning',steps:['Ejecutar esta tarea siguiendo el protocolo estándar del proyecto','Documentar resultado en el parte diario','Notificar al supervisor si hay algún impedimento para completarla','Marcar como completada solo cuando esté 100% verificada']}
-};
-
-function getInfo(id){
-  return INFO[id] || INFO.default;
-}
-
-function showInfo(id, titleText){
-  const info = getInfo(id);
-  document.getElementById('info-tag').textContent = info.tag;
-  document.getElementById('info-title').textContent = info.title || titleText;
-  let html = '<div class="info-steps">';
-  info.steps.forEach((step,i)=>{
-    html += '<div class="info-step"><div class="info-step-num">'+(i+1).toString().padStart(2,'0')+'</div><div class="info-step-txt">'+step+'</div></div>';
-  });
-  html += '</div>';
-  if(info.link){
-    html += '<div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border)">';
-    html += '<a href="'+info.link+'" target="_blank" rel="noopener" style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:var(--accent);text-decoration:none;letter-spacing:.06em;display:flex;align-items:center;gap:.4rem">';
-    html += '<span style="font-size:.75rem">↗</span> Documentación oficial Omada</a>';
-    html += '</div>';
-  }
-  document.getElementById('info-body').innerHTML = html;
-  document.getElementById('info-modal').classList.add('open');
-}
-
-function closeInfo(e){
-  if(e.target === document.getElementById('info-modal')) closeInfoBtn();
-}
-function closeInfoBtn(){
-  document.getElementById('info-modal').classList.remove('open');
-}
-
-// ── INJECT INFO BUTTONS (skip s0 herramientas and components) ──
-function injectInfoButtons(){
-  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-    // Skip tools section (h_ prefix) and component rows
-    if(li.dataset.id.startsWith('h_')) return;
-    const id = li.dataset.id;
-    const titleText = li.querySelector('.it') ? li.querySelector('.it').textContent : '';
-    const btn = document.createElement('button');
-    btn.className = 'info-btn';
-    btn.title = 'Cómo realizar esta tarea';
-    btn.textContent = 'i';
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      showInfo(id, titleText);
-    });
-    const notebtn = li.querySelector('.note-btn');
-    if(notebtn) li.insertBefore(btn, notebtn);
-    else li.insertBefore(btn, li.querySelector('.im'));
-  });
-}
-
-// ── STATIC ITEMS — migration seed ─────────────────
-// These are written to Firebase once on first admin login
-// After that, Firebase is the source of truth
-const STATIC_ITEMS = [
-  {id:"h_01",text:"Escaleras",tag:"",section:"s0",sub:"Herramientas Manuales",order:0},
-  {id:"h_02",text:"Busca polo / detector de tensión",tag:"",section:"s0",sub:"Herramientas Manuales",order:1},
-  {id:"h_03",text:"Pela cables",tag:"",section:"s0",sub:"Herramientas Manuales",order:2},
-  {id:"h_04",text:"Alicate",tag:"",section:"s0",sub:"Herramientas Manuales",order:3},
-  {id:"h_05",text:"Cinta aisladora",tag:"",section:"s0",sub:"Herramientas Manuales",order:4},
-  {id:"h_06",text:"Crimpadora de red (RJ45)",tag:"",section:"s0",sub:"Herramientas de Red",order:5},
-  {id:"h_07",text:"Fichas de red Cat 5e",tag:"",section:"s0",sub:"Herramientas de Red",order:6},
-  {id:"h_08",text:"Fichas de red Cat 6",tag:"",section:"s0",sub:"Herramientas de Red",order:7},
-  {id:"h_09",text:"Cable UTP Cat 5e",tag:"",section:"s0",sub:"Herramientas de Red",order:8},
-  {id:"h_10",text:"Cable UTP Cat 6",tag:"",section:"s0",sub:"Herramientas de Red",order:9},
-  {id:"h_11",text:"Tester de red (cable tester RJ45)",tag:"",section:"s0",sub:"Herramientas de Red",order:10},
-  {id:"h_12",text:"Crimpadora de fichas TIF (punchdown)",tag:"",section:"s0",sub:"Herramientas de Red",order:11},
-  {id:"h_13",text:"Fichas TIF / keystone",tag:"",section:"s0",sub:"Herramientas de Red",order:12},
-  {id:"s1_01",text:"Verificar continuidad y etiquetado de todos los cables estructurados",tag:"critical",section:"s1",sub:"Red Física",order:13},
-  {id:"s1_02",text:"Confirmar que todos los puertos de switch tienen identificación física",tag:"high",section:"s1",sub:"Red Física",order:14},
-  {id:"s1_03",text:"Documentar plano de red actualizado (switches, VLANs, puertos)",tag:"high",section:"s1",sub:"Red Física",order:15},
-  {id:"s1_04",text:"Verificar OC300 en firmware estable más reciente",tag:"critical",section:"s1",sub:"Red Física",order:16},
-  {id:"s1_05",text:"Router dual WAN: failover configurado y testeado",tag:"critical",section:"s1",sub:"Red Física",order:17},
-  {id:"s1_06",text:"Switches PoE: presupuesto PoE suficiente por segmento",tag:"high",section:"s1",sub:"Red Física",order:18},
-  {id:"s1_07",text:"UPS / protección eléctrica en sala de máquinas confirmada",tag:"critical",section:"s1",sub:"Red Física",order:19},
-  {id:"s1_08",text:"IPs fijos documentados: NVR, iHost, OC300, APs",tag:"critical",section:"s1",sub:"Red Física",order:20},
-  {id:"s1_09",text:"Reglas de firewall entre VLANs (IoT aislado de Clientes)",tag:"critical",section:"s1",sub:"VLANs — Arquitectura Definitiva",order:21},
-  {id:"s1_10",text:"iHost puede comunicarse con VLAN IoT",tag:"critical",section:"s1",sub:"VLANs — Arquitectura Definitiva",order:22},
-  {id:"s1_11",text:"Alexa resuelve dispositivos IoT (mDNS relay configurado)",tag:"critical",section:"s1",sub:"VLANs — Arquitectura Definitiva",order:23},
-  {id:"s1_12",text:"32 cámaras activas y grabando",tag:"critical",section:"s1",sub:"Cámaras / NVR Hikvision",order:24},
-  {id:"s1_13",text:"Domos TandemVu con PTZ operativo",tag:"high",section:"s1",sub:"Cámaras / NVR Hikvision",order:25},
-  {id:"s1_14",text:"Retención de grabación configurada",tag:"high",section:"s1",sub:"Cámaras / NVR Hikvision",order:26},
-  {id:"s1_15",text:"Acceso remoto al NVR verificado (Hik-Connect o VPN)",tag:"high",section:"s1",sub:"Cámaras / NVR Hikvision",order:27},
-  {id:"s1_16",text:"Test de failover WAN: NVR sigue grabando sin WAN1",tag:"high",section:"s1",sub:"Cámaras / NVR Hikvision",order:28},
-  {id:"s2_01",text:"Backup completo de configuración Omada (exportar desde OC300)",tag:"critical",section:"s2",sub:"Backups y Seguridad",order:29},
-  {id:"s2_02",text:"Backup de configuración iHost",tag:"critical",section:"s2",sub:"Backups y Seguridad",order:30},
-  {id:"s2_03",text:"Export de todas las automatizaciones eWeLink existentes",tag:"critical",section:"s2",sub:"Backups y Seguridad",order:31},
-  {id:"s2_04",text:"Fotografiar panel eléctrico y tableros antes de intervenir",tag:"high",section:"s2",sub:"Backups y Seguridad",order:32},
-  {id:"s2_05",text:"Confirmar con el cliente: horarios sin intervención",tag:"high",section:"s2",sub:"Backups y Seguridad",order:33},
-  {id:"s2_07",text:"Medir velocidad WAN1 y WAN2 antes de cualquier cambio",tag:"high",section:"s2",sub:"Baseline del Sistema",order:34},
-  {id:"s2_08",text:"Documentar dispositivos conectados por SSID actual",tag:"high",section:"s2",sub:"Baseline del Sistema",order:35},
-  {id:"s2_09",text:"Identificar sticky clients IoT (dispositivos en AP incorrecto)",tag:"critical",section:"s2",sub:"Baseline del Sistema",order:36},
-  {id:"s2_10",text:"Listar Sonoff comisionados vs. pendientes",tag:"high",section:"s2",sub:"Baseline del Sistema",order:37},
-  {id:"s2_11",text:"Listar todas las Alexa: estado, cuenta, rutinas activas",tag:"high",section:"s2",sub:"Baseline del Sistema",order:38},
-  {id:"s2_12",text:"Confirmar versión de firmware en todos los Sonoff instalados",tag:"high",section:"s2",sub:"Baseline del Sistema",order:39},
-  {id:"s3_01",text:"Identificar todos los Sonoff del ambiente (Mini-Dim y Mini-RBS)",tag:"",section:"s3",sub:"Protocolo Universal",order:40},
-  {id:"s3_02",text:"Cada dispositivo visible en eWeLink y responde desde app",tag:"",section:"s3",sub:"Protocolo Universal",order:41},
-  {id:"s3_03",text:"AP asignado correcto — RSSI ≥ −65 dBm confirmado",tag:"critical",section:"s3",sub:"Protocolo Universal",order:42},
-  {id:"s3_04",text:"Escena de prueba del ambiente ejecutada",tag:"",section:"s3",sub:"Protocolo Universal",order:43},
-  {id:"s3_05",text:"Control Alexa: encender, apagar, dimear confirmado",tag:"",section:"s3",sub:"Protocolo Universal",order:44},
-  {id:"s3_06",text:"Control por tecla física (M5 o inalámbrica) confirmado",tag:"",section:"s3",sub:"Protocolo Universal",order:45},
-  {id:"s3_07",text:"Cortinas suben y bajan correctamente",tag:"",section:"s3",sub:"Protocolo Universal",order:46},
-  {id:"s3_08",text:"Termostato: responde y muestra temperatura real",tag:"",section:"s3",sub:"Protocolo Universal",order:47},
-  {id:"s3_09",text:"Mini-Dim: dimmer funcional al 30% / 60% / 100%",tag:"",section:"s3",sub:"Living",order:48},
-  {id:"s3_10",text:"Cortinas: subida y bajada desde tecla y desde Alexa",tag:"",section:"s3",sub:"Living",order:49},
-  {id:"s3_11",text:"Escena \"Cine\" activa correctamente",tag:"",section:"s3",sub:"Living",order:50},
-  {id:"s3_12",text:"Bar: Mini-Dim funcionando — integración con escena \"Buenas tardes\"",tag:"",section:"s3",sub:"Bar / Cocina / Lavadero",order:51},
-  {id:"s3_13",text:"Cocina: luces trabajo y ambiente — integración escena \"Buen día\"",tag:"",section:"s3",sub:"Bar / Cocina / Lavadero",order:52},
-  {id:"s3_14",text:"Lavadero: dispositivos básicos operativos",tag:"",section:"s3",sub:"Bar / Cocina / Lavadero",order:53},
-  {id:"s3_15",text:"Quincho: iluminación exterior/interior — incluido en escena exterior",tag:"",section:"s3",sub:"Quincho / Playroom",order:54},
-  {id:"s3_16",text:"Playroom: Mini-Dim + cortinas + Alexa operativos",tag:"",section:"s3",sub:"Quincho / Playroom",order:55},
-  {id:"s3_17",text:"Mini-Dim: luz principal controlada",tag:"",section:"s3",sub:"Habitaciones Comunes ×8",order:56},
-  {id:"s3_18",text:"Mini-RBS: cortinas operativas — límites calibrados",tag:"",section:"s3",sub:"Habitaciones Comunes ×8",order:57},
-  {id:"s3_19",text:"Tecla inalámbrica: 1-3 suben / 4-6 bajan",tag:"critical",section:"s3",sub:"Habitaciones Comunes ×8",order:58},
-  {id:"s3_20",text:"Alexa sin cross-control con habitaciones adyacentes",tag:"critical",section:"s3",sub:"Habitaciones Comunes ×8",order:59},
-  {id:"s3_21",text:"Escena \"Buenas noches\" apaga luces y baja cortinas",tag:"",section:"s3",sub:"Habitaciones Comunes ×8",order:60},
-  {id:"s3_22",text:"Iluminación principal + ambientales funcionando",tag:"",section:"s3",sub:"Dormitorio Principal",order:61},
-  {id:"s3_23",text:"Cortinas dormitorio y vestidor: subida/bajada perfecta",tag:"",section:"s3",sub:"Dormitorio Principal",order:62},
-  {id:"s3_24",text:"Baño: iluminación funcional",tag:"",section:"s3",sub:"Dormitorio Principal",order:63},
-  {id:"s3_25",text:"Alexa sin interferencia con habitaciones adyacentes",tag:"critical",section:"s3",sub:"Dormitorio Principal",order:64},
-  {id:"s3_26",text:"Relé Sonoff del ascensor: operativo y testeado",tag:"critical",section:"s3",sub:"Subsuelo / Cochera / Sala de Máquinas",order:65},
-  {id:"s3_27",text:"Iluminación funcional en subsuelo y cochera",tag:"",section:"s3",sub:"Subsuelo / Cochera / Sala de Máquinas",order:66},
-  {id:"s3_28",text:"Temperatura de sala de máquinas monitoreada",tag:"",section:"s3",sub:"Subsuelo / Cochera / Sala de Máquinas",order:67},
-  {id:"s4_01",text:"AP1 → Canal 1 — 20 MHz — Zona 1",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:68},
-  {id:"s4_02",text:"AP2 → Canal 6 — 20 MHz — Zona 1 adyacente",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:69},
-  {id:"s4_03",text:"AP3 → Canal 11 — 20 MHz — Zona 2",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:70},
-  {id:"s4_04",text:"AP4 → Canal 1 — 20 MHz — Zona 2 (separado físicamente de AP1)",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:71},
-  {id:"s4_05",text:"AP5 → Canal 6 — 20 MHz — Zona 3",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:72},
-  {id:"s4_06",text:"AP6 → Canal 11 — 20 MHz — Zona 3",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:73},
-  {id:"s4_07",text:"Auto-channel DESHABILITADO en todos los APs para SSID IoT",tag:"critical",section:"s4",sub:"Canales 2.4 GHz — Asignación Manual",order:74},
-  {id:"s4_08",text:"SSID_IoT_Z1 → 2.4 GHz → AP Zona 1 (living/bar/cocina)",tag:"critical",section:"s4",sub:"SSIDs — Arquitectura Definitiva",order:75},
-  {id:"s4_09",text:"SSID_IoT_Z2 → 2.4 GHz → AP Zona 2 (habitaciones)",tag:"critical",section:"s4",sub:"SSIDs — Arquitectura Definitiva",order:76},
-  {id:"s4_10",text:"SSID_IoT_Z3 → 2.4 GHz → AP Zona 3 (exterior/quincho/subsuelo)",tag:"critical",section:"s4",sub:"SSIDs — Arquitectura Definitiva",order:77},
-  {id:"s4_11",text:"SSID_Clientes → 2.4+5 GHz → todos los APs → band steering activo",tag:"high",section:"s4",sub:"SSIDs — Arquitectura Definitiva",order:78},
-  {id:"s4_12",text:"SSID_Invitados → portal cautivo → sin acceso LAN",tag:"high",section:"s4",sub:"SSIDs — Arquitectura Definitiva",order:79},
-  {id:"s4_13",text:"Fast Roaming (802.11r): DESACTIVADO en todos los SSID IoT",tag:"critical",section:"s4",sub:"Parámetros y Validación RF",order:80},
-  {id:"s4_14",text:"802.11b deshabilitado — mínimo 802.11g/n en SSID IoT",tag:"high",section:"s4",sub:"Parámetros y Validación RF",order:81},
-  {id:"s4_15",text:"DTIM interval: 3 en SSID IoT",tag:"medium",section:"s4",sub:"Parámetros y Validación RF",order:82},
-  {id:"s4_16",text:"Potencia RF ajustada por zona — sin sangrado entre zonas",tag:"high",section:"s4",sub:"Parámetros y Validación RF",order:83},
-  {id:"s4_17",text:"WiFi Analyzer: cada zona ve su AP como el más fuerte",tag:"critical",section:"s4",sub:"Parámetros y Validación RF",order:84},
-  {id:"s4_18",text:"RSSI en punto más alejado de cada AP ≥ −70 dBm",tag:"high",section:"s4",sub:"Parámetros y Validación RF",order:85},
-  {id:"s4_19",text:"Mapa de cobertura final documentado",tag:"medium",section:"s4",sub:"Parámetros y Validación RF",order:86},
-  {id:"s5_01",text:"Nombre único en eWeLink — formato [Ambiente]-[Circuito]",tag:"critical",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:87},
-  {id:"s5_02",text:"Asignado a habitación en eWeLink y visible en iHost",tag:"critical",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:88},
-  {id:"s5_03",text:"Firmware estable — NO beta — actualizaciones automáticas OFF",tag:"high",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:89},
-  {id:"s5_04",text:"Mini-Dim conectado al circuito real — M5 solo como pulsador externo",tag:"critical",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:90},
-  {id:"s5_05",text:"Test de ciclo: pulso físico → cambio de estado en app confirmado",tag:"critical",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:91},
-  {id:"s5_06",text:"Modo dimmer configurado — rango 1%→100% sin parpadeo",tag:"high",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:92},
-  {id:"s5_07",text:"Compatibilidad LED dimmable verificada en cada circuito",tag:"critical",section:"s5",sub:"Mini-Dim ×40 — Comisionado",order:93},
-  {id:"s5_08",text:"Tecla 1 / pulsación simple → 60%",tag:"high",section:"s5",sub:"Mini-Dim — Escenas de Tecla",order:94},
-  {id:"s5_09",text:"Tecla 1 / mantenido ≥1.5s → 100%",tag:"high",section:"s5",sub:"Mini-Dim — Escenas de Tecla",order:95},
-  {id:"s5_10",text:"Tecla 4 / pulsación simple → 30%",tag:"high",section:"s5",sub:"Mini-Dim — Escenas de Tecla",order:96},
-  {id:"s5_11",text:"Tecla 4 / mantenido ≥1.5s → 10%",tag:"high",section:"s5",sub:"Mini-Dim — Escenas de Tecla",order:97},
-  {id:"s5_12",text:"Nombre único: [Ambiente]-Cortina — visible en iHost",tag:"critical",section:"s5",sub:"Mini-RBS ×36 — Cortinas",order:98},
-  {id:"s5_13",text:"Límites de apertura y cierre calibrados",tag:"high",section:"s5",sub:"Mini-RBS ×36 — Cortinas",order:99},
-  {id:"s5_14",text:"Test ciclo: subida completa → bajada completa sin error de motor",tag:"critical",section:"s5",sub:"Mini-RBS ×36 — Cortinas",order:100},
-  {id:"s5_15",text:"Botones 1/2/3 → subir — Botones 4/5/6 → bajar",tag:"high",section:"s5",sub:"Mini-RBS ×36 — Cortinas",order:101},
-  {id:"s5_16",text:"Sin cross-pairing entre habitaciones adyacentes",tag:"critical",section:"s5",sub:"Mini-RBS ×36 — Cortinas",order:102},
-  {id:"s5_17",text:"Termostatos listados — temperatura real correcta — electroválvulas OK",tag:"",section:"s5",sub:"Termostatos e iHost",order:103},
-  {id:"s5_18",text:"iHost: firmware actualizado — IP fija VLAN 10 — todos los dispositivos visibles",tag:"critical",section:"s5",sub:"Termostatos e iHost",order:104},
-  {id:"s5_19",text:"iHost funciona SIN internet — escenas locales operativas offline",tag:"critical",section:"s5",sub:"Termostatos e iHost",order:105},
-  {id:"s6_01",text:"Luces ingreso 60%",tag:"",section:"s6",sub:"🏠 Llegué",order:106},
-  {id:"s6_02",text:"Living 40%",tag:"",section:"s6",sub:"🏠 Llegué",order:107},
-  {id:"s6_03",text:"Termostato → 23°C",tag:"",section:"s6",sub:"🏠 Llegué",order:108},
-  {id:"s6_04",text:"Ascensor llamado (relé Sonoff)",tag:"",section:"s6",sub:"🏠 Llegué",order:109},
-  {id:"s6_05",text:"Ejecución local iHost — sin cloud",tag:"",section:"s6",sub:"🏠 Llegué",order:110},
-  {id:"s6_06",text:"Delay entre acciones ≤ 2s",tag:"",section:"s6",sub:"🏠 Llegué",order:111},
-  {id:"s6_07",text:"Cortinas dorm. suben gradual",tag:"",section:"s6",sub:"🌅 Buen Día",order:112},
-  {id:"s6_08",text:"Luces dormitorio 20%",tag:"",section:"s6",sub:"🌅 Buen Día",order:113},
-  {id:"s6_09",text:"Cocina 70%",tag:"",section:"s6",sub:"🌅 Buen Día",order:114},
-  {id:"s6_10",text:"Termostato → temp. diurna",tag:"",section:"s6",sub:"🌅 Buen Día",order:115},
-  {id:"s6_11",text:"Trigger: hora programada O voz",tag:"",section:"s6",sub:"🌅 Buen Día",order:116},
-  {id:"s6_12",text:"Living 10% o apaga",tag:"",section:"s6",sub:"🎬 Cine",order:117},
-  {id:"s6_13",text:"Cortinas living bajan completo",tag:"",section:"s6",sub:"🎬 Cine",order:118},
-  {id:"s6_14",text:"Otras luces del área apagan",tag:"",section:"s6",sub:"🎬 Cine",order:119},
-  {id:"s6_15",text:"Luces habitaciones apagan",tag:"",section:"s6",sub:"🌙 Buenas Noches",order:120},
-  {id:"s6_16",text:"Cortinas todas las habs. bajan",tag:"",section:"s6",sub:"🌙 Buenas Noches",order:121},
-  {id:"s6_17",text:"Termostato → temp. nocturna",tag:"",section:"s6",sub:"🌙 Buenas Noches",order:122},
-  {id:"s6_18",text:"Pasillos al 5% (orientación)",tag:"",section:"s6",sub:"🌙 Buenas Noches",order:123},
-  {id:"s6_19",text:"Quincho / jardín / cochera encienden",tag:"",section:"s6",sub:"💡 Luces Exteriores",order:124},
-  {id:"s6_20",text:"Solo afecta circuitos exteriores",tag:"",section:"s6",sub:"💡 Luces Exteriores",order:125},
-  {id:"s6_21",text:"Todas las cortinas bajan simultáneo",tag:"",section:"s6",sub:"⬇ Bajar Cortinas",order:126},
-  {id:"s6_22",text:"Sin conflicto de relés en secuencia",tag:"",section:"s6",sub:"⬇ Bajar Cortinas",order:127},
-  {id:"s6_23",text:"Tiempo total de ejecución documentado",tag:"",section:"s6",sub:"⬇ Bajar Cortinas",order:128},
-  {id:"s7_01",text:"Todas las Alexa ×12 en la misma cuenta Amazon",tag:"critical",section:"s7",sub:"Setup y Grupos",order:129},
-  {id:"s7_02",text:"Skill eWeLink habilitado — todos los dispositivos importados",tag:"critical",section:"s7",sub:"Setup y Grupos",order:130},
-  {id:"s7_03",text:"Nombres en eWeLink pronunciables y únicos en español",tag:"critical",section:"s7",sub:"Setup y Grupos",order:131},
-  {id:"s7_04",text:"Grupo de habitación creado para cada ambiente con Alexa",tag:"critical",section:"s7",sub:"Setup y Grupos",order:132},
-  {id:"s7_05",text:"\"Apaga las luces\" en cada hab. SOLO afecta esa habitación",tag:"critical",section:"s7",sub:"Setup y Grupos",order:133},
-  {id:"s7_06",text:"\"Alexa, llegué / buen día / cine / buenas noches\" → escenas OK",tag:"",section:"s7",sub:"Rutinas y Validación de Voz",order:134},
-  {id:"s7_07",text:"\"Alexa, sube/baja las cortinas\" → Mini-RBS responde por grupo",tag:"",section:"s7",sub:"Rutinas y Validación de Voz",order:135},
-  {id:"s7_08",text:"\"Alexa, pon las luces al X%\" → Mini-Dim responde",tag:"",section:"s7",sub:"Rutinas y Validación de Voz",order:136},
-  {id:"s7_09",text:"Test con voz de mujer, hombre y niño (distintos acentos)",tag:"high",section:"s7",sub:"Rutinas y Validación de Voz",order:137},
-  {id:"s7_10",text:"Tiempo de respuesta: comando → acción ≤ 3 segundos",tag:"high",section:"s7",sub:"Rutinas y Validación de Voz",order:138},
-  {id:"s7_11",text:"Test desde cada punto con música ambiente a 40dB",tag:"high",section:"s7",sub:"Rutinas y Validación de Voz",order:139},
-  {id:"s8_01",text:"Todas las escenas simultáneas — respuesta medida y documentada",tag:"critical",section:"s8",sub:"",order:140},
-  {id:"s8_02",text:"50 comandos en 60s — tasa de fallos documentada",tag:"high",section:"s8",sub:"",order:141},
-  {id:"s8_03",text:"Desconexión WAN → automatizaciones locales iHost siguen funcionando",tag:"critical",section:"s8",sub:"",order:142},
-  {id:"s8_04",text:"Corte de luz y reconexión: todos los dispositivos recuperan estado",tag:"critical",section:"s8",sub:"",order:143},
-  {id:"s8_05",text:"Todos los IoT con DHCP reservation — lease time ≥ 24h",tag:"critical",section:"s8",sub:"",order:144},
-  {id:"s8_06",text:"OC300: ningún AP supera 30 clientes por radio",tag:"high",section:"s8",sub:"",order:145},
-  {id:"s8_07",text:"STP activo en switches — sin loops de red confirmado",tag:"critical",section:"s8",sub:"",order:146},
-  {id:"s8_08",text:"Firmware Sonoff estable — actualizaciones automáticas DESACTIVADAS",tag:"critical",section:"s8",sub:"",order:147},
-  {id:"s8_09",text:"Reconexión tras corte: ≤ 60s para el 95% de dispositivos",tag:"high",section:"s8",sub:"",order:148},
-  {id:"s9_01",text:"Hoja de emergencia plastificada en sala de máquinas (IPs, pasos de reinicio, contacto NIXA)",tag:"critical",section:"s9",sub:"",order:149},
-  {id:"s9_02",text:"Acceso remoto OC300 testeado desde exterior",tag:"critical",section:"s9",sub:"",order:150},
-  {id:"s9_03",text:"Acceso remoto iHost testeado desde exterior",tag:"critical",section:"s9",sub:"",order:151},
-  {id:"s9_04",text:"Acceso remoto NVR testeado desde celular fuera de la red",tag:"high",section:"s9",sub:"",order:152},
-  {id:"s9_05",text:"Router, OC300, switches core en UPS — autonomía ≥ 30 min",tag:"critical",section:"s9",sub:"",order:153},
-  {id:"s9_06",text:"iHost en UPS",tag:"critical",section:"s9",sub:"",order:154},
-  {id:"s9_07",text:"NVR en UPS — grabación continua ante corte",tag:"critical",section:"s9",sub:"",order:155},
-  {id:"s11_01",text:"Living — Mini-Dim + dimmer + escenas + cortinas + Alexa + cámara",tag:"critical",section:"s11",sub:"",order:156},
-  {id:"s11_02",text:"Bar — Mini-Dim + integración escena + Alexa",tag:"",section:"s11",sub:"",order:157},
-  {id:"s11_03",text:"Cocina — Mini-Dim + integración escena + Alexa",tag:"",section:"s11",sub:"",order:158},
-  {id:"s11_04",text:"Lavadero — dispositivos básicos operativos",tag:"",section:"s11",sub:"",order:159},
-  {id:"s11_05",text:"Quincho — iluminación exterior + integración escena",tag:"",section:"s11",sub:"",order:160},
-  {id:"s11_06",text:"Playroom — Mini-Dim + cortinas + Alexa",tag:"",section:"s11",sub:"",order:161},
-  {id:"s11_07",text:"Habitaciones ×8 — Mini-Dim + Mini-RBS + teclas + Alexa + termostato",tag:"high",section:"s11",sub:"",order:162},
-  {id:"s11_08",text:"Dormitorio Principal — iluminación + cortinas + vestidor + baño + Alexa",tag:"critical",section:"s11",sub:"",order:163},
-  {id:"s11_09",text:"Subsuelo — relé ascensor + iluminación + temperatura sala de máquinas",tag:"critical",section:"s11",sub:"",order:164},
-  {id:"s12_01",text:"\"Alexa, llegué\" → toda la secuencia en ≤ 5 segundos",tag:"critical",section:"s12",sub:"",order:165},
-  {id:"s12_02",text:"Tecla física → respuesta inmediata ≤ 1 segundo",tag:"critical",section:"s12",sub:"",order:166},
-  {id:"s12_03",text:"Control desde app estando en otra ciudad → funciona",tag:"high",section:"s12",sub:"",order:167},
-  {id:"s12_04",text:"Bajar todas las cortinas antes de dormir con un solo comando",tag:"high",section:"s12",sub:"",order:168},
-  {id:"s12_05",text:"Corte de luz y vuelta: casa recupera estado sola",tag:"critical",section:"s12",sub:"",order:169},
-  {id:"s12_06",text:"Cliente ajusta brillo desde app de forma intuitiva",tag:"high",section:"s12",sub:"",order:170},
-  {id:"s12_07",text:"Invitado se conecta al WiFi sin acceder a la red domótica",tag:"high",section:"s12",sub:"",order:171},
-  {id:"s12_08",text:"Cliente ve cámaras desde celular fuera de la casa",tag:"high",section:"s12",sub:"",order:172},
-  {id:"s12_09",text:"Ninguna automatización se activa sola de forma inesperada",tag:"critical",section:"s12",sub:"",order:173},
-  {id:"s12_10",text:"El sistema funciona igual de bien de noche que de día",tag:"medium",section:"s12",sub:"",order:174},
-  {id:"s13_01",text:"Sticky Clients validado y mitigado en commissioning",tag:"critical",section:"s13",sub:"",order:175},
-  {id:"s13_02",text:"Saturación 2.4GHz verificada con WiFi Analyzer en hora pico",tag:"critical",section:"s13",sub:"",order:176},
-  {id:"s13_03",text:"Dependencia cloud eliminada para escenas críticas",tag:"critical",section:"s13",sub:"",order:177},
-  {id:"s13_04",text:"Cross-control Alexa validado en cada habitación",tag:"high",section:"s13",sub:"",order:178},
-  {id:"s13_05",text:"Compatibilidad LED verificada en todos los circuitos con dimmer",tag:"high",section:"s13",sub:"",order:179},
-  {id:"s13_06",text:"Backup de iHost realizado antes del cierre del proyecto",tag:"critical",section:"s13",sub:"",order:180},
-  {id:"s14_01",text:"Local first: toda automatización crítica vive en iHost. Cloud es complemento, no la base",tag:"critical",section:"s14",sub:"",order:181},
-  {id:"s14_02",text:"Predictibilidad antes que features: 6 escenas perfectas > 20 que fallan",tag:"high",section:"s14",sub:"",order:182},
-  {id:"s14_03",text:"WiFi IoT tratado como red industrial: AP fijo, señal estable, canal predecible",tag:"critical",section:"s14",sub:"",order:183},
-  {id:"s14_04",text:"Un nombre = un dispositivo: nomenclatura es infraestructura",tag:"critical",section:"s14",sub:"",order:184},
-  {id:"s14_05",text:"El cliente no debe llamar al técnico para nada cotidiano",tag:"critical",section:"s14",sub:"",order:185},
-  {id:"s14_06",text:"Sensor de temperatura en sala de máquinas para alertas térmicas",tag:"medium",section:"s14",sub:"",order:186},
-  {id:"s14_07",text:"Sensor de apertura en puerta principal para trigger de \"Llegué\" sin voz",tag:"medium",section:"s14",sub:"",order:187},
-  {id:"s14_08",text:"Documentar todo en Notion: red, IPs, nombres, escenas, firmware",tag:"high",section:"s14",sub:"",order:188},
-  {id:"s14_09",text:"Calendario de mantenimiento trimestral establecido con el cliente",tag:"medium",section:"s14",sub:"",order:189},
-];
-
-// ── DYNAMIC ITEMS SYSTEM ───────────────────────────
-// Firebase path: items_db/<id> → {text, tag, section, sub, order, addedBy?, ts?}
-// Checklist state stays at: checklist/<id> → {by, role, ts}  ← UNCHANGED
-
-let itemsData = {}; // local cache of all items from Firebase
-
-async function migrateItemsIfNeeded(){
-  // Use a dedicated flag so we don't trigger items_db listener during migration
-  const migFlag = await db.ref('config/itemsMigrated').once('value');
-  if(migFlag.val()) return; // already done
-  
-  // Write all 190 items in ONE atomic batch — triggers items_db listener only ONCE
-  const batch = {};
-  STATIC_ITEMS.forEach(item=>{
-    batch['items_db/'+item.id] = {
-      text: item.text, tag: item.tag, section: item.section,
-      sub: item.sub, order: item.order, static: true
-    };
-  });
-  batch['config/itemsMigrated'] = true;
-  
-  await db.ref().update(batch);
-  toast('<b>Sistema actualizado</b> <span>Ítems migrados a Firebase</span>');
-}
-
-let checklistListening = false;
-let notesListening = false;
-let renderScheduled = false;
-
-function listenItemsDB(){
-  // Use 'value' which fires once with the complete snapshot
-  // then re-fires when anything changes
-  db.ref('items_db').on('value', snap=>{
-    itemsData = snap.val() || {};
-    
-    // Debounce renders — don't re-render more than once per frame
-    if(!renderScheduled){
-      renderScheduled = true;
-      requestAnimationFrame(()=>{
-        renderScheduled = false;
-        renderAllSections();
-        // Start listeners only once
-        if(!checklistListening){
-          checklistListening = true;
-          listenChecklist();
-        }
-        if(!notesListening){
-          notesListening = true;
-          listenNotes();
-        }
-        updateStats();
-      });
-    }
-  });
-}
-
-let sectionsRendered = false;
-
-function renderAllSections(){
-  // Group items by section
-  const bySec = {};
-  Object.values(itemsData).forEach(item=>{
-    if(!bySec[item.section]) bySec[item.section] = [];
-    bySec[item.section].push(item);
-  });
-  Object.values(bySec).forEach(arr=> arr.sort((a,b)=> (a.order||0)-(b.order||0)));
-
-  // Only do full re-render if sections haven't been rendered yet
-  // After first render, do surgical DOM updates to avoid resetting checked state
-  if(!sectionsRendered){
-    SECTIONS.forEach(([label, sid])=>{
-      if(sid === 'sc' || sid === 'sr') return;
-      const sec = document.getElementById(sid);
-      if(!sec) return;
-      renderSectionItems(sec, sid, bySec[sid] || []);
-    });
-    sectionsRendered = true;
-    injectInfoButtons();
-  } else {
-    // Surgical update: only add new items or remove deleted items
-    SECTIONS.forEach(([label, sid])=>{
-      if(sid === 'sc' || sid === 'sr') return;
-      const sec = document.getElementById(sid);
-      if(!sec) return;
-      const currentIds = new Set([...sec.querySelectorAll('.cl li[data-id]')].map(li=>li.dataset.id));
-      const newItems = bySec[sid] || [];
-      const newIds = new Set(newItems.map(i=>i.id));
-
-      // Remove deleted items
-      currentIds.forEach(id=>{
-        if(!newIds.has(id)){
-          const li = sec.querySelector(`li[data-id="${id}"]`);
-          if(li){ li.nextElementSibling?.classList?.contains('note-panel') && li.nextElementSibling.remove(); li.remove(); }
-        }
-      });
-
-      // Add new items (items not currently in DOM)
-      newItems.forEach(item=>{
-        if(!currentIds.has(item.id)){
-          // Find the right ul to append to
-          const subs = sec.querySelectorAll('.sub');
-          let targetUl = null;
-          subs.forEach(sub=>{
-            const st = sub.querySelector('.sub-t');
-            if(st && st.textContent === item.sub) targetUl = sub.querySelector('ul.cl');
-          });
-          if(!targetUl){
-            // Create new sub group
-            const newSub = document.createElement('div');
-            newSub.className = 'sub';
-            newSub.innerHTML = (item.sub ? `<div class="sub-t">${item.sub}</div>` : '') +
-              `<ul class="cl" data-s="${sid.replace('s','')}"></ul>`;
-            const body = sec.querySelector('.sec-body');
-            if(body) body.appendChild(newSub);
-            targetUl = newSub.querySelector('ul.cl');
-          }
-          if(targetUl){
-            const tmp = document.createElement('ul');
-            tmp.innerHTML = buildItemHTML(item);
-            const newLi = tmp.firstElementChild;
-            targetUl.appendChild(newLi);
-          }
-        }
-      });
-    });
-    injectInfoButtons();
-  }
-
-  // Apply current state without touching checked items
-  applyChecklistState();
-  applyNotesState();
-}
-
-function renderSectionItems(sec, sid, items){
-  // Find or create sec-body
-  let body = sec.querySelector('.sec-body');
-  if(!body) return;
-
-  // Group by sub
-  const bySub = {};
-  const subOrder = [];
-  items.forEach(item=>{
-    const sub = item.sub || '';
-    if(!bySub[sub]){ bySub[sub] = []; subOrder.push(sub); }
-    bySub[sub].push(item);
-  });
-
-  // For s6 (escenas) keep the grid layout
-  const isScenes = sid === 's6';
-
-  // Build HTML
-  let html = '';
-
-  // Keep existing note-boxes
-  const noteBoxes = body.querySelectorAll('.note-box');
-  noteBoxes.forEach(nb=>{ html += nb.outerHTML; });
-
-  if(isScenes){
-    html += '<div class="sg">';
-    const uniqueSubs = [...new Set(subOrder)];
-    uniqueSubs.forEach(sub=>{
-      const subItems = bySub[sub] || [];
-      html += `<div class="sc"><div class="sch"><div class="sct">${sub||'General'}</div></div><div class="scb"><ul class="cl" data-s="${sid.replace('s','')}">`;
-      subItems.forEach(item=>{ html += buildItemHTML(item); });
-      html += '</ul>';
-      if(isSup) html += buildAddItemUI(sid, sub);
-      html += '</div></div>';
-    });
-    html += '</div>';
-  } else {
-    const uniqueSubs = [...new Set(subOrder)];
-    uniqueSubs.forEach(sub=>{
-      const subItems = bySub[sub] || [];
-      html += `<div class="sub">`;
-      if(sub) html += `<div class="sub-t">${sub}</div>`;
-      html += `<ul class="cl" data-s="${sid.replace('s','')}">`;
-      subItems.forEach(item=>{ html += buildItemHTML(item); });
-      html += '</ul>';
-      if(isSup) html += buildAddItemUI(sid, sub);
-      html += '</div>';
-    });
-    // Admin: add new subsection
-    if(isSup){
-      html += `<div class="add-item-row open" style="margin-top:.75rem;border-style:dashed">
-        <input class="add-item-input" placeholder="Nueva subsección o ítem sin grupo..." id="new-sub-${sid}"/>
-        <button class="add-item-ok" onclick="addItemToSection('${sid}','','')">+ Ítem</button>
-      </div>`;
-    }
-  }
-
-  body.innerHTML = html;
-}
-
-function buildItemHTML(item){
-  const tagMap = {critical:'tc',high:'th',medium:'tm',low:'tl'};
-  const tagClass = tagMap[item.tag] || '';
-  const tagLabels = {critical:'Crítico',high:'Alto',medium:'Medio',low:'Bajo'};
-  const tagLabel = tagLabels[item.tag] || '';
-  return `<li data-id="${item.id}">
-    <div class="cb"><span class="ci">✓</span></div>
-    <span class="it">${item.text}</span>
-    ${tagClass ? `<span class="tag ${tagClass}">${tagLabel}</span>` : ''}
-    <button class="note-btn">nota</button>
-    <div class="im"><span class="ic">—</span><span class="itime"></span></div>
-    <button class="del-item-btn" data-del="${item.id}" title="Eliminar ítem">✕</button>
-  </li>`;
-}
-
-function buildAddItemUI(sid, sub){
-  const safeId = `${sid}_${sub.replace(/[^a-z0-9]/gi,'_')}`;
-  return `<div class="add-item-row" id="add-row-${safeId}">
-    <input class="add-item-input" placeholder="Texto del nuevo ítem..." id="add-input-${safeId}"/>
-    <select class="add-item-tag-sel" id="add-tag-${safeId}">
-      <option value="">Sin tag</option>
-      <option value="critical">Crítico</option>
-      <option value="high">Alto</option>
-      <option value="medium">Medio</option>
-    </select>
-    <button class="add-item-ok" onclick="addItemToSection('${sid}','${sub}','${safeId}')">+</button>
-    <button class="add-item-cancel" onclick="document.getElementById('add-row-${safeId}').classList.remove('open')">✕</button>
-  </div>
-  <button class="add-item-btn" onclick="document.getElementById('add-row-${safeId}').classList.toggle('open')">+ Agregar ítem</button>`;
-}
-
-function addItemToSection(sid, sub, safeId){
-  if(!me || !isSup) return;
-  const inputId = safeId ? `add-input-${safeId}` : `new-sub-${sid}`;
-  const tagId   = safeId ? `add-tag-${safeId}` : null;
-  const input = document.getElementById(inputId);
-  const tagSel = tagId ? document.getElementById(tagId) : null;
-  if(!input || !input.value.trim()) return;
-  
-  const text = input.value.trim();
-  const tag  = tagSel ? tagSel.value : '';
-  
-  // Generate unique ID
-  const newId = sid + '_' + Date.now();
-  const maxOrder = Math.max(0, ...Object.values(itemsData)
-    .filter(i=>i.section===sid)
-    .map(i=>i.order||0));
-  
-  db.ref('items_db/'+newId).set({
-    text, tag, section: sid, sub: sub||'', order: maxOrder+1,
-    addedBy: me.name, ts: Date.now(), static: false
-  }).then(()=>{
-    input.value = '';
-    toast('<b>Ítem agregado</b> <span>'+text.slice(0,30)+'</span>');
-  });
-}
-
-function deleteItem(id){
-  if(!me || !isSup) return;
-  const item = itemsData[id];
-  if(!item) return;
-  
-  if(!confirm(`¿Eliminar "${item.text}"?\nTambién se eliminará su estado y nota si los tiene.`)) return;
-  
-  // Delete item, its check state, and note
-  const updates = {};
-  updates['items_db/'+id] = null;
-  updates['checklist/'+id] = null;
-  updates['notes/'+id] = null;
-  db.ref().update(updates).then(()=>{
-    toast('<span style="color:var(--red)">✕</span> Ítem eliminado');
-  });
-}
-
-// ── SINGLE DELEGATED CLICK LISTENER — set up once ──
-// Handles checklist items, note buttons, del buttons across dynamic renders
+// ── CHECKLIST CLICKS ───────────────────────────────
 document.addEventListener('click', e=>{
   if(!me) return;
-
-  // Delete item button
-  const delBtn = e.target.closest('.del-item-btn[data-del]');
-  if(delBtn){ deleteItem(delBtn.dataset.del); return; }
-
-  // Note button
-  const noteBtn = e.target.closest('.note-btn');
-  if(noteBtn){ toggleNote(noteBtn); return; }
-
-  // Info button
+  if(e.target.closest('.note-btn')){ toggleNote(e.target.closest('.note-btn')); return; }
   if(e.target.closest('.info-btn')) return;
-
-  // Checklist item click
   const li = e.target.closest('.cl li[data-id]');
   if(!li) return;
   const id = li.dataset.id;
@@ -2190,7 +1281,75 @@ document.addEventListener('click', e=>{
   db.ref('checklist/'+id).set({ by:me.name, role:me.role, ts:Date.now() });
 });
 
-function attachChecklistClicks(){ /* no-op — using document delegation */ }
+// ── LISTEN CHECKLIST ───────────────────────────────
+function listenChecklist(){
+  db.ref('checklist').on('value', snap=>{
+    const data = snap.val() || {};
+    Object.keys(checklistState).forEach(k=>delete checklistState[k]);
+    Object.assign(checklistState, data);
+    Object.keys(checkers).forEach(k=>delete checkers[k]);
+    document.querySelectorAll('.cl li[data-id]').forEach(li=>{
+      const id = li.dataset.id;
+      const e  = data[id];
+      const was = li.classList.contains('checked');
+      if(e){
+        li.classList.add('checked');
+        const nm=li.querySelector('.im .ic'); if(nm) nm.textContent=e.by||'—';
+        const tm=li.querySelector('.im .itime'); if(tm) tm.textContent=fmtTime(e.ts);
+        if(!was && e.by !== me?.name) toast('<b>'+e.by+'</b> <span>completó: '+(li.querySelector('.it')?.textContent||'').slice(0,40)+'…</span>');
+        checkers[e.by] = (checkers[e.by]||0)+1;
+      } else {
+        li.classList.remove('checked');
+        const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
+        const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
+      }
+    });
+    updateStats();
+  });
+}
+
+// ── NOTES ──────────────────────────────────────────
+function toggleNote(btn){
+  const li = btn.closest('li[data-id]');
+  let panel = li.nextElementSibling;
+  if(!panel || !panel.classList.contains('note-panel')){
+    panel = document.createElement('div');
+    panel.className = 'note-panel';
+    const id = li.dataset.id;
+    panel.innerHTML =
+      '<textarea class="note-input" placeholder="Agregar nota..."></textarea>'+
+      '<div class="note-actions">'+
+        '<button class="note-cancel" onclick="this.closest('.note-panel').classList.remove('open')">Cancelar</button>'+
+        '<button class="note-save" onclick="saveNote(''+id+'',this)">Guardar</button>'+
+      '</div>';
+    li.after(panel);
+    db.ref('notes/'+id).once('value').then(s=>{
+      if(s.val()) panel.querySelector('.note-input').value = s.val().text||'';
+    });
+  }
+  panel.classList.toggle('open');
+}
+
+function saveNote(id, btn){
+  if(!me) return;
+  const panel = btn.closest('.note-panel');
+  const val = panel.querySelector('.note-input').value.trim();
+  db.ref('notes/'+id).set(val ? {text:val, by:me.name, ts:Date.now()} : null);
+  panel.classList.remove('open');
+}
+
+function listenNotes(){
+  db.ref('notes').on('value', snap=>{
+    notesState = snap.val() || {};
+    document.querySelectorAll('.cl li[data-id]').forEach(li=>{
+      const nb = li.querySelector('.note-btn'); if(!nb) return;
+      const e  = notesState[li.dataset.id];
+      if(e){ nb.classList.add('has-note'); nb.title=e.by+': '+e.text; }
+      else  { nb.classList.remove('has-note'); nb.title=''; }
+    });
+  });
+}
+
 
 // ── SINGLE SOURCE OF TRUTH — section order ──────────
 // [ label, elementId, navId, dnpId ]  — drives sidebar, drawer AND admin bars
@@ -2681,26 +1840,55 @@ window.closeInfoBtn=closeInfoBtn;
 window.openDrawer=openDrawer;
 window.closeDrawer=closeDrawer;
 window.forceMinVersion=forceMinVersion;
-window.resetAllChecks = function(){
+// ── INFO MODAL ─────────────────────────────────────
+function closeInfo(e){
+  if(e.target === document.getElementById('info-modal')) closeInfoBtn();
+}
+function closeInfoBtn(){
+  document.getElementById('info-modal').classList.remove('open');
+}
+
+// ── DRAWER ─────────────────────────────────────────
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+// ── RESET ALL CHECKS ───────────────────────────────
+function resetAllChecks(){
   if(!isSup) return;
-  if(!confirm('¿Resetear TODOS los checks? Esto borrará todo el avance registrado. No se puede deshacer.')) return;
+  if(!confirm('¿Resetear TODOS los checks? Esto borrará todo el avance. No se puede deshacer.')) return;
   db.ref('checklist').set(null).then(()=>{
-    Object.keys(checklistState).forEach(k=>delete checklistState[k]);
-    Object.keys(checkers).forEach(k=>delete checkers[k]);
     document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
       li.classList.remove('checked');
       const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
       const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
     });
+    Object.keys(checklistState).forEach(k=>delete checklistState[k]);
+    Object.keys(checkers).forEach(k=>delete checkers[k]);
     updateStats();
-    toast('<b>Checks reseteados</b> <span>Todos los ítems vuelven a pendiente</span>');
+    toast('<b>Checks reseteados</b>');
   });
-};
+}
+
+window.toggleAdmin=toggleAdmin;
+window.doLogin=doLogin;
+window.toggleSec=toggleSec;
+window.openAndScroll=openAndScroll;
+window.openDrawer=openDrawer;
+window.closeDrawer=closeDrawer;
+window.saveNote=saveNote;
+window.closeInfo=closeInfo;
+window.closeInfoBtn=closeInfoBtn;
 window.closeConfirm=closeConfirm;
 window.confirmUncheck=confirmUncheck;
 window.buildNavFromSections=buildNavFromSections;
-window.addItemToSection=addItemToSection;
-window.deleteItem=deleteItem;
+window.forceMinVersion=forceMinVersion;
+window.resetAllChecks=resetAllChecks;
 </script>
 </body>
 </html>
