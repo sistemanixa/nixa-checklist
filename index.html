@@ -32,6 +32,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+body.no-scroll{overflow:hidden;position:fixed;width:100%;}
 
 /* ── LOADING ─────────────────────────── */
 #loading{
@@ -124,6 +125,34 @@ body{padding-top:56px;}
 .h-me{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);border:1px solid var(--border2);padding:.2rem .6rem;display:flex;align-items:center;gap:.38rem;}
 .h-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── INFO MODAL ──────────────────────── */
+.info-row{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--border);}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
+.info-val{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);text-align:right;}
+
+/* ── SEARCH BOX ──────────────────────── */
+.search-box-wrap{display:flex;align-items:center;gap:.4rem;}
+.search-box-input{flex:1;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;padding:.55rem .85rem;outline:none;transition:border-color .2s;}
+.search-box-input:focus{border-color:var(--accent);}
+.search-box-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:.2rem .3rem;flex-shrink:0;}
+.search-box-clear:hover{color:var(--text);}
+.search-result-item{display:flex;flex-direction:column;gap:.15rem;padding:.5rem .6rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.search-result-item:hover{background:var(--s2);}
+.search-result-item:last-child{border-bottom:none;}
+.sri-text{font-size:.76rem;color:var(--text);line-height:1.4;}
+.sri-text mark{background:rgba(0,200,240,.2);color:var(--accent);border-radius:2px;padding:0 .1rem;}
+.sri-meta{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);}
+#search-results{margin-top:.65rem;border:1px solid var(--border);}
+
+/* ── ADMIN PANEL ─────────────────────── */
+.sec-bar-row{display:flex;align-items:center;gap:.6rem;padding:.3rem 0;border-bottom:1px solid var(--border);}
+.sec-bar-row:last-child{border-bottom:none;}
+.sec-bar-label{font-size:.68rem;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sec-bar-track{flex:2;height:4px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.sec-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s ease;}
+.sec-bar-pct{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);min-width:2.2rem;text-align:right;}
 
 /* ── STATS CARDS ─────────────────────── */
 .stats-panel{max-width:1160px;margin:1.25rem auto 0;padding:0 1.25rem;}
@@ -537,7 +566,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="login-divider"></div>
 
     <label class="lbl">Nombre</label>
-    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off"/>
+    <input class="linput" id="lname" type="text" placeholder="Tu nombre" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter'){const chk=document.getElementById('admin-check');if(chk.checked){document.getElementById('admin-pass').focus();}else{doLogin();}}"/>
 
     <label class="admin-toggle">
       <input type="checkbox" id="admin-check" onchange="toggleAdmin(this)"/>
@@ -546,7 +575,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 
     <div id="admin-pass-wrap">
       <label class="lbl">Clave de administrador</label>
-      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0"/>
+      <input class="linput" id="admin-pass" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" autocomplete="off" style="margin-bottom:0" onkeydown="if(event.key==='Enter') doLogin()"/>
     </div>
 
     <div style="height:1.1rem"></div>
@@ -557,6 +586,22 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 
 <!-- TOASTS -->
 <div id="toasts"></div>
+
+<!-- INFO MODAL -->
+<div id="info-modal" style="display:none;position:fixed;inset:0;z-index:4000;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);padding:1.5rem;max-width:340px;width:90%;position:relative;">
+    <button onclick="closeInfo()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;">NIXA</div>
+    <div style="display:flex;flex-direction:column;gap:.55rem;">
+      <div class="info-row"><span class="info-lbl">Versión</span><span class="info-val" id="im-ver">—</span></div>
+      <div class="info-row"><span class="info-lbl">Proyecto</span><span class="info-val">Bariloche</span></div>
+      <div class="info-row"><span class="info-lbl">Firebase</span><span class="info-val">nixa-bariloche-default-rtdb</span></div>
+      <div class="info-row"><span class="info-lbl">URL</span><span class="info-val">checklist.sistemanixa.com</span></div>
+      <div class="info-row"><span class="info-lbl">Secciones</span><span class="info-val" id="im-secs">—</span></div>
+      <div class="info-row"><span class="info-lbl">Ítems totales</span><span class="info-val" id="im-items">—</span></div>
+    </div>
+  </div>
+</div>
 
 <!-- CONFIRM MODAL -->
 <div id="confirm-modal">
@@ -591,8 +636,23 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
       <div class="h-dot"></div>
       <span id="hme-name">—</span>
     </div>
+    <button id="info-btn" onclick="openInfo()" style="display:none;background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.2rem .5rem;cursor:pointer;letter-spacing:.05em;">INFO</button>
   </div>
 </header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Proyecto Domótica Premium</div>
+  <div class="hero-title">Super Checklist Bariloche</div>
+  <div class="hero-badges">
+    <div class="badge">Integrador <b>NIXA</b></div>
+    <div class="badge">Sonoff <b>76 disp.</b></div>
+    <div class="badge">Cámaras <b>×32</b></div>
+    <div class="badge">Alexa <b>×12</b></div>
+    <div class="badge">Ambientes <b>15+</b></div>
+    <div class="badge">DB <b>Firebase RT</b></div>
+  </div>
+</div>
 
 <!-- STATS CARDS -->
 <div class="stats-panel" id="stats-panel" style="display:none">
@@ -609,20 +669,8 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   <div class="sup-inner">
     <div class="sup-title">Actividad por técnico</div>
     <div id="sup-checker-list"><div class="sup-empty">Sin actividad aún</div></div>
-  </div>
-</div>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">Proyecto Domótica Premium</div>
-  <div class="hero-title">Super Checklist Bariloche</div>
-  <div class="hero-badges">
-    <div class="badge">Integrador <b>NIXA</b></div>
-    <div class="badge">Sonoff <b>76 disp.</b></div>
-    <div class="badge">Cámaras <b>×32</b></div>
-    <div class="badge">Alexa <b>×12</b></div>
-    <div class="badge">Ambientes <b>15+</b></div>
-    <div class="badge">DB <b>Firebase RT</b></div>
+    <div class="sup-title" style="margin-top:1.25rem;">Progreso por sección</div>
+    <div id="sup-sec-bars"></div>
   </div>
 </div>
 
@@ -632,6 +680,20 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   <nav class="sidebar" id="sidebar"><div class="sb-head">Índice</div></nav>
 
   <div class="content">
+
+  <!-- BUSCADOR -->
+  <div class="section" id="search-section">
+    <div class="sec-body" style="padding:.75rem 1.1rem;">
+      <div class="search-box-wrap">
+        <input id="search-input" class="search-box-input" type="text" placeholder="🔍  Buscar ítem..." autocomplete="off" oninput="doSearch(this.value)"/>
+        <button class="search-box-clear" id="search-clear-btn" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <div id="search-results" style="display:none;">
+        <div id="search-results-list"></div>
+        <div id="search-empty" style="display:none;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin resultados</div>
+      </div>
+    </div>
+  </div>
 
   <div class="section collapsed" id="s0">
     <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">00</span><span class="sec-t">Check de Herramientas</span><span class="sec-st" id="st0">0/0</span><span class="sec-chev">▼</span></div>
@@ -727,6 +789,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <li data-id="s1_14"><div class="cb"><span class="ci">✓</span></div><span class="it">Retención de grabación configurada</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s1_15"><div class="cb"><span class="ci">✓</span></div><span class="it">Acceso remoto al NVR verificado (Hik-Connect o VPN)</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s1_16"><div class="cb"><span class="ci">✓</span></div><span class="it">Test de failover WAN: NVR sigue grabando sin WAN1</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s1_17"><div class="cb"><span class="ci">✓</span></div><span class="it">Cámaras externas: visión nocturna activa y verificada</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         </ul></div>
       </div>
     </div>
@@ -780,6 +843,11 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <li data-id="s4_17"><div class="cb"><span class="ci">✓</span></div><span class="it">WiFi Analyzer: cada zona ve su AP como el más fuerte</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s4_18"><div class="cb"><span class="ci">✓</span></div><span class="it">RSSI en punto más alejado de cada AP ≥ −70 dBm</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s4_19"><div class="cb"><span class="ci">✓</span></div><span class="it">Mapa de cobertura final documentado</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s4_20"><div class="cb"><span class="ci">✓</span></div><span class="it">5 GHz: canales DFS o superiores (100-140) donde el entorno lo permite</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s4_21"><div class="cb"><span class="ci">✓</span></div><span class="it">5 GHz: ancho de canal 80 MHz para SSID Clientes</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s4_22"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_Admin → solo equipo técnico → VLAN 10</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s4_23"><div class="cb"><span class="ci">✓</span></div><span class="it">No hay APs vecinos externos en canales 1/6/11 con RSSI > −70 dBm</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s4_24"><div class="cb"><span class="ci">✓</span></div><span class="it">Beacon interval: 100ms — no modificar</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         </ul></div>
       </div>
     </div>
@@ -838,6 +906,9 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s3_26"><div class="cb"><span class="ci">✓</span></div><span class="it">Relé Sonoff del ascensor: operativo y testeado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s3_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación funcional en subsuelo y cochera</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s3_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Temperatura de sala de máquinas monitoreada</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_29"><div class="cb"><span class="ci">✓</span></div><span class="it">Cámara del ambiente visible en NVR</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_30"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas del vestidor operativas (si aplica)</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s3_31"><div class="cb"><span class="ci">✓</span></div><span class="it">Acceso a sala de máquinas documentado (llaves, código, responsable)</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
   </div>
@@ -871,6 +942,15 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <li data-id="s5_17"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostatos listados — temperatura real correcta — electroválvulas OK</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s5_18"><div class="cb"><span class="ci">✓</span></div><span class="it">iHost: firmware actualizado — IP fija VLAN 10 — todos los dispositivos visibles</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s5_19"><div class="cb"><span class="ci">✓</span></div><span class="it">iHost funciona SIN internet — escenas locales operativas offline</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_20"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostatos: setpoint por ambiente definido con el cliente</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_21"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostatos: automatización por presencia activa (si sensor disponible)</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_22"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostatos: integración con escena "Llegué" (subir temperatura)</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_23"><div class="cb"><span class="ci">✓</span></div><span class="it">Documentar versión de firmware de cada Sonoff al momento del commissioning</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_24"><div class="cb"><span class="ci">✓</span></div><span class="it">Planificar ventana de mantenimiento mensual para actualizaciones controladas</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_25"><div class="cb"><span class="ci">✓</span></div><span class="it">Mini-RBS conectado a motor real de cortina/persiana (no solo carga)</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_26"><div class="cb"><span class="ci">✓</span></div><span class="it">Tiempo de viaje del motor calibrado correctamente</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Automatizaciones críticas configuradas localmente en iHost (no solo cloud)</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s5_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Electroválvulas de termostatos: apertura y cierre confirmados físicamente</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         </ul></div>
       </div>
     </div>
@@ -887,6 +967,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
             <li data-id="s6_04"><div class="cb"><span class="ci">✓</span></div><span class="it">Ascensor llamado (relé Sonoff)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Ejecución local iHost — sin cloud</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_06"><div class="cb"><span class="ci">✓</span></div><span class="it">Delay entre acciones ≤ 2s</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Trigger: sensor de presencia (doble detección) o botón/Alexa configurado</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           </ul></div></div>
           <div class="sc"><div class="sch"><div class="sct">🌅 Buen Día</div></div><div class="scb"><ul class="cl" data-s="6">
             <li data-id="s6_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas dorm. suben gradual</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
@@ -899,12 +980,16 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
             <li data-id="s6_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Living 10% o apaga</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas living bajan completo</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_14"><div class="cb"><span class="ci">✓</span></div><span class="it">Otras luces del área apagan</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_29"><div class="cb"><span class="ci">✓</span></div><span class="it">Temperatura se mantiene o ajusta a preferencia (Cine)</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_30"><div class="cb"><span class="ci">✓</span></div><span class="it">Silencio de notificaciones configurado (si integrado)</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           </ul></div></div>
           <div class="sc"><div class="sch"><div class="sct">🌙 Buenas Noches</div></div><div class="scb"><ul class="cl" data-s="6">
             <li data-id="s6_15"><div class="cb"><span class="ci">✓</span></div><span class="it">Luces habitaciones apagan</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_16"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas todas las habs. bajan</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_17"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostato → temp. nocturna</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_18"><div class="cb"><span class="ci">✓</span></div><span class="it">Pasillos al 5% (orientación)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_31"><div class="cb"><span class="ci">✓</span></div><span class="it">Luces exteriores pasan a modo mínimo o apagan</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_32"><div class="cb"><span class="ci">✓</span></div><span class="it">Termostato baja a temperatura nocturna</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           </ul></div></div>
           <div class="sc"><div class="sch"><div class="sct">💡 Luces Exteriores</div></div><div class="scb"><ul class="cl" data-s="6">
             <li data-id="s6_19"><div class="cb"><span class="ci">✓</span></div><span class="it">Quincho / jardín / cochera encienden</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
@@ -914,6 +999,12 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
             <li data-id="s6_21"><div class="cb"><span class="ci">✓</span></div><span class="it">Todas las cortinas bajan simultáneo</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_22"><div class="cb"><span class="ci">✓</span></div><span class="it">Sin conflicto de relés en secuencia</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
             <li data-id="s6_23"><div class="cb"><span class="ci">✓</span></div><span class="it">Tiempo total de ejecución documentado</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+          </ul></div></div>
+        <div class="sc"><div class="sch"><div class="sct">Buenas Tardes</div></div><div class="scb"><ul class="cl" data-s="6">
+        <li data-id="s6_24"><div class="cb"><span class="ci">✓</span></div><span class="it">Luces ambientales del living al 50%</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_25"><div class="cb"><span class="ci">✓</span></div><span class="it">Luces del bar al 40%</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_26"><div class="cb"><span class="ci">✓</span></div><span class="it">Iluminación exterior enciende</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s6_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Cortinas a 50% (media apertura)</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           </ul></div></div>
         </div>
       </div>
@@ -936,6 +1027,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <li data-id="s7_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Test con voz de mujer, hombre y niño (distintos acentos)</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s7_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Tiempo de respuesta: comando → acción ≤ 3 segundos</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s7_11"><div class="cb"><span class="ci">✓</span></div><span class="it">Test desde cada punto con música ambiente a 40dB</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s7_12"><div class="cb"><span class="ci">✓</span></div><span class="it">Test de comando mientras otra Alexa está reproduciendo audio</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         </ul></div>
       </div>
     </div>
@@ -952,6 +1044,11 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s8_07"><div class="cb"><span class="ci">✓</span></div><span class="it">STP activo en switches — sin loops de red confirmado</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s8_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Firmware Sonoff estable — actualizaciones automáticas DESACTIVADAS</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s8_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Reconexión tras corte: ≤ 60s para el 95% de dispositivos</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s8_10"><div class="cb"><span class="ci">✓</span></div><span class="it">Desconexión WAN: control por Alexa local sigue funcionando (si aplica)</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s8_11"><div class="cb"><span class="ci">✓</span></div><span class="it">iHost reconecta y reactiva automatizaciones tras corte</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s8_12"><div class="cb"><span class="ci">✓</span></div><span class="it">APs reconectan al OC300 tras reinicio del controlador</span><span class="tag th">Alto</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s8_13"><div class="cb"><span class="ci">✓</span></div><span class="it">Tráfico en VLAN IoT en reposo: baseline documentado</span><span class="tag tm">Medio</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s8_14"><div class="cb"><span class="ci">✓</span></div><span class="it">Actualizaciones automáticas desactivadas en todos los dispositivos IoT productivos</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
 
@@ -965,6 +1062,8 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s9_05"><div class="cb"><span class="ci">✓</span></div><span class="it">Router, OC300, switches core en UPS — autonomía ≥ 30 min</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s9_06"><div class="cb"><span class="ci">✓</span></div><span class="it">iHost en UPS</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s9_07"><div class="cb"><span class="ci">✓</span></div><span class="it">NVR en UPS — grabación continua ante corte</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s9_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Credenciales de acceso remoto testeadas desde celular fuera de la red</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="s9_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Documento de emergencia incluye: IPs, pasos de reinicio, credenciales y contacto NIXA</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
     </div>
 
@@ -1171,9 +1270,12 @@ function doLogin(){
   }
   me = { name, role: isSup ? 'Administrador' : 'Integrador', color: colorFor(name) };
   document.getElementById('login').style.display='none';
+  document.body.classList.remove('no-scroll');
+  window.scrollTo(0,0);
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
   document.getElementById('stats-panel').style.display='block';
+  document.getElementById('info-btn').style.display='block';
   if(isSup) {
     document.getElementById('sup-panel').style.display='block';
     db.ref('config/minVersion').once('value').then(snap=>{
@@ -1306,16 +1408,16 @@ function listenPresence(){
 // ── STATS ───────────────────────────────────────────
 function updateStats(){
   let total=0, done=0;
-  const secIds = ['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14','s15'];
-  secIds.forEach(sid=>{
+  SECTIONS.forEach(([sid])=>{
     const sec=document.getElementById(sid); if(!sec) return;
     const items=sec.querySelectorAll('.cl li[data-id]');
     const chk=sec.querySelectorAll('.cl li[data-id].checked');
     const t=items.length, d=chk.length;
-    const num = sid.replace('s','');
-    const st=document.getElementById('st'+num); if(st) st.textContent=d+'/'+t;
-    const np=document.getElementById('np'+num); if(np) np.textContent=t>0?Math.round(d/t*100)+'%':'—';
-    const dnp=document.getElementById('dnp'+num); if(dnp) dnp.textContent=t>0?Math.round(d/t*100)+'%':'—';
+    // section header stat: id="stX" where X = sid without leading 's' for numeric, or full for sc/sr/s0
+    const stkey = sid==='sc'||sid==='sr' ? sid : sid.replace('s','');
+    const st=document.getElementById('st'+stkey);   if(st)  st.textContent=d+'/'+t;
+    const np=document.getElementById('np'+sid);     if(np)  np.textContent=t>0?Math.round(d/t*100)+'%':'—';
+    const dnp=document.getElementById('dnp'+sid);   if(dnp) dnp.textContent=t>0?Math.round(d/t*100)+'%':'—';
     total+=t; done+=d;
   });
   document.getElementById('gtotal').textContent=total;
@@ -1332,13 +1434,32 @@ function updateStats(){
   if(isSup){
     const cl=document.getElementById('sup-checker-list');
     const sorted=Object.entries(checkers).sort((a,b)=>b[1]-a[1]);
-    if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; return; }
-    cl.innerHTML=sorted.map(([name,count])=>
-      '<div class="sup-checker-row">'+
-        '<span><span class="sup-checker-name">'+name+'</span></span>'+
-        '<span class="sup-checker-count">'+count+' ítems</span>'+
-      '</div>'
-    ).join('');
+    if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; }
+    else {
+      cl.innerHTML=sorted.map(([name,count])=>
+        '<div class="sup-checker-row">'+
+          '<span><span class="sup-checker-name">'+name+'</span></span>'+
+          '<span class="sup-checker-count">'+count+' ítems</span>'+
+        '</div>'
+      ).join('');
+    }
+
+    // section progress bars
+    const barsEl = document.getElementById('sup-sec-bars');
+    if(barsEl){
+      barsEl.innerHTML = SECTIONS.map(([sid,,label])=>{
+        const sec = document.getElementById(sid); if(!sec) return '';
+        const t = sec.querySelectorAll('.cl li[data-id]').length;
+        const d = sec.querySelectorAll('.cl li[data-id].checked').length;
+        if(t===0) return '';
+        const pct = Math.round(d/t*100);
+        return '<div class="sec-bar-row">'+
+          '<span class="sec-bar-label">'+label+'</span>'+
+          '<div class="sec-bar-track"><div class="sec-bar-fill" style="width:'+pct+'%"></div></div>'+
+          '<span class="sec-bar-pct">'+d+'/'+t+'</span>'+
+        '</div>';
+      }).join('');
+    }
   }
 }
 
@@ -1347,6 +1468,7 @@ function parseVer(v){ const p=String(v).split('.').map(Number); return p[0]*1000
 
 window.addEventListener('load',()=>{
   buildNavFromSections();
+  document.body.classList.add('no-scroll');
 
   // Mostrar login después de 1 segundo siempre
   setTimeout(()=>{
@@ -1452,7 +1574,7 @@ function initComponents(){
 const SECTIONS = [
   ['s0',  '00', 'Herramientas'],
   ['sc',  '●',  'Componentes'],
-  ['sr',  'SR', 'Por Habitación'],
+  ['sr',  'SR', 'Instalación Hab.'],
   ['s1',  '01', 'Infraestructura'],
   ['s2',  '02', 'Commissioning'],
   ['s3',  '03', 'Check Habitación'],
@@ -1463,8 +1585,8 @@ const SECTIONS = [
   ['s8',  '08', 'Estabilidad IoT'],
   ['s9',  '09', 'Contingencia'],
   ['s10', '10', 'Plan por Días'],
-  ['s11', '11', 'Validaciones'],
-  ['s12', '12', 'Experiencia'],
+  ['s11', '11', 'Valid. Técnicas'],
+  ['s12', '12', 'Valid. Experiencia'],
   ['s13', '13', 'Diagnóstico'],
   ['s14', '14', 'Arquitectura'],
   ['s15', '15', 'Prioridades'],
@@ -1476,11 +1598,22 @@ function buildNavFromSections(){
   sidebar.innerHTML = '<div class="sb-head">Índice</div>';
   drawer.innerHTML  = '<div class="sb-head">Índice</div>';
   SECTIONS.forEach(([id, num, label])=>{
+    const onclick = `navTo('${id}')`;
     sidebar.innerHTML +=
-      `<a class="nav-item" href="#${id}"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="np${id}">—</span></a>`;
+      `<a class="nav-item" href="#${id}" onclick="event.preventDefault();${onclick}"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="np${id}">—</span></a>`;
     drawer.innerHTML +=
-      `<a class="nav-item" href="#${id}" onclick="closeDrawer()"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="dnp${id}">—</span></a>`;
+      `<a class="nav-item" href="#${id}" onclick="event.preventDefault();closeDrawer();${onclick}"><span class="ni-n">${num}</span>${label}<span class="ni-p" id="dnp${id}">—</span></a>`;
   });
+}
+
+function navTo(id){
+  const sec = document.getElementById(id);
+  if(!sec) return;
+  // open if collapsed
+  if(sec.classList.contains('collapsed')) sec.classList.remove('collapsed');
+  // scroll with offset for fixed header
+  const top = sec.getBoundingClientRect().top + window.scrollY - 68;
+  window.scrollTo({ top, behavior:'smooth' });
 }
 
 // ── ROOMS ───────────────────────────────────────────
@@ -1619,15 +1752,96 @@ function listenRoomTasks(){
   });
 }
 
+// ── SEARCH ─────────────────────────────────────────
+function doSearch(q){
+  const term = q.trim().toLowerCase();
+  const clearBtn = document.getElementById('search-clear-btn');
+  const resultsBox = document.getElementById('search-results');
+  const resultsList = document.getElementById('search-results-list');
+  const emptyMsg = document.getElementById('search-empty');
+
+  if(!term){
+    resultsBox.style.display = 'none';
+    clearBtn.style.display = 'none';
+    return;
+  }
+
+  clearBtn.style.display = 'block';
+  const results = [];
+
+  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
+    const itEl = li.querySelector('.it');
+    if(!itEl) return;
+    const text = itEl.textContent;
+    if(text.toLowerCase().includes(term)){
+      // find section name
+      const sec = li.closest('.section');
+      const secTitle = sec?.querySelector('.sec-t')?.textContent || '';
+      results.push({ li, text, secTitle });
+    }
+  });
+
+  resultsBox.style.display = 'block';
+
+  if(!results.length){
+    resultsList.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+
+  emptyMsg.style.display = 'none';
+  resultsList.innerHTML = results.slice(0,30).map((r, i)=>{
+    const highlighted = r.text.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+    const checked = r.li.classList.contains('checked') ? ' ✓' : '';
+    return `<div class="search-result-item" onclick="searchGoTo('${r.li.dataset.id}')">
+      <div class="sri-text">${highlighted}${checked}</div>
+      <div class="sri-meta">${r.secTitle}</div>
+    </div>`;
+  }).join('');
+}
+
+function searchGoTo(id){
+  const li = document.querySelector(`li[data-id="${id}"]`);
+  if(!li) return;
+  // open section if collapsed
+  const sec = li.closest('.section');
+  if(sec && sec.classList.contains('collapsed')) sec.classList.remove('collapsed');
+  // scroll to item with offset
+  setTimeout(()=>{
+    const top = li.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior:'smooth' });
+    // flash highlight
+    li.style.transition = 'background .1s';
+    li.style.background = 'rgba(0,200,240,.15)';
+    setTimeout(()=>{ li.style.background = ''; }, 1200);
+  }, 100);
+}
+
+function clearSearch(){
+  document.getElementById('search-input').value = '';
+  doSearch('');
+}
+
 // expose globals
 window.toggleAdmin=toggleAdmin;
 window.doLogin=doLogin;
 window.toggleSec=toggleSec;
 window.saveNote=saveNote;
+window.navTo=navTo;
 window.closeConfirm=closeConfirm;
 window.confirmUncheck=confirmUncheck;
+window.doSearch=doSearch;
+window.clearSearch=clearSearch;
+window.searchGoTo=searchGoTo;
+window.openInfo=function(){
+  document.getElementById('im-ver').textContent   = 'v'+APP_VERSION;
+  document.getElementById('im-secs').textContent  = SECTIONS.length+' secciones';
+  document.getElementById('im-items').textContent = document.getElementById('gtotal').textContent+' ítems';
+  document.getElementById('info-modal').style.display='flex';
+};
+window.closeInfo=function(){ document.getElementById('info-modal').style.display='none'; };
 window.openDrawer=function(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawer-overlay').classList.add('open'); };
 window.closeDrawer=function(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); };
 </script>
 </body>
-  </html>
+                                                                                                                                                                                                                                                                     </html>
