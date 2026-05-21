@@ -293,6 +293,13 @@ li.filter-hidden{display:none!important;}
 .ni-n{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);min-width:.9rem;}
 .ni-p{margin-left:auto;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);}
 
+.nav-item.nav-active{
+  background:rgba(0,200,240,.15)!important;
+  color:#ffffff!important;
+  border-left-color:var(--accent)!important;
+  font-weight:700!important;
+}
+
 /* ── SECTIONS ────────────────────────── */
 .content{display:flex;flex-direction:column;gap:1.1rem;}
 .section{background:var(--s1);border:1px solid var(--border);overflow:hidden;}
@@ -847,6 +854,10 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="h_27"><div class="cb"><span class="ci">✓</span></div><span class="it">Cadenas para ruedas (nieve)</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_27',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="h_32"><div class="cb"><span class="ci">✓</span></div><span class="it">Terminales generales (punta hueca, ojal, horquilla)</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_32',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="h_33"><div class="cb"><span class="ci">✓</span></div><span class="it">Crimpadora de terminales</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_33',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_34"><div class="cb"><span class="ci">✓</span></div><span class="it">Soldador eléctrico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_34',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_35"><div class="cb"><span class="ci">✓</span></div><span class="it">Reflector / lámpara de obra</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_35',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_36"><div class="cb"><span class="ci">✓</span></div><span class="it">Cargador de batería portátil (powerbank)</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_36',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+        <li data-id="h_37"><div class="cb"><span class="ci">✓</span></div><span class="it">Cintas pasa cable</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_37',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
       <div class="sub"><div class="sub-t">Herramientas de Oficina</div><ul class="cl" data-s="0">
         <li data-id="h_28"><div class="cb"><span class="ci">✓</span></div><span class="it">Notebook</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('h_28',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
@@ -912,6 +923,15 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <div class="comp-grid">
           <div class="comp-row" data-cid="c_13"><span class="comp-name">Relé 220V riel DIN</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
           <div class="comp-row" data-cid="c_16"><span class="comp-name">Conector rápido 4 polos PCT-214</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+        </div>
+      </div>
+      <div class="sub"><div class="sub-t">Cables y Tomas</div>
+        <div class="comp-grid">
+          <div class="comp-row" data-cid="c_26"><span class="comp-name">Cable unipolar marrón (fase)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_27"><span class="comp-name">Cable unipolar azul (neutro)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_28"><span class="comp-name">Cable unipolar negro (tierra)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_29"><span class="comp-name">Cable paralelo color piel (2×0.75)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
+          <div class="comp-row" data-cid="c_30"><span class="comp-name">Tomas dobles (enchufes dobles)</span><div class="comp-counter"><button class="comp-btn" data-dir="-">−</button><span class="comp-val">0</span><button class="comp-btn" data-dir="+">+</button><span class="comp-updated-by"></span></div><button class="comp-note-btn">nota</button></div>
         </div>
       </div>
     </div>
@@ -2738,10 +2758,7 @@ function initScrollSpy(){
       document.querySelectorAll(sel).forEach(a=>{
         const href = a.getAttribute('href');
         const isActive = href === '#'+currentId;
-        a.style.borderLeftColor = isActive ? 'var(--accent)' : 'transparent';
-        a.style.color = isActive ? '#ffffff' : '';
-        a.style.background = isActive ? 'rgba(0,200,240,.12)' : '';
-        a.style.fontWeight = isActive ? '700' : '';
+        a.classList.toggle('nav-active', isActive);
       });
     });
   }, { passive:true });
@@ -3072,12 +3089,22 @@ window.closeInfo=function(){ document.getElementById('info-modal').style.display
 window.openDrawer=function(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
-  document.body.classList.add('no-scroll');
+  // Block scroll without moving page
+  document.getElementById('drawer-overlay').addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive:false });
+  // Trigger highlight
+  let currentId = '';
+  SECTIONS.forEach(([sid])=>{
+    const sec = document.getElementById(sid);
+    if(!sec) return;
+    if(sec.getBoundingClientRect().top <= 120) currentId = sid;
+  });
+  document.querySelectorAll('#drawer .nav-item').forEach(a=>{
+    a.classList.toggle('nav-active', a.getAttribute('href') === '#'+currentId);
+  });
 };
 window.closeDrawer=function(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
-  document.body.classList.remove('no-scroll');
 };
 </script>
 
@@ -3150,4 +3177,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                    </html>
+                                                                                                                                                                                           </html>
