@@ -575,6 +575,27 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 .item-info-close{position:absolute;top:.75rem;right:.75rem;background:none;
   border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:.2rem .4rem;}
 .item-info-close:hover{color:var(--text);}
+
+/* ── PLAN TABLE CLICKABLE ────────────── */
+.pt tr.task-row{cursor:pointer;transition:background .12s;}
+.pt tr.task-row:hover td{background:rgba(0,200,240,.06);}
+.pt tr.task-row.found td{background:rgba(0,200,240,.1);}
+
+/* ── NOMENCLATURA ────────────────────── */
+.nom-section{background:var(--s1);border:1px solid var(--border);margin-bottom:1rem;overflow:hidden;}
+.nom-sec-hdr{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:.5rem;}
+.nom-sec-hdr:hover{background:var(--s2);}
+.nom-sec-num{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--accent);min-width:2rem;}
+.nom-table{width:100%;border-collapse:collapse;}
+.nom-table th{font-family:'DM Mono',monospace;font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.32rem .65rem;border-bottom:1px solid var(--border);text-align:left;background:var(--s2);}
+.nom-table td{padding:.38rem .65rem;border-bottom:1px solid var(--border);font-size:.72rem;vertical-align:middle;}
+.nom-table tr:last-child td{border-bottom:none;}
+.nom-name-input{background:transparent;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:.68rem;width:100%;outline:none;padding:.1rem .25rem;border-radius:2px;transition:background .15s;}
+.nom-name-input:focus{background:var(--s2);border:1px solid var(--accent);}
+.nom-name-input:hover{background:var(--s2);}
+.nom-badge{font-family:'DM Mono',monospace;font-size:.44rem;padding:.05rem .28rem;border-radius:2px;white-space:nowrap;}
+.nom-saved{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--green);opacity:0;transition:opacity .3s;}
+.nom-tbd{color:var(--dim);font-style:italic;font-size:.65rem;}
 </style>
 </head>
 <body>
@@ -835,7 +856,198 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     </div>
   </div>
 
-  <div class="section collapsed" id="s1">
+  <div class="section collapsed" id="s10">
+      <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">10</span><span class="sec-t">Plan de Implementación por Días</span><span class="sec-st" id="st10">0/0</span><span class="sec-chev">▼</span></div>
+      <div class="sec-body">
+        <table class="pt"><thead><tr><th>Hora</th><th>Tarea</th></tr></thead><tbody>
+
+          <tr class="dh"><td colspan="2">Día 1 — Revisión General del Lugar + APs Omada (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Llegada y recorrida general del lugar — identificar ubicaciones definitivas de A')"><td class="tc2">08:00</td><td>Llegada y recorrida general del lugar — identificar ubicaciones definitivas de APs, sala de máquinas y tableros</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Fotografiar sala de máquinas, tableros y cableado estructurado existente')"><td class="tc2">09:00</td><td>Fotografiar sala de máquinas, tableros y cableado estructurado existente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Instalar y montar APs Omada EAP670 en ubicaciones definitivas')"><td class="tc2">10:00</td><td>Instalar y montar APs Omada EAP670 en ubicaciones definitivas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cablear APs al switch PoE — verificar alimentación y link activo')"><td class="tc2">11:00</td><td>Cablear APs al switch PoE — verificar alimentación y link activo</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Adoptar APs en OC300 — actualizar firmware de todos los APs')"><td class="tc2">14:00</td><td>Adoptar APs en OC300 — actualizar firmware de todos los APs</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar cobertura preliminar con WiFi Analyzer — documentar mapa físico')"><td class="tc2">15:00</td><td>Verificar cobertura preliminar con WiFi Analyzer — documentar mapa físico</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Identificar y etiquetar todos los cables estructurados y puertos de switch')"><td class="tc2">16:00</td><td>Identificar y etiquetar todos los cables estructurados y puertos de switch</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre del día — parte técnico y foto de avance')"><td class="tc2">17:00</td><td>Cierre del día — parte técnico y foto de avance</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 2 — Infraestructura — VLANs, SSIDs, RF/WiFi (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Backup completo de configuración OC300 existente')"><td class="tc2">08:00</td><td>Backup completo de configuración OC300 existente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Configurar VLANs definitivas (Admin 10, Clientes 20, IoT 30, Cámaras 40, Invitad')"><td class="tc2">08:30</td><td>Configurar VLANs definitivas (Admin 10, Clientes 20, IoT 30, Cámaras 40, Invitados 50)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Configurar SSIDs IoT por zona (Z1, Z2, Z3) — canales manuales 1/6/11 — 20MHz')"><td class="tc2">09:30</td><td>Configurar SSIDs IoT por zona (Z1, Z2, Z3) — canales manuales 1/6/11 — 20MHz</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('SSID Clientes con band steering — SSID Admin — SSID Invitados con portal cautivo')"><td class="tc2">10:30</td><td>SSID Clientes con band steering — SSID Admin — SSID Invitados con portal cautivo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Ajustar potencia RF por AP — verificar sin sangrado entre zonas')"><td class="tc2">11:30</td><td>Ajustar potencia RF por AP — verificar sin sangrado entre zonas</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Configurar reglas de firewall entre VLANs — IoT aislado de Clientes')"><td class="tc2">14:00</td><td>Configurar reglas de firewall entre VLANs — IoT aislado de Clientes</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar mDNS relay — Alexa resuelve dispositivos IoT desde VLAN Clientes')"><td class="tc2">15:00</td><td>Verificar mDNS relay — Alexa resuelve dispositivos IoT desde VLAN Clientes</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Reservas DHCP para todos los dispositivos conocidos — IP fija iHost y NVR')"><td class="tc2">15:30</td><td>Reservas DHCP para todos los dispositivos conocidos — IP fija iHost y NVR</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test de conectividad por zona — WiFi Analyzer confirma cada AP como el más fuert')"><td class="tc2">16:00</td><td>Test de conectividad por zona — WiFi Analyzer confirma cada AP como el más fuerte</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Documentar mapa de red definitivo — cierre y parte del día')"><td class="tc2">17:00</td><td>Documentar mapa de red definitivo — cierre y parte del día</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 3 — Commissioning General — Backups, Baseline y Dispositivos (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Backup configuración iHost — export automatizaciones eWeLink existentes')"><td class="tc2">08:00</td><td>Backup configuración iHost — export automatizaciones eWeLink existentes</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar firmware de todos los Sonoff — actualizar los que no están en versión ')"><td class="tc2">08:30</td><td>Verificar firmware de todos los Sonoff — actualizar los que no están en versión estable</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Confirmar versión firmware NVR Hikvision — verificar grabación de 32 cámaras')"><td class="tc2">09:30</td><td>Confirmar versión firmware NVR Hikvision — verificar grabación de 32 cámaras</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Listar Sonoff comisionados vs. pendientes — mapear por ambiente')"><td class="tc2">10:00</td><td>Listar Sonoff comisionados vs. pendientes — mapear por ambiente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Listar Alexa ×12 — verificar cuenta Amazon — rutinas activas')"><td class="tc2">10:30</td><td>Listar Alexa ×12 — verificar cuenta Amazon — rutinas activas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Medir velocidad WAN1 y WAN2 — documentar baseline')"><td class="tc2">11:00</td><td>Medir velocidad WAN1 y WAN2 — documentar baseline</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Identificar sticky clients IoT — documentar dispositivos en AP incorrecto')"><td class="tc2">11:30</td><td>Identificar sticky clients IoT — documentar dispositivos en AP incorrecto</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Comisionar primeros Sonoff Mini-Dim — protocolo de nomenclatura Hx-Dim-01')"><td class="tc2">14:00</td><td>Comisionar primeros Sonoff Mini-Dim — protocolo de nomenclatura Hx-Dim-01</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar iHost — IP fija — todos los dispositivos visibles — escenas locales of')"><td class="tc2">15:30</td><td>Verificar iHost — IP fija — todos los dispositivos visibles — escenas locales offline</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test failover WAN — NVR sigue grabando sin WAN1')"><td class="tc2">16:30</td><td>Test failover WAN — NVR sigue grabando sin WAN1</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — parte del día')"><td class="tc2">17:00</td><td>Cierre — parte del día</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 4 — Habitaciones H1, H2, H3 (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H1 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">08:00</td><td>H1 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H1 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa')"><td class="tc2">09:30</td><td>H1 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H2 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">10:00</td><td>H2 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H2 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa')"><td class="tc2">11:00</td><td>H2 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H3 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">14:00</td><td>H3 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H3 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa')"><td class="tc2">15:00</td><td>H3 — Verificar AP asignado, RSSI, escenas locales, control por voz Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test cruzado H1-H2-H3 — sin cross-control Alexa entre habitaciones')"><td class="tc2">15:30</td><td>Test cruzado H1-H2-H3 — sin cross-control Alexa entre habitaciones</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Calibrar límites Mini-RBS H1, H2, H3 — test subida y bajada completa')"><td class="tc2">16:00</td><td>Calibrar límites Mini-RBS H1, H2, H3 — test subida y bajada completa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte H1, H2, H3')"><td class="tc2">17:00</td><td>Cierre — documentar parte H1, H2, H3</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 5 — Habitaciones H4, H5, H6 (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H4 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">08:00</td><td>H4 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H4 — Verificar AP, RSSI, escenas locales, Alexa')"><td class="tc2">09:00</td><td>H4 — Verificar AP, RSSI, escenas locales, Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H5 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">09:30</td><td>H5 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H5 — Verificar AP, RSSI, escenas locales, Alexa')"><td class="tc2">10:30</td><td>H5 — Verificar AP, RSSI, escenas locales, Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test cruzado H4-H5 — sin cross-control Alexa')"><td class="tc2">11:00</td><td>Test cruzado H4-H5 — sin cross-control Alexa</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H6 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">14:00</td><td>H6 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H6 — Verificar AP, RSSI, escenas locales, Alexa')"><td class="tc2">15:00</td><td>H6 — Verificar AP, RSSI, escenas locales, Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Calibrar límites Mini-RBS H4, H5, H6')"><td class="tc2">15:30</td><td>Calibrar límites Mini-RBS H4, H5, H6</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test Buenas Noches en H4, H5, H6 — cortinas bajan, luces apagan')"><td class="tc2">16:00</td><td>Test Buenas Noches en H4, H5, H6 — cortinas bajan, luces apagan</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte H4, H5, H6')"><td class="tc2">17:00</td><td>Cierre — documentar parte H4, H5, H6</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 6 — Habitaciones H7, H8 (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H7 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">08:00</td><td>H7 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H7 — Verificar AP, RSSI, escenas locales, Alexa')"><td class="tc2">09:30</td><td>H7 — Verificar AP, RSSI, escenas locales, Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H8 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nomb')"><td class="tc2">10:00</td><td>H8 — Mini-Dim ×2, Mini-RBS ×2, R5-C, R5-L, M5 ×4, Termostato — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('H8 — Verificar AP, RSSI, escenas locales, Alexa')"><td class="tc2">11:30</td><td>H8 — Verificar AP, RSSI, escenas locales, Alexa</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test cruzado H1 a H8 — &quot;Alexa, buenas noches&quot; en cada habitación solo ')"><td class="tc2">14:00</td><td>Test cruzado H1 a H8 — "Alexa, buenas noches" en cada habitación solo afecta su ambiente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Escena global &quot;Bajar Cortinas&quot; — verificar todas las habs. en simultán')"><td class="tc2">15:00</td><td>Escena global "Bajar Cortinas" — verificar todas las habs. en simultáneo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('R5-L verificación: mantenido sube 100%, mantenido baja 10%, toque gradual — en t')"><td class="tc2">16:00</td><td>R5-L verificación: mantenido sube 100%, mantenido baja 10%, toque gradual — en todas las habs.</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte H7, H8')"><td class="tc2">17:00</td><td>Cierre — documentar parte H7, H8</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 7 — Habitación Principal (HP) (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — Mini-Dim ×4 (dormitorio, ambiental, vestidor, baño) — comisionar y nombrar')"><td class="tc2">08:00</td><td>HP — Mini-Dim ×4 (dormitorio, ambiental, vestidor, baño) — comisionar y nombrar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — Mini-RBS ×2 (ventana + vestidor) — calibrar límites')"><td class="tc2">09:30</td><td>HP — Mini-RBS ×2 (ventana + vestidor) — calibrar límites</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — R5-C y R5-L — verificar lógica completa de botones')"><td class="tc2">10:30</td><td>HP — R5-C y R5-L — verificar lógica completa de botones</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — M5 ×4 + Termostato — comisionar, nombrar, verificar')"><td class="tc2">11:00</td><td>HP — M5 ×4 + Termostato — comisionar, nombrar, verificar</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — Alexa sin interferencia con habitaciones adyacentes — test exhaustivo')"><td class="tc2">14:00</td><td>HP — Alexa sin interferencia con habitaciones adyacentes — test exhaustivo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — Escenas Buen Día y Buenas Noches locales en iHost')"><td class="tc2">15:00</td><td>HP — Escenas Buen Día y Buenas Noches locales en iHost</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('HP — Test completo: voz, teclas físicas, cortinas, temperatura')"><td class="tc2">16:00</td><td>HP — Test completo: voz, teclas físicas, cortinas, temperatura</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte HP completo')"><td class="tc2">17:00</td><td>Cierre — documentar parte HP completo</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 8 — Living, Bar, Cocina (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Living — identificar circuitos, comisionar Mini-Dim y Mini-RBS, nomenclatura LV-')"><td class="tc2">08:00</td><td>Living — identificar circuitos, comisionar Mini-Dim y Mini-RBS, nomenclatura LV-</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Living — escena &quot;Cine&quot;: cortinas bajan, luces 10%, temperatura — test ')"><td class="tc2">09:30</td><td>Living — escena "Cine": cortinas bajan, luces 10%, temperatura — test completo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Bar — comisionar Mini-Dim, nombrar BA-, integrar a escena &quot;Buenas Tardes&qu')"><td class="tc2">10:30</td><td>Bar — comisionar Mini-Dim, nombrar BA-, integrar a escena "Buenas Tardes"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Bar — Alexa, control físico, escena verificada con cliente')"><td class="tc2">11:30</td><td>Bar — Alexa, control físico, escena verificada con cliente</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cocina — comisionar Mini-Dim luces trabajo y ambiente, nombrar CO-')"><td class="tc2">14:00</td><td>Cocina — comisionar Mini-Dim luces trabajo y ambiente, nombrar CO-</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cocina — integrar a escena &quot;Buen Día&quot; — Alexa — test completo')"><td class="tc2">15:00</td><td>Cocina — integrar a escena "Buen Día" — Alexa — test completo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Escena &quot;Llegué&quot; — verificar Living, Bar y Cocina en secuencia — delay ')"><td class="tc2">16:00</td><td>Escena "Llegué" — verificar Living, Bar y Cocina en secuencia — delay ≤ 2s</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte Living, Bar, Cocina')"><td class="tc2">17:00</td><td>Cierre — documentar parte Living, Bar, Cocina</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 9 — Quincho, Playroom, Subsuelo, Cochera (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Quincho — comisionar iluminación exterior e interior, nombrar QU-, integrar esce')"><td class="tc2">08:00</td><td>Quincho — comisionar iluminación exterior e interior, nombrar QU-, integrar escena exterior</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Quincho — Alexa, control físico, test escena &quot;Luces Exteriores&quot;')"><td class="tc2">09:30</td><td>Quincho — Alexa, control físico, test escena "Luces Exteriores"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Playroom — Mini-Dim + Mini-RBS + Alexa, nombrar PL-')"><td class="tc2">10:30</td><td>Playroom — Mini-Dim + Mini-RBS + Alexa, nombrar PL-</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Playroom — cortinas, luces, Alexa — test completo')"><td class="tc2">11:30</td><td>Playroom — cortinas, luces, Alexa — test completo</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Subsuelo — relé ascensor Sonoff — test operativo y escena &quot;Llegué&quot;')"><td class="tc2">14:00</td><td>Subsuelo — relé ascensor Sonoff — test operativo y escena "Llegué"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cochera — iluminación funcional — nombrar SB-')"><td class="tc2">15:00</td><td>Cochera — iluminación funcional — nombrar SB-</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Sala de máquinas — temperatura monitoreada, hoja de emergencia plastificada')"><td class="tc2">15:30</td><td>Sala de máquinas — temperatura monitoreada, hoja de emergencia plastificada</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Lavadero — dispositivos básicos operativos')"><td class="tc2">16:00</td><td>Lavadero — dispositivos básicos operativos</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar parte Quincho, Playroom, Subsuelo')"><td class="tc2">17:00</td><td>Cierre — documentar parte Quincho, Playroom, Subsuelo</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 10 — Termostatos + Escenas iHost (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar todos los termostatos — temperatura real correcta — electroválvulas OK')"><td class="tc2">08:00</td><td>Verificar todos los termostatos — temperatura real correcta — electroválvulas OK</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Configurar setpoints por ambiente — temp. diurna, nocturna y &quot;Llegué&quot;')"><td class="tc2">09:00</td><td>Configurar setpoints por ambiente — temp. diurna, nocturna y "Llegué"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Programar escenas en iHost: &quot;Llegué&quot;, &quot;Buen Día&quot;, &quot;Buen')"><td class="tc2">10:00</td><td>Programar escenas en iHost: "Llegué", "Buen Día", "Buenas Noches", "Cine", "Buenas Tardes"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Configurar escenas globales en eWeLink — cortinas, luces exteriores')"><td class="tc2">11:00</td><td>Configurar escenas globales en eWeLink — cortinas, luces exteriores</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test de cada escena completa — delay entre acciones ≤ 2s')"><td class="tc2">14:00</td><td>Test de cada escena completa — delay entre acciones ≤ 2s</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar todas las escenas funcionan SIN internet — desconectar WAN')"><td class="tc2">15:30</td><td>Verificar todas las escenas funcionan SIN internet — desconectar WAN</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Backup iHost después de todas las escenas configuradas')"><td class="tc2">16:30</td><td>Backup iHost después de todas las escenas configuradas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar escenas activas y versiones')"><td class="tc2">17:00</td><td>Cierre — documentar escenas activas y versiones</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 11 — Alexa — Grupos, Rutinas y Validación de Voz (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Skill eWeLink — verificar todos los dispositivos importados en Alexa')"><td class="tc2">08:00</td><td>Skill eWeLink — verificar todos los dispositivos importados en Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Crear/verificar grupos de habitación en Alexa — uno por ambiente')"><td class="tc2">09:00</td><td>Crear/verificar grupos de habitación en Alexa — uno por ambiente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Rutinas de voz: &quot;Llegué&quot;, &quot;Buen Día&quot;, &quot;Cine&quot;, &quo')"><td class="tc2">10:00</td><td>Rutinas de voz: "Llegué", "Buen Día", "Cine", "Buenas Noches", "Buenas Tardes"</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test &quot;Apaga las luces&quot; en cada habitación — solo afecta su ambiente')"><td class="tc2">11:00</td><td>Test "Apaga las luces" en cada habitación — solo afecta su ambiente</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test con voz de mujer, hombre y niño — distintos acentos — desde cada Alexa')"><td class="tc2">14:00</td><td>Test con voz de mujer, hombre y niño — distintos acentos — desde cada Alexa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test de comando con música ambiente a 40dB en simultáneo')"><td class="tc2">15:00</td><td>Test de comando con música ambiente a 40dB en simultáneo</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Test &quot;Alexa, sube/baja las cortinas&quot; en cada grupo de habitación')"><td class="tc2">15:30</td><td>Test "Alexa, sube/baja las cortinas" en cada grupo de habitación</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Tiempo de respuesta: comando → acción ≤ 3 segundos — documentar')"><td class="tc2">16:00</td><td>Tiempo de respuesta: comando → acción ≤ 3 segundos — documentar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar rutinas activas')"><td class="tc2">17:00</td><td>Cierre — documentar rutinas activas</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 12 — Stress Test + Estabilidad IoT (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Todas las escenas simultáneas — medir tiempo de respuesta total')"><td class="tc2">08:00</td><td>Todas las escenas simultáneas — medir tiempo de respuesta total</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('50 comandos en 60s — documentar tasa de fallos')"><td class="tc2">09:00</td><td>50 comandos en 60s — documentar tasa de fallos</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Desconexión WAN — automatizaciones iHost siguen funcionando')"><td class="tc2">10:00</td><td>Desconexión WAN — automatizaciones iHost siguen funcionando</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Corte de luz y reconexión — todos los dispositivos recuperan estado en ≤ 60s')"><td class="tc2">10:30</td><td>Corte de luz y reconexión — todos los dispositivos recuperan estado en ≤ 60s</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Verificar OC300 — ningún AP supera 30 clientes por radio')"><td class="tc2">11:00</td><td>Verificar OC300 — ningún AP supera 30 clientes por radio</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('STP activo en switches — sin loops — verificar con OC300')"><td class="tc2">11:30</td><td>STP activo en switches — sin loops — verificar con OC300</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Acceso remoto OC300, iHost y NVR desde celular externo — verificar')"><td class="tc2">14:00</td><td>Acceso remoto OC300, iHost y NVR desde celular externo — verificar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('UPS — autonomía ≥ 30 min — test con carga real')"><td class="tc2">15:00</td><td>UPS — autonomía ≥ 30 min — test con carga real</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Tráfico VLAN IoT en reposo — baseline documentado')"><td class="tc2">16:00</td><td>Tráfico VLAN IoT en reposo — baseline documentado</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — documentar resultados stress test')"><td class="tc2">17:00</td><td>Cierre — documentar resultados stress test</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 13 — Validaciones Técnicas + Experiencia con Cliente (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Recorrida técnica completa — validar cada ambiente con el checklist')"><td class="tc2">08:00</td><td>Recorrida técnica completa — validar cada ambiente con el checklist</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Sticky clients — saturación 2.4GHz — cross-control Alexa — verificar mitigados')"><td class="tc2">10:00</td><td>Sticky clients — saturación 2.4GHz — cross-control Alexa — verificar mitigados</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('LED dimmable verificado en todos los circuitos — sin parpadeo ni zumbido')"><td class="tc2">11:00</td><td>LED dimmable verificado en todos los circuitos — sin parpadeo ni zumbido</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Sesión con el cliente — &quot;Alexa, llegué&quot; en ≤ 5s — tecla física ≤ 1s')"><td class="tc2">14:00</td><td>Sesión con el cliente — "Alexa, llegué" en ≤ 5s — tecla física ≤ 1s</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cliente baja cortinas con un solo comando — ajusta brillo desde app')"><td class="tc2">14:30</td><td>Cliente baja cortinas con un solo comando — ajusta brillo desde app</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Invitado conectado a WiFi sin acceso a red domótica — verificar')"><td class="tc2">15:00</td><td>Invitado conectado a WiFi sin acceso a red domótica — verificar</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cliente ve cámaras desde celular fuera de la casa')"><td class="tc2">15:30</td><td>Cliente ve cámaras desde celular fuera de la casa</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Ninguna automatización se activa sola inesperadamente — test nocturno')"><td class="tc2">16:00</td><td>Ninguna automatización se activa sola inesperadamente — test nocturno</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre — lista de pendientes y ajustes para día 14')"><td class="tc2">17:00</td><td>Cierre — lista de pendientes y ajustes para día 14</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 14 — Documentación + Capacitación Cliente (8hs trabajadas)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Documento final: red, IPs, credenciales, nombres de dispositivos, escenas')"><td class="tc2">08:00</td><td>Documento final: red, IPs, credenciales, nombres de dispositivos, escenas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Hoja de emergencia plastificada — colocar en sala de máquinas')"><td class="tc2">09:00</td><td>Hoja de emergencia plastificada — colocar en sala de máquinas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Backup final iHost + export eWeLink + backup OC300')"><td class="tc2">10:00</td><td>Backup final iHost + export eWeLink + backup OC300</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Capacitación al cliente y personal de la casa — app eWeLink, Alexa, escenas')"><td class="tc2">11:00</td><td>Capacitación al cliente y personal de la casa — app eWeLink, Alexa, escenas</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Capacitación parte 2 — NVR Hikvision, acceso remoto, qué hacer ante fallas')"><td class="tc2">14:00</td><td>Capacitación parte 2 — NVR Hikvision, acceso remoto, qué hacer ante fallas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Calendario de mantenimiento trimestral — acordar con cliente')"><td class="tc2">15:00</td><td>Calendario de mantenimiento trimestral — acordar con cliente</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Recorrida final de entrega — firma de conformidad')"><td class="tc2">16:00</td><td>Recorrida final de entrega — firma de conformidad</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Cierre del proyecto — entrega de documentación completa')"><td class="tc2">17:00</td><td>Cierre del proyecto — entrega de documentación completa</td></tr>
+
+          <tr class="dh"><td colspan="2">Día 15 — Buffer / Imprevistos / Ajustes Finos (8hs disponibles)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Revisión de pendientes acumulados durante el proyecto')"><td class="tc2">08:00</td><td>Revisión de pendientes acumulados durante el proyecto</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Ajustes finos de RF tras días de uso real — potencia, canales')"><td class="tc2">09:00</td><td>Ajustes finos de RF tras días de uso real — potencia, canales</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Corrección de issues reportados por cliente o técnicos')"><td class="tc2">10:00</td><td>Corrección de issues reportados por cliente o técnicos</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Optimización de escenas según feedback real de uso')"><td class="tc2">11:00</td><td>Optimización de escenas según feedback real de uso</td></tr>
+          <tr><td class="tc2">13:00</td><td style="color:var(--yellow)">🍽 Almuerzo (13:00–14:00)</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Documentar lecciones aprendidas para próximos proyectos')"><td class="tc2">14:00</td><td>Documentar lecciones aprendidas para próximos proyectos</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Evaluación de expansiones futuras — sensores, automatizaciones avanzadas')"><td class="tc2">15:00</td><td>Evaluación de expansiones futuras — sensores, automatizaciones avanzadas</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('Actualizar nomenclatura final si hubo cambios de último momento')"><td class="tc2">16:00</td><td>Actualizar nomenclatura final si hubo cambios de último momento</td></tr>
+          <tr class="task-row" ondblclick="planRowClick('✅ Proyecto Bariloche — CERRADO')"><td class="tc2">17:00</td><td>✅ Proyecto Bariloche — CERRADO</td></tr>
+
+        </tbody></table>
+      </div>
+    </div>
+
+  <div class="section" id="snm" onclick="openNomenclatura()" style="cursor:pointer;">
+    <div class="sec-hdr" style="pointer-events:none;"><span class="sec-n">📋</span><span class="sec-t">Nomenclatura de Dispositivos</span><span class="sec-st"></span><span class="sec-chev" style="color:var(--accent)">↗</span></div>
+  </div>
+
+    <div class="section collapsed" id="s1">
       <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">01</span><span class="sec-t">Infraestructura Macro</span><span class="sec-st" id="st1">0/0</span><span class="sec-chev">▼</span></div>
       <div class="sec-body">
         <div class="sub"><div class="sub-t">Red Física</div><ul class="cl" data-s="1">
@@ -1140,45 +1352,6 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <li data-id="s9_08"><div class="cb"><span class="ci">✓</span></div><span class="it">Credenciales de acceso remoto testeadas desde celular fuera de la red</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         <li data-id="s9_09"><div class="cb"><span class="ci">✓</span></div><span class="it">Documento de emergencia incluye: IPs, pasos de reinicio, credenciales y contacto NIXA</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
       </ul></div>
-    </div>
-
-  <div class="section collapsed" id="s10">
-      <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">10</span><span class="sec-t">Plan de Implementación por Días</span><span class="sec-st" id="st10">0/0</span><span class="sec-chev">▼</span></div>
-      <div class="sec-body">
-        <table class="pt"><thead><tr><th>Hora</th><th>Tarea</th></tr></thead><tbody>
-          <tr class="dh"><td colspan="2">Día 1 — Infraestructura y Red</td></tr>
-          <tr><td class="tc2">08:00</td><td>Backup completo de configuración existente</td></tr>
-          <tr><td class="tc2">09:00</td><td>Configurar VLANs definitivas en OC300</td></tr>
-          <tr><td class="tc2">10:00</td><td>Configurar SSIDs IoT por zona (Z1, Z2, Z3)</td></tr>
-          <tr><td class="tc2">11:00</td><td>Asignar canales manuales — ajustar potencia RF por AP</td></tr>
-          <tr><td class="tc2">13:00</td><td>Almuerzo / Validación intermedia</td></tr>
-          <tr><td class="tc2">14:00</td><td>SSID Clientes con band steering — VLAN Invitados y portal cautivo</td></tr>
-          <tr><td class="tc2">16:00</td><td>Validar reglas de firewall entre VLANs</td></tr>
-          <tr><td class="tc2">17:00</td><td>Test de conectividad: un dispositivo IoT por zona — documentar mapa de red</td></tr>
-          <tr class="dh"><td colspan="2">Día 2 — Commissioning Mini-Dim ×40</td></tr>
-          <tr><td class="tc2">08:00</td><td>Empezar por Living y áreas comunes (alta visibilidad)</td></tr>
-          <tr><td class="tc2">—</td><td>Protocolo: encender → nombrar → verificar SSID → test dimmer → escenas de tecla</td></tr>
-          <tr><td class="tc2">17:00</td><td>Test de todas las luces comisionadas desde app</td></tr>
-          <tr class="dh"><td colspan="2">Día 3 — Commissioning Mini-RBS ×36</td></tr>
-          <tr><td class="tc2">08:00</td><td>Empezar por dormitorio principal</td></tr>
-          <tr><td class="tc2">—</td><td>Protocolo: conectar → nombrar → calibrar límites → parear tecla inalámbrica</td></tr>
-          <tr><td class="tc2">17:00</td><td>Test de escena "Bajar cortinas" completo</td></tr>
-          <tr class="dh"><td colspan="2">Día 4 — Termostatos y Automatizaciones</td></tr>
-          <tr><td class="tc2">08:00</td><td>Verificar termostatos — configurar setpoints por ambiente</td></tr>
-          <tr><td class="tc2">12:00</td><td>Programar escena "Llegué" en iHost (ejecución local)</td></tr>
-          <tr><td class="tc2">15:00</td><td>Configurar todas las escenas generales en eWeLink e iHost</td></tr>
-          <tr><td class="tc2">17:00</td><td>Test de cada escena con cliente presente</td></tr>
-          <tr class="dh"><td colspan="2">Día 5 — Alexa y Voz</td></tr>
-          <tr><td class="tc2">08:00</td><td>Skill eWeLink — grupos de habitación en Alexa</td></tr>
-          <tr><td class="tc2">10:00</td><td>Rutinas de voz para cada escena</td></tr>
-          <tr><td class="tc2">15:00</td><td>Test final con el cliente (validación de experiencia)</td></tr>
-          <tr class="dh"><td colspan="2">Día 6 — Stress Test y Documentación</td></tr>
-          <tr><td class="tc2">08:00</td><td>Stress test completo — corte WAN — corte de energía</td></tr>
-          <tr><td class="tc2">14:00</td><td>Recorrida final con el cliente habitación por habitación</td></tr>
-          <tr><td class="tc2">16:00</td><td>Entrega de documentación: red, IPs, credenciales, escenas</td></tr>
-          <tr><td class="tc2">17:00</td><td>Capacitación al cliente / personal de la casa</td></tr>
-        </tbody></table>
-      </div>
     </div>
 
   <div class="section collapsed" id="s11">
@@ -1490,9 +1663,9 @@ function updateStats(){
     const t=items.length, d=chk.length;
     // section header stat: id="stX" where X = sid without leading 's' for numeric, or full for sc/sr/s0
     const stkey = sid==='sc'||sid==='sr' ? sid : sid.replace('s','');
-    const st=document.getElementById('st'+stkey);   if(st)  st.textContent=d+'/'+t;
-    const np=document.getElementById('np'+sid);     if(np)  np.textContent=t>0?Math.round(d/t*100)+'%':'—';
-    const dnp=document.getElementById('dnp'+sid);   if(dnp) dnp.textContent=t>0?Math.round(d/t*100)+'%':'—';
+    const st=document.getElementById('st'+stkey);   if(st)  st.textContent=t>0?d+'/'+t:'';
+    const np=document.getElementById('np'+sid);     if(np)  np.textContent=t>0?Math.round(d/t*100)+'%':'';
+    const dnp=document.getElementById('dnp'+sid);   if(dnp) dnp.textContent=t>0?Math.round(d/t*100)+'%':'';
     total+=t; done+=d;
   });
   document.getElementById('gtotal').textContent=total;
@@ -1587,10 +1760,13 @@ function initComponents(){
       if(byEl)  byEl.textContent  = (entry.by && entry.qty > 0) ? '· '+entry.by : '';
     });
     const total = Object.values(data).reduce((a,v)=>a+(v.qty||0), 0);
+    const rows = document.querySelectorAll('#sc .comp-row[data-cid]').length;
     const npsc  = document.getElementById('npsc');
     const dnpsc = document.getElementById('dnpsc');
-    if(npsc)  npsc.textContent  = total > 0 ? total+' uds' : '—';
-    if(dnpsc) dnpsc.textContent = total > 0 ? total+' uds' : '—';
+    const stsc  = document.getElementById('stsc');
+    if(npsc)  npsc.textContent  = total > 0 ? total+' uds' : rows+' prod.';
+    if(dnpsc) dnpsc.textContent = total > 0 ? total+' uds' : rows+' prod.';
+    if(stsc)  stsc.textContent  = total > 0 ? total+' uds' : rows+' prod.';
   });
 
   db.ref('comp_notes').on('value', snap=>{
@@ -1658,6 +1834,8 @@ function initComponents(){
 const SECTIONS = [
   ['s0',  '00', 'Herramientas'],
   ['sc',  '●',  'Componentes'],
+  ['s10', '📅', 'Plan por Días'],
+  ['snm', '📋', 'Nomenclatura'],
   ['s1',  '01', 'Infraestructura'],
   ['s2',  '02', 'Commissioning'],
   ['s4',  '04', 'RF / WiFi'],
@@ -1668,7 +1846,6 @@ const SECTIONS = [
   ['s7',  '07', 'Alexa / Voz'],
   ['s8',  '08', 'Estabilidad IoT'],
   ['s9',  '09', 'Contingencia'],
-  ['s10', '10', 'Plan por Días'],
   ['s11', '11', 'Valid. Técnicas'],
   ['s12', '12', 'Valid. Experiencia'],
   ['s13', '13', 'Diagnóstico'],
@@ -1698,6 +1875,150 @@ function navTo(id){
   // scroll with offset for fixed header
   const top = sec.getBoundingClientRect().top + window.scrollY - 68;
   window.scrollTo({ top, behavior:'smooth' });
+}
+
+
+// ── NOMENCLATURA ────────────────────────────────────
+const NOM_ROOMS = [
+  { id:'H1', label:'Habitación 1', type:'hab' },
+  { id:'H2', label:'Habitación 2', type:'hab' },
+  { id:'H3', label:'Habitación 3', type:'hab' },
+  { id:'H4', label:'Habitación 4', type:'hab' },
+  { id:'H5', label:'Habitación 5', type:'hab' },
+  { id:'H6', label:'Habitación 6', type:'hab' },
+  { id:'H7', label:'Habitación 7', type:'hab' },
+  { id:'H8', label:'Habitación 8', type:'hab' },
+  { id:'HP', label:'Habitación Principal', type:'principal' },
+  { id:'LV', label:'Living', type:'comun' },
+  { id:'BA', label:'Bar', type:'comun' },
+  { id:'CO', label:'Cocina', type:'comun' },
+  { id:'QU', label:'Quincho', type:'comun' },
+  { id:'PL', label:'Playroom', type:'comun' },
+  { id:'SB', label:'Subsuelo / Cochera', type:'comun' },
+  { id:'LA', label:'Lavadero', type:'comun' },
+];
+
+const NOM_DEVICES_HAB = [
+  { key:'Dim-01', badge:'Mini-Dim', color:'#00c8f0', func:'Luz principal' },
+  { key:'Dim-02', badge:'Mini-Dim', color:'#00c8f0', func:'Luz ambiental / velador' },
+  { key:'RBS-01', badge:'Mini-RBS', color:'#fbbf24', func:'Cortina ventana 1' },
+  { key:'RBS-02', badge:'Mini-RBS', color:'#fbbf24', func:'Cortina ventana 2' },
+  { key:'R5-C',   badge:'R5',       color:'#4ade80', func:'Control cortinas (mantenido=completo, toque=pausa)' },
+  { key:'R5-L',   badge:'R5',       color:'#4ade80', func:'Control luces (mantenido=100%/10%, toque=gradual)' },
+  { key:'M5-01',  badge:'M5',       color:'#e8621a', func:'Interruptor luz principal' },
+  { key:'M5-02',  badge:'M5',       color:'#e8621a', func:'Interruptor luz ambiental' },
+  { key:'M5-03',  badge:'M5',       color:'#e8621a', func:'Escena Buen Día' },
+  { key:'M5-04',  badge:'M5',       color:'#e8621a', func:'Escena Buenas Noches' },
+  { key:'Termo',  badge:'Termostato', color:'#f87171', func:'Control climatización' },
+];
+
+const NOM_DEVICES_HP = [
+  { key:'Dim-01', badge:'Mini-Dim', color:'#00c8f0', func:'Luz principal dormitorio' },
+  { key:'Dim-02', badge:'Mini-Dim', color:'#00c8f0', func:'Luz ambiental dormitorio' },
+  { key:'Dim-03', badge:'Mini-Dim', color:'#00c8f0', func:'Luz vestidor' },
+  { key:'Dim-04', badge:'Mini-Dim', color:'#00c8f0', func:'Luz baño' },
+  { key:'RBS-01', badge:'Mini-RBS', color:'#fbbf24', func:'Cortina ventana 1' },
+  { key:'RBS-02', badge:'Mini-RBS', color:'#fbbf24', func:'Cortina vestidor' },
+  { key:'R5-C',   badge:'R5',       color:'#4ade80', func:'Control cortinas' },
+  { key:'R5-L',   badge:'R5',       color:'#4ade80', func:'Control luces' },
+  { key:'M5-01',  badge:'M5',       color:'#e8621a', func:'Interruptor luz principal' },
+  { key:'M5-02',  badge:'M5',       color:'#e8621a', func:'Interruptor luz ambiental' },
+  { key:'M5-03',  badge:'M5',       color:'#e8621a', func:'Escena Buen Día' },
+  { key:'M5-04',  badge:'M5',       color:'#e8621a', func:'Escena Buenas Noches' },
+  { key:'Termo',  badge:'Termostato', color:'#f87171', func:'Control climatización' },
+];
+
+let nomData = {};
+
+function openNomenclatura(){
+  document.getElementById('nom-modal').style.display = 'flex';
+  document.body.classList.add('no-scroll');
+  buildNomTable();
+  listenNomData();
+}
+
+function closeNomenclatura(){
+  document.getElementById('nom-modal').style.display = 'none';
+  document.body.classList.remove('no-scroll');
+  db.ref('nomenclatura').off();
+}
+
+function listenNomData(){
+  db.ref('nomenclatura').on('value', snap=>{
+    nomData = snap.val() || {};
+    // Update all inputs with Firebase values
+    document.querySelectorAll('.nom-name-input').forEach(inp=>{
+      const key = inp.dataset.nomkey;
+      if(nomData[key] !== undefined) inp.value = nomData[key];
+    });
+  });
+}
+
+function buildNomTable(){
+  const wrap = document.getElementById('nom-table-wrap');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  NOM_ROOMS.forEach(room=>{
+    const devices = room.id === 'HP' ? NOM_DEVICES_HP : NOM_DEVICES_HAB;
+    const isTbd = room.type === 'comun';
+
+    const sec = document.createElement('div');
+    sec.className = 'nom-section';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'nom-sec-hdr';
+    hdr.innerHTML = '<span class="nom-sec-num">'+room.id+'</span>' + room.label +
+      (isTbd ? ' <span style="font-family:DM Mono,monospace;font-size:.48rem;color:var(--dim);border:1px solid var(--dim);padding:.1rem .3rem;margin-left:.5rem;font-weight:400;">TBD</span>' : '');
+    hdr.onclick = ()=> sec.classList.toggle('nom-collapsed');
+    sec.appendChild(hdr);
+
+    if(!isTbd){
+      const table = document.createElement('table');
+      table.className = 'nom-table';
+      table.innerHTML = '<thead><tr><th>Nombre eWeLink</th><th>Tipo</th><th>Función</th><th>Grupo Alexa</th></tr></thead>';
+      const tbody = document.createElement('tbody');
+
+      devices.forEach(dev=>{
+        const defaultName = room.id + '-' + dev.key;
+        const nomKey = 'nom_' + room.id + '_' + dev.key.replace(/-/g,'_');
+        const currentVal = nomData[nomKey] || defaultName;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td><input class="nom-name-input" data-nomkey="'+nomKey+'" value="'+currentVal+'" placeholder="'+defaultName+'"/>' +
+          '<span class="nom-saved" id="saved_'+nomKey+'">✓ guardado</span></td>' +
+          '<td><span class="nom-badge" style="background:'+dev.color+'22;color:'+dev.color+';border:1px solid '+dev.color+'44;">'+dev.badge+'</span></td>' +
+          '<td style="color:var(--muted);font-size:.68rem;">'+dev.func+'</td>' +
+          '<td style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);">'+room.label+'</td>';
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      sec.appendChild(table);
+    } else {
+      const tbd = document.createElement('div');
+      tbd.style.cssText = 'padding:.65rem 1rem;font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);';
+      tbd.textContent = 'Dispositivos pendientes de definir para este ambiente.';
+      sec.appendChild(tbd);
+    }
+
+    wrap.appendChild(sec);
+  });
+
+  // Add save on blur for all inputs
+  wrap.querySelectorAll('.nom-name-input').forEach(inp=>{
+    inp.addEventListener('blur', ()=>{
+      if(!me) return;
+      const key = inp.dataset.nomkey;
+      const val = inp.value.trim();
+      if(!val) return;
+      db.ref('nomenclatura/'+key).set(val);
+      const savedEl = document.getElementById('saved_'+key);
+      if(savedEl){ savedEl.style.opacity='1'; setTimeout(()=>savedEl.style.opacity='0', 2000); }
+    });
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') inp.blur(); });
+  });
 }
 
 // ── ROOMS ───────────────────────────────────────────
@@ -1869,6 +2190,35 @@ function listenRoomTasks(){
       else  { nb.classList.remove('has-note'); nb.title=''; }
     });
   });
+}
+
+
+// ── PLAN SEARCH ────────────────────────────────────
+function planRowClick(taskText){
+  const term = taskText.toLowerCase().trim();
+  // Find best matching checklist item
+  let bestLi = null;
+  let bestScore = 0;
+  const termWords = term.split(/\s+/).filter(w => w.length > 3);
+
+  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
+    const liText = (li.querySelector('.it')?.textContent || '').toLowerCase();
+    let score = 0;
+    termWords.forEach(w=>{ if(liText.includes(w)) score++; });
+    if(score > bestScore){ bestScore=score; bestLi=li; }
+  });
+
+  if(bestLi && bestScore >= 2){
+    const sec = bestLi.closest('.section');
+    if(sec && sec.classList.contains('collapsed')) sec.classList.remove('collapsed');
+    setTimeout(()=>{
+      const top = bestLi.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior:'smooth' });
+      bestLi.style.transition = 'background .1s';
+      bestLi.style.background = 'rgba(0,200,240,.2)';
+      setTimeout(()=>{ bestLi.style.background=''; }, 1500);
+    }, 150);
+  }
 }
 
 // ── SEARCH ─────────────────────────────────────────
@@ -2093,6 +2443,9 @@ window.navTo=navTo;
 window.closeConfirm=closeConfirm;
 window.confirmUncheck=confirmUncheck;
 window.doSearch=doSearch;
+window.planRowClick=planRowClick;
+window.openNomenclatura=openNomenclatura;
+window.closeNomenclatura=closeNomenclatura;
 window.openItemInfo=openItemInfo;
 window.closeItemInfo=closeItemInfo;
 window.closeItemInfoBtn=closeItemInfoBtn;
@@ -2126,5 +2479,58 @@ window.closeInfo=function(){ document.getElementById('info-modal').style.display
 window.openDrawer=function(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawer-overlay').classList.add('open'); };
 window.closeDrawer=function(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); };
 </script>
+
+<!-- NOMENCLATURA MODAL -->
+<div id="nom-modal" style="display:none;position:fixed;inset:0;z-index:6000;background:var(--bg);flex-direction:column;">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(8,9,12,.97);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 1.25rem;gap:1rem;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);">NIXA</div>
+    <div style="width:1px;height:20px;background:var(--border2);"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;">Nomenclatura de Dispositivos</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:.75rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--accent);border:1px solid rgba(0,200,240,.2);padding:.2rem .5rem;">v1.0 Draft</div>
+      <button onclick="closeNomenclatura()" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.2rem .6rem;cursor:pointer;letter-spacing:.05em;">✕ CERRAR</button>
+    </div>
+  </div>
+  <div style="overflow-y:auto;flex:1;padding:1.5rem 1.25rem 4rem;max-width:960px;margin:0 auto;width:100%;">
+
+    <!-- FÓRMULA -->
+    <div style="background:var(--s1);border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:1.25rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;">Fórmula de nomenclatura</div>
+      <div style="background:var(--s2);border:1px solid var(--border2);padding:.65rem 1rem;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);">[Habitación] — [Tipo] — [Número]</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:.5rem;line-height:1.8;">
+        Ej: <span style="color:var(--text)">H1-Dim-01</span> → Hab. 1, Mini-Dim, unidad 1 &nbsp;|&nbsp;
+        <span style="color:var(--text)">HP-RBS-02</span> → Hab. Principal, Mini-RBS, unidad 2
+      </div>
+    </div>
+
+    <!-- R5 LOGIC -->
+    <div style="background:var(--s1);border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:1.25rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">Lógica de botones R5</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div style="background:var(--s2);border:1px solid var(--border);padding:.65rem .85rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:.5rem;">R5-C — Cortinas</div>
+          <div style="font-size:.7rem;color:var(--muted);line-height:1.8;">
+            <b style="color:var(--text)">Mantenido ↑</b> → Sube completa<br>
+            <b style="color:var(--text)">Mantenido ↓</b> → Baja completa<br>
+            <b style="color:var(--text)">Toque simple</b> → Pausa
+          </div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--border);padding:.65rem .85rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:.5rem;">R5-L — Luces</div>
+          <div style="font-size:.7rem;color:var(--muted);line-height:1.8;">
+            <b style="color:var(--text)">Mantenido ↑</b> → 100%<br>
+            <b style="color:var(--text)">Mantenido ↓</b> → 10%<br>
+            <b style="color:var(--text)">Toque simple ↑/↓</b> → Gradual
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEVICE TABLE -->
+    <div id="nom-table-wrap"></div>
+
+  </div>
+</div>
+
 </body>
-</html>
+  </html>
