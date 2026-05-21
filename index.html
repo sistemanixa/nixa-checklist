@@ -736,9 +736,14 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
       <div class="h-dot"></div>
       <span id="hme-name">—</span>
     </div>
-    <button id="info-btn" onclick="openInfo()" style="display:none;background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.2rem .5rem;cursor:pointer;letter-spacing:.05em;">INFO</button>
-    <button id="pdf-btn" onclick="exportPDF()" style="display:none;background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.2rem .5rem;cursor:pointer;letter-spacing:.05em;">PDF</button>
-    <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;padding:.2rem .45rem;cursor:pointer;">🌙</button>
+    <div style="position:relative;">
+      <button onclick="toggleMenu()" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem;padding:.18rem .5rem;cursor:pointer;">⋯</button>
+      <div id="h-menu" style="display:none;position:absolute;top:36px;right:0;background:var(--s1);border:1px solid var(--border2);min-width:150px;z-index:300;flex-direction:column;">
+        <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🌙  Modo claro</button>
+        <button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">ℹ️  Info proyecto</button>
+        <button id="pdf-btn" onclick="exportPDF();closeMenu()" style="display:none;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📄  Exportar PDF</button>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -2280,7 +2285,9 @@ function exportPDF(){
 // ── THEME ───────────────────────────────────────────
 function toggleTheme(){
   const isLight = document.body.classList.toggle('light-mode');
-  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = isLight ? '☀️  Modo oscuro' : '🌙  Modo claro';
+  closeMenu();
   try{ localStorage.setItem('nixa-theme', isLight ? 'light' : 'dark'); }catch(e){}
 }
 // restore theme on load
@@ -2496,6 +2503,21 @@ function planRowClick(taskText){
   }
 }
 
+// ── MENU ────────────────────────────────────────────
+function toggleMenu(){
+  const m = document.getElementById('h-menu');
+  m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+}
+function closeMenu(){
+  document.getElementById('h-menu').style.display = 'none';
+}
+document.addEventListener('click', e=>{
+  const menu = document.getElementById('h-menu');
+  if(menu && !menu.parentElement.contains(e.target)){
+    menu.style.display = 'none';
+  }
+});
+
 // ── FILTER ─────────────────────────────────────────
 let currentFilter = 'all';
 
@@ -2519,6 +2541,19 @@ function applyFilter(){
     if(currentFilter === 'critical') show = isCritical && !isChecked;
     li.classList.toggle('filter-hidden', !show);
   });
+
+  // Open sections that have visible items, collapse those with none
+  if(currentFilter !== 'all'){
+    document.querySelectorAll('.section').forEach(sec=>{
+      const visibleItems = sec.querySelectorAll('.cl li[data-id]:not(.filter-hidden)').length;
+      if(visibleItems > 0){
+        sec.classList.remove('collapsed');
+      }
+    });
+  } else {
+    // Reset — remove filter-hidden from all
+    document.querySelectorAll('.filter-hidden').forEach(el=> el.classList.remove('filter-hidden'));
+  }
 }
 
 // ── SEARCH ─────────────────────────────────────────
@@ -2736,6 +2771,8 @@ function closeItemInfoBtn(){
 
 // expose globals
 window.toggleTheme=toggleTheme;
+window.toggleMenu=toggleMenu;
+window.closeMenu=closeMenu;
 window.setFilter=setFilter;
 window.exportPDF=exportPDF;
 window.toggleAdmin=toggleAdmin;
@@ -2836,4 +2873,4 @@ window.closeDrawer=function(){ document.getElementById('drawer').classList.remov
 </div>
 
 </body>
-  </html>
+                                                                                                                                                                     </html>
