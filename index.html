@@ -1558,7 +1558,20 @@ const checkers = {};
 let pendingUncheck = null;
 
 function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); pendingUncheck=null; }
-function confirmUncheck(){ if(!pendingUncheck) return; db.ref('checklist/'+pendingUncheck).set(null); closeConfirm(); }
+function confirmUncheck(){
+  if(!pendingUncheck) return;
+  // Double-check ownership before writing
+  db.ref('checklist/'+pendingUncheck).once('value').then(snap=>{
+    const data = snap.val();
+    if(data && data.by && data.by !== me?.name && !isSup){
+      toast('<span>No tenés permiso para desmarcar este ítem</span>');
+      closeConfirm();
+      return;
+    }
+    db.ref('checklist/'+pendingUncheck).set(null);
+    closeConfirm();
+  });
+}
 
 function colorFor(n){ let h=0; for(const c of n) h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
 function initials(n){ return n.slice(0,2).toUpperCase(); }
@@ -1642,7 +1655,17 @@ document.querySelectorAll('.cl').forEach(ul=>{
     if(!li) return;
     const isChecked=li.classList.contains('checked');
     if(isChecked){
+      // Check who marked this item
+      const markedBy = li.querySelector('.ic')?.textContent?.trim() || '';
+      // Only allow uncheck if: admin OR same user who checked it
+      if(!isSup && markedBy && markedBy !== me.name){
+        toast('<span>Solo <b>'+markedBy+'</b> o el admin puede desmarcar este ítem</span>');
+        return;
+      }
       pendingUncheck = li.dataset.id;
+      // Update confirm modal text
+      const sub = document.getElementById('confirm-sub');
+      if(sub) sub.textContent = markedBy ? 'Marcado por ' + markedBy : 'Esta acción deshará el progreso registrado.';
       document.getElementById('confirm-modal').classList.add('open');
       return;
     }
@@ -3177,4 +3200,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                           </html>
+                                                                                                                                                                                                                                                                                                  </html>
