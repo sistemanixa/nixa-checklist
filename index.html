@@ -696,6 +696,13 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   </div>
 </div>
 
+<!-- CONNECTIVITY BANNER -->
+<div id="conn-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:8000;background:#1a0a00;border-top:1px solid var(--accent2);padding:.55rem 1.25rem;align-items:center;gap:.75rem;">
+  <span style="font-size:.85rem;">⚠️</span>
+  <span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent2);letter-spacing:.06em;">SIN CONEXIÓN — Los cambios no se están guardando</span>
+  <span style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-left:auto;">Reconectando...</span>
+</div>
+
 <!-- TOASTS -->
 <div id="toasts"></div>
 
@@ -1656,6 +1663,8 @@ function doLogin(){
   listenRoomTasks();
   initNotifications();
   initScrollSpy();
+  initConnectivity();
+  initSwipe();
   listenPhotos();
   updateDayCounter();
   if(isSup) initObs();
@@ -2021,13 +2030,12 @@ function buildNavFromSections(){
 }
 
 function navTo(id){
-  const sec = document.getElementById(id);
-  if(!sec) return;
-  // open if collapsed
-  if(sec.classList.contains('collapsed')) sec.classList.remove('collapsed');
-  // scroll with offset for fixed header
-  const top = sec.getBoundingClientRect().top + window.scrollY - 68;
-  window.scrollTo({ top, behavior:'smooth' });
+  const el = document.getElementById(id);
+  if(!el) return;
+  const offset = 130;
+  const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({ top: y, behavior:'smooth' });
+  closeDrawer?.();
 }
 
 
@@ -2875,25 +2883,90 @@ function listenPhotos(){
   });
 }
 
+// ── SWIPE GESTURES ──────────────────────────────────
+function initSwipe(){
+  let startX = null;
+  let startY = null;
+
+  document.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive:true });
+
+  document.addEventListener('touchend', e=>{
+    if(startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+
+    // Only horizontal swipes (dx > dy to avoid confusing with scroll)
+    if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5){
+      startX = null; startY = null;
+      return;
+    }
+
+    const drawer = document.getElementById('drawer');
+    const isOpen = drawer?.classList.contains('open');
+
+    if(dx > 0 && !isOpen) openDrawer();   // swipe → abre
+    if(dx < 0 &&  isOpen) closeDrawer();  // swipe ← cierra
+
+    startX = null; startY = null;
+  }, { passive:true });
+}
+
+// ── CONECTIVIDAD ────────────────────────────────────
+function initConnectivity(){
+  const banner = document.getElementById('conn-banner');
+  if(!banner) return;
+
+  function setOnline(){
+    banner.style.display = 'none';
+  }
+
+  function setOffline(){
+    banner.style.display = 'flex';
+  }
+
+  // Browser online/offline events
+  window.addEventListener('online',  setOnline);
+  window.addEventListener('offline', setOffline);
+
+  // Firebase connection state
+  db.ref('.info/connected').on('value', snap=>{
+    if(snap.val() === true) setOnline();
+    else setOffline();
+  });
+
+  // Set initial state
+  if(!navigator.onLine) setOffline();
+}
+
 // ── SCROLL SPY ──────────────────────────────────────
 function initScrollSpy(){
-  window.addEventListener('scroll', ()=>{
-    let currentId = '';
-    SECTIONS.forEach(([sid])=>{
-      const sec = document.getElementById(sid);
-      if(!sec) return;
-      const top = sec.getBoundingClientRect().top;
-      if(top <= 100) currentId = sid;
+  const links = document.querySelectorAll('#sidebar .nav-item, #drawer .nav-item');
+
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        links.forEach(a=>{
+          a.classList.toggle(
+            'nav-active',
+            a.getAttribute('href') === '#' + id
+          );
+        });
+      }
     });
-    // Update sidebar and drawer
-    ['#sidebar .nav-item', '#drawer .nav-item'].forEach(sel=>{
-      document.querySelectorAll(sel).forEach(a=>{
-        const href = a.getAttribute('href');
-        const isActive = href === '#'+currentId;
-        a.classList.toggle('nav-active', isActive);
-      });
-    });
-  }, { passive:true });
+  }, {
+    root: null,
+    rootMargin: '-25% 0px -60% 0px',
+    threshold: 0
+  });
+
+  SECTIONS.forEach(([sid])=>{
+    const sec = document.getElementById(sid);
+    if(sec) observer.observe(sec);
+  });
 }
 
 // ── MENU ────────────────────────────────────────────
@@ -3310,4 +3383,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-  </html>
+            </html>
