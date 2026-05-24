@@ -1778,16 +1778,22 @@ function doLogin(){
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
   if(isSup){
-    const ua = navigator.userAgent;
-    let device = 'PC / Escritorio';
-    if(/Android/.test(ua)){
-      const m = ua.match(/;\s*([^;)]+)\sBuild\//);
-      device = m ? m[1].trim() : 'Android';
-    } else if(/iPhone|iPad/.test(ua)){
-      device = /iPad/.test(ua) ? 'iPad' : 'iPhone';
-    }
     const devEl = document.getElementById('device-info');
-    if(devEl) devEl.textContent = '📱 '+device+' · '+new Date().toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'});
+    const timestamp = new Date().toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'});
+
+    // Try User-Agent Client Hints first (more accurate on Android Chrome)
+    if(navigator.userAgentData?.getHighEntropyValues){
+      navigator.userAgentData.getHighEntropyValues(['model','platform','platformVersion'])
+        .then(data=>{
+          const model = data.model || '';
+          const platform = data.platform || '';
+          const label = model ? `📱 ${model} (${platform})` : `💻 ${platform || 'Escritorio'}`;
+          if(devEl) devEl.textContent = label + ' · ' + timestamp;
+        })
+        .catch(()=> setDeviceFallback(devEl, timestamp));
+    } else {
+      setDeviceFallback(devEl, timestamp);
+    }
   }
   document.getElementById('stats-panel').style.display='block';
   document.getElementById('info-btn').style.display='block';
@@ -3046,6 +3052,22 @@ function listenPhotos(){
   });
 }
 
+function setDeviceFallback(devEl, timestamp){
+  const ua = navigator.userAgent;
+  let device = '💻 PC / Escritorio';
+  if(/Android/.test(ua)){
+    // Try to extract model from UA string
+    const m = ua.match(/;\s*([^;)]+)\sBuild\//) || ua.match(/Android[^;]*;\s*([^)]+)\)/);
+    const model = m ? m[1].trim() : 'Android';
+    device = '📱 '+model;
+  } else if(/iPhone/.test(ua)){
+    device = '📱 iPhone';
+  } else if(/iPad/.test(ua)){
+    device = '📱 iPad';
+  }
+  if(devEl) devEl.textContent = device + ' · ' + (timestamp || new Date().toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'}));
+}
+
 // ── BIOMETRÍA ────────────────────────────────────────
 async function biometricAvailable(){
   try{
@@ -3859,4 +3881,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+                                                                                                                                                                       </html>
