@@ -792,7 +792,9 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
       <div id="h-menu" style="display:none;position:absolute;top:36px;right:0;background:var(--s1);border:1px solid var(--border2);min-width:150px;z-index:300;flex-direction:column;">
         <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🌙  Modo claro</button>
         <button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">ℹ️  Info proyecto</button>
-        <button id="pdf-btn" onclick="exportPDF();closeMenu()" style="display:none;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📄  Exportar PDF</button>
+        <button id="pdf-btn" onclick="exportPDF();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📄  Exportar PDF</button>
+        <button id="devices-btn" onclick="openDevicesPanel();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📱  Dispositivos admin</button>
+        <button id="passwd-btn" onclick="openPasswdPanel();closeMenu()" style="display:none;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🔑  Cambiar clave</button>
       </div>
     </div>
   </div>
@@ -1730,13 +1732,25 @@ function toggleAdmin(chk){
     // Try biometric first
     biometricAvailable().then(hasBio=>{
       if(hasBio){
-        biometricAuth('Acceso admin NIXA').then(ok=>{
+    biometricAuth('Acceso admin NIXA').then(async ok=>{
           if(ok){
-            bioAdminVerified = true;
-            passWrap.style.display = 'none';
-            // Auto-login if name already set
-            const n = nameInput.value.trim();
-            if(n) doLogin();
+            // Check if device is registered in Firebase
+            const devId = getDeviceId();
+            const snap = await db.ref('admin_devices/'+devId).once('value');
+            if(snap.exists()){
+              // Known device — enter directly
+              bioAdminVerified = true;
+              passWrap.style.display = 'none';
+              const n = nameInput.value.trim();
+              if(n) doLogin();
+            } else {
+              // Unknown device — ask for password too
+              toast('<span>Dispositivo nuevo — ingresá la clave para registrarlo</span>');
+              bioAdminVerified = true; // biometric passed, still need pass
+              passWrap.style.display = 'block';
+              passWrap.dataset.registerDevice = 'true'; // flag to register on success
+              setTimeout(()=>{ passInput.focus(); }, 100);
+            }
           } else {
             // Fallback to PIN
             bioAdminVerified = false;
@@ -1756,7 +1770,7 @@ function toggleAdmin(chk){
   }
 }
 
-function doLogin(){
+async function doLogin(){
   const name = document.getElementById('lname').value.trim();
   const isAdminChecked = document.getElementById('admin-check').checked;
   const err = document.getElementById('lerr');
@@ -1764,10 +1778,29 @@ function doLogin(){
   if(!name){ err.textContent='Ingresá tu nombre para continuar.'; err.style.display='block'; return; }
   if(isAdminChecked){
     if(bioAdminVerified){
-      isSup = true; // biometric already verified
+      // Check if this was a new device that needed password verification
+      const passWrap = document.getElementById('admin-pass-wrap');
+      const needsRegister = passWrap?.dataset.registerDevice === 'true';
+      if(needsRegister){
+        // Verify password for new device
+        const pass = document.getElementById('admin-pass').value;
+        const storedPass = await db.ref('config/adminPass').once('value').then(s=>s.val()||ADMIN_PASS);
+        if(pass !== storedPass){ err.textContent='Clave incorrecta.'; err.style.display='block'; return; }
+        // Register device automatically
+        const devId = getDeviceId();
+        const model = await getDeviceModel();
+        await db.ref('admin_devices/'+devId).set({
+          label: model, model, by: name, ts: Date.now()
+        });
+        delete passWrap.dataset.registerDevice;
+        toast('<span>✓ Dispositivo registrado automáticamente</span>');
+      }
+      isSup = true;
     } else {
       const pass = document.getElementById('admin-pass').value;
-      if(pass !== ADMIN_PASS){ err.textContent='Clave incorrecta.'; err.style.display='block'; return; }
+      // Check Firebase first, fallback to hardcoded
+      const storedPass = await db.ref('config/adminPass').once('value').then(s=>s.val()||ADMIN_PASS);
+      if(pass !== storedPass){ err.textContent='Clave incorrecta.'; err.style.display='block'; return; }
       isSup = true;
     }
   }
@@ -1798,6 +1831,10 @@ function doLogin(){
   document.getElementById('stats-panel').style.display='block';
   document.getElementById('info-btn').style.display='block';
   document.getElementById('pdf-btn').style.display='block';
+  if(isSup){
+    document.getElementById('devices-btn').style.display='block';
+    document.getElementById('passwd-btn').style.display='block';
+  }
   if(isSup) {
     document.getElementById('sup-panel').style.display='block';
     db.ref('config/minVersion').once('value').then(snap=>{
@@ -3109,8 +3146,22 @@ async function adminAuth(callback){
   const hasBio = await biometricAvailable();
   if(hasBio){
     const ok = await biometricAuth('Acceso admin NIXA');
-    if(ok){ callback(); return; }
-    // If biometric fails, fallback to PIN
+    if(ok){
+      // Auto-register device if not already registered
+      const devId = getDeviceId();
+      const snap = await db.ref('admin_devices/'+devId).once('value');
+      if(!snap.exists()){
+        const model = await getDeviceModel();
+        await db.ref('admin_devices/'+devId).set({
+          label: model,
+          model,
+          by: 'auto',
+          ts: Date.now()
+        });
+      }
+      callback();
+      return;
+    }
     toast('<span>Biometría fallida — ingresá la clave</span>');
     pinFallback(callback);
   } else {
@@ -3371,6 +3422,132 @@ function listenGastos(){
 function deleteGasto(key){
   if(!isSup) return;
   db.ref('gastos/'+key).remove();
+}
+
+// ── DISPOSITIVOS ADMIN ──────────────────────────────
+let currentDeviceId = null;
+
+function getDeviceId(){
+  const ua = navigator.userAgent;
+  const lang = navigator.language;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const raw = ua + lang + tz + screen.width + screen.height;
+  let hash = 0;
+  for(let i=0; i<raw.length; i++){ hash = ((hash<<5)-hash)+raw.charCodeAt(i); hash |= 0; }
+  return 'dev_'+Math.abs(hash).toString(36);
+}
+
+function getDeviceModel(){
+  if(navigator.userAgentData?.getHighEntropyValues){
+    return navigator.userAgentData.getHighEntropyValues(['model','platform'])
+      .then(d=> d.model ? d.model+' ('+d.platform+')' : d.platform||'Escritorio')
+      .catch(()=> Promise.resolve(uaFallbackModel()));
+  }
+  return Promise.resolve(uaFallbackModel());
+}
+
+function uaFallbackModel(){
+  const ua = navigator.userAgent;
+  if(/Android/.test(ua)){ const m=ua.match(/;\s*([^;)]+)\sBuild\//); return m?m[1].trim():'Android'; }
+  if(/iPhone/.test(ua)) return 'iPhone';
+  if(/iPad/.test(ua)) return 'iPad';
+  return 'PC / Escritorio';
+}
+
+function openDevicesPanel(){
+  currentDeviceId = getDeviceId();
+  getDeviceModel().then(model=>{
+    const el = document.getElementById('current-device-info');
+    if(el) el.textContent = model+' · ID: '+currentDeviceId;
+  });
+  // Load current label if exists
+  db.ref('admin_devices/'+currentDeviceId).once('value').then(snap=>{
+    const d = snap.val();
+    const inp = document.getElementById('device-label');
+    if(inp && d?.label && d.label !== d.model) inp.value = d.label;
+  });
+  document.getElementById('devices-modal').style.display = 'flex';
+  loadDevicesList();
+}
+
+function saveDeviceLabel(){
+  const label = document.getElementById('device-label').value.trim();
+  if(!label){ toast('<span>Ingresá un nombre</span>'); return; }
+  getDeviceModel().then(model=>{
+    db.ref('admin_devices/'+currentDeviceId+'/label').set(label).then(()=>{
+      toast('<span>✓ Nombre guardado</span>');
+      loadDevicesList();
+    });
+  });
+}
+
+function closeDevicesPanel(){
+  document.getElementById('devices-modal').style.display = 'none';
+}
+
+function addCurrentDevice(){
+  const label = document.getElementById('device-label').value.trim();
+  if(!label){ toast('<span>Ingresá un nombre para el dispositivo</span>'); return; }
+  getDeviceModel().then(model=>{
+    db.ref('admin_devices/'+currentDeviceId).set({
+      label, model, by:me.name, ts:Date.now()
+    }).then(()=>{
+      document.getElementById('device-label').value = '';
+      toast('<span>Dispositivo registrado ✓</span>');
+      loadDevicesList();
+    });
+  });
+}
+
+function loadDevicesList(){
+  db.ref('admin_devices').once('value').then(snap=>{
+    const data = snap.val()||{};
+    const list = document.getElementById('devices-list');
+    if(!list) return;
+    const items = Object.entries(data);
+    if(!items.length){ list.innerHTML='<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin dispositivos registrados</div>'; return; }
+    list.innerHTML = items.map(([id,d])=>{
+      const isCurrent = id === currentDeviceId;
+      return `<div style="display:flex;align-items:center;gap:.6rem;padding:.5rem .4rem;border-bottom:1px solid var(--border);">
+        <span style="font-size:.85rem;">📱</span>
+        <div style="flex:1;">
+          <div style="font-size:.75rem;color:${isCurrent?'var(--accent)':'var(--text)'};font-weight:${isCurrent?'600':'400'};">${d.label}${isCurrent?' ← este':''}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--muted);">${d.model||''} · ${d.by||''}</div>
+        </div>
+        <button onclick="removeDevice('${id}')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:.65rem;">✕</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+function removeDevice(id){
+  db.ref('admin_devices/'+id).remove().then(()=>loadDevicesList());
+}
+
+// ── CAMBIAR CLAVE ───────────────────────────────────
+function openPasswdPanel(){
+  document.getElementById('passwd-modal').style.display = 'flex';
+}
+
+function closePasswdPanel(){
+  document.getElementById('passwd-modal').style.display = 'none';
+  ['pass-current','pass-new','pass-confirm'].forEach(id=>{ document.getElementById(id).value=''; });
+}
+
+function changePassword(){
+  const current = document.getElementById('pass-current').value;
+  const newPass  = document.getElementById('pass-new').value;
+  const confirm  = document.getElementById('pass-confirm').value;
+  db.ref('config/adminPass').once('value').then(snap=>{
+    const stored = snap.val() || ADMIN_PASS;
+    if(current !== stored){ toast('<span>Clave actual incorrecta</span>'); return; }
+    if(newPass.length < 6){ toast('<span>Mínimo 6 caracteres</span>'); return; }
+    if(newPass !== confirm){ toast('<span>Las claves no coinciden</span>'); return; }
+    db.ref('config/adminPass').set(newPass).then(()=>{
+      toast('<span>✓ Clave actualizada</span>');
+      closePasswdPanel();
+    });
+  });
 }
 
 // ── SWIPE GESTURES ──────────────────────────────────
@@ -3730,6 +3907,14 @@ function closeItemInfoBtn(){
 }
 
 // expose globals
+window.openDevicesPanel=openDevicesPanel;
+window.closeDevicesPanel=closeDevicesPanel;
+window.saveDeviceLabel=saveDeviceLabel;
+window.addCurrentDevice=addCurrentDevice;
+window.removeDevice=removeDevice;
+window.openPasswdPanel=openPasswdPanel;
+window.closePasswdPanel=closePasswdPanel;
+window.changePassword=changePassword;
 window.addGasto=addGasto;
 window.deleteGasto=deleteGasto;
 window.openBudgetEdit=openBudgetEdit;
@@ -3865,6 +4050,40 @@ window.closeDrawer=function(){
 </div>
 
 
+<!-- DEVICES MODAL -->
+<div id="devices-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.5rem 1.25rem 2rem;position:relative;">
+    <button onclick="closeDevicesPanel()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;">📱 Dispositivos Admin</div>
+
+    <!-- Add/edit current device label -->
+    <div style="background:var(--s2);border:1px solid var(--border);padding:.85rem;margin-bottom:1rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">Dispositivo actual</div>
+      <div id="current-device-info" style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-bottom:.65rem;">—</div>
+      <input id="device-label" type="text" placeholder="Nombre personalizado (ej: Z Fold7 Gonzalo)" maxlength="40" style="width:100%;background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.4rem .6rem;outline:none;margin-bottom:.5rem;"/>
+      <button onclick="saveDeviceLabel()" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;cursor:pointer;width:100%;">Guardar nombre</button>
+    </div>
+
+    <!-- Registered devices list -->
+    <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">Dispositivos registrados</div>
+    <div id="devices-list"></div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div id="passwd-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);padding:1.5rem 1.25rem;max-width:320px;width:90%;position:relative;">
+    <button onclick="closePasswdPanel()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;">🔑 Cambiar clave</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;">
+      <input id="pass-current" type="password" placeholder="Clave actual" style="background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.45rem .6rem;outline:none;width:100%;"/>
+      <input id="pass-new" type="password" placeholder="Nueva clave" style="background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.45rem .6rem;outline:none;width:100%;"/>
+      <input id="pass-confirm" type="password" placeholder="Confirmar nueva clave" style="background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.45rem .6rem;outline:none;width:100%;"/>
+      <button onclick="changePassword()" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.5rem;cursor:pointer;margin-top:.25rem;">Guardar nueva clave</button>
+    </div>
+  </div>
+</div>
+
 <!-- DAILY SUMMARY MODAL -->
 <div id="daily-modal" style="display:none;position:fixed;inset:0;z-index:5500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.5rem 1.25rem 2rem;position:relative;">
@@ -3881,4 +4100,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                       </html>
+  </html>
