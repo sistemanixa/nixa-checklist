@@ -709,7 +709,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <div id="game-modal" style="display:none;position:fixed;inset:0;z-index:9500;align-items:center;justify-content:center;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);">
   <div style="text-align:center;padding:2.5rem 2rem;max-width:340px;position:relative;">
     <div style="font-size:2.5rem;margin-bottom:1.25rem;animation:pulse 2s ease-in-out infinite;">⚡</div>
-    <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">¡Que comience<br>el proyecto!</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">¡Que comience<br>el juego!</div>
     <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:1.25rem;font-weight:300;">
       Cada ítem que marquen es un paso más hacia una casa que se controla sola. Gracias por ser parte de este proyecto — la dedicación de este equipo es lo que hace posible lo extraordinario.
     </div>
@@ -2993,11 +2993,14 @@ function listenGastos(){
     } else {
       list.innerHTML = items.map(([key, g])=>{
         total += g.monto || 0;
+        const catLabel = GASTO_CATS[g.cat] || g.cat;
+        const icon = catLabel.split(' ')[0];
+        const name = catLabel.split(' ').slice(1).join(' ');
         return `<div style="display:flex;align-items:center;gap:.6rem;padding:.45rem .4rem;border-bottom:1px solid var(--border);">
-          <span style="font-size:.75rem;flex-shrink:0;">${GASTO_CATS[g.cat]?.split(' ')[0]||'📦'}</span>
+          <span style="font-size:.85rem;flex-shrink:0;">${icon}</span>
           <div style="flex:1;min-width:0;">
-            <div style="font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.desc||GASTO_CATS[g.cat]||g.cat}</div>
-            <div style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--muted);">${g.date||''} · ${g.by||''} · ${GASTO_CATS[g.cat]||g.cat}</div>
+            <div style="font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.desc || name}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--muted);">${name} · ${g.date||''} · ${g.by||''}</div>
           </div>
           <span style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--accent);flex-shrink:0;">$${g.monto.toLocaleString('es-AR')}</span>
           ${isSup ? `<button onclick="deleteGasto('${key}')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:.65rem;flex-shrink:0;">✕</button>` : ''}
