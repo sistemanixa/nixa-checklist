@@ -794,7 +794,8 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
         <button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">ℹ️  Info proyecto</button>
         <button id="pdf-btn" onclick="exportPDF();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📄  Exportar PDF</button>
         <button id="devices-btn" onclick="openDevicesPanel();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">📱  Dispositivos admin</button>
-        <button id="passwd-btn" onclick="openPasswdPanel();closeMenu()" style="display:none;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🔑  Cambiar clave</button>
+        <button id="passwd-btn" onclick="openPasswdPanel();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🔑  Cambiar clave</button>
+        <button onclick="logout();closeMenu()" style="background:none;border:none;color:var(--red);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">⏻  Cerrar sesión</button>
       </div>
     </div>
   </div>
@@ -1736,7 +1737,7 @@ function toggleAdmin(chk){
   const passInput = document.getElementById('admin-pass');
 
   if(chk.checked){
-    if(!nameInput.value.trim()) nameInput.value = 'NIXA';
+    nameInput.value = 'NIXA';
     // Try biometric first
     biometricAvailable().then(hasBio=>{
       if(hasBio){
@@ -1779,7 +1780,10 @@ function toggleAdmin(chk){
 }
 
 async function doLogin(){
-  const name = document.getElementById('lname').value.trim();
+  const name = document.getElementById('lname').value.trim()
+    .split(' ')
+    .map(w=> w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
   const isAdminChecked = document.getElementById('admin-check').checked;
   const err = document.getElementById('lerr');
   err.style.display = 'none';
@@ -1813,6 +1817,9 @@ async function doLogin(){
     }
   }
   me = { name, role: isSup ? 'Administrador' : 'Integrador', color: colorFor(name) };
+  try{
+    sessionStorage.setItem('nixa-session', JSON.stringify({ name, isSup }));
+  }catch(e){}
   try{ localStorage.setItem('nixa-username', name); }catch(e){}
   // Registrar login en Firebase
   db.ref('logins').push({
@@ -2097,6 +2104,20 @@ window.addEventListener('load',()=>{
   // Mostrar login después de 1 segundo siempre
   setTimeout(()=>{
     clearTimeout(emergencyTimer);
+
+    // Restaurar sesión si existe
+    try{
+      const saved = sessionStorage.getItem('nixa-session');
+      if(saved){
+        const s = JSON.parse(saved);
+        isSup = s.isSup || false;
+        document.getElementById('lname').value = isSup ? 'NIXA' : (s.name || '');
+        document.getElementById('loading').style.display='none';
+        doLogin();
+        return;
+      }
+    }catch(e){}
+
     document.getElementById('loading').style.display='none';
     document.getElementById('login').style.display='flex';
     updateStats();
@@ -3452,6 +3473,11 @@ function deleteGasto(key){
   db.ref('gastos/'+key).remove();
 }
 
+function logout(){
+  try{ sessionStorage.removeItem('nixa-session'); }catch(e){}
+  location.reload();
+}
+
 // ── WHATSAPP NOTIFICATIONS ──────────────────────────
 const WA_PHONE = '5492235591464';
 const WA_KEY   = '8672887';
@@ -3492,22 +3518,26 @@ function renderDashboard(){
       .filter(l=> filter==='today' ? l.date===today : true)
       .sort((a,b)=> b.ts-a.ts);
 
-    // Count per person
+    // Count per person - normalize names
     const people = {};
+    const normName = n => n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+
     Object.values(logins).forEach(l=>{
-      if(!people[l.name]) people[l.name] = { logins:0, lastLogin:'—', role: l.role };
-      people[l.name].logins++;
-      if(!people[l.name].lastTs || l.ts > people[l.name].lastTs){
-        people[l.name].lastTs = l.ts;
-        people[l.name].lastLogin = l.date+' '+l.time;
+      const name = normName(l.name||'');
+      if(!people[name]) people[name] = { logins:0, lastLogin:'—', role: l.role };
+      people[name].logins++;
+      if(!people[name].lastTs || l.ts > people[name].lastTs){
+        people[name].lastTs = l.ts;
+        people[name].lastLogin = l.date+' '+l.time;
       }
     });
 
     // Count checks per person
     Object.values(checks).forEach(c=>{
       if(!c?.by) return;
-      if(!people[c.by]) people[c.by] = { logins:0, lastLogin:'—', role:'Integrador' };
-      people[c.by].checks = (people[c.by].checks||0)+1;
+      const name = normName(c.by);
+      if(!people[name]) people[name] = { logins:0, lastLogin:'—', role:'Integrador' };
+      people[name].checks = (people[name].checks||0)+1;
     });
 
     // Total stats
@@ -4090,6 +4120,7 @@ window.showDailySummary=showDailySummary;
 window.closeDailySummary=closeDailySummary;
 window.saveObs=saveObs;
 window.toggleTheme=toggleTheme;
+window.logout=logout;
 window.toggleMenu=toggleMenu;
 window.closeMenu=closeMenu;
 window.setFilter=setFilter;
@@ -4285,4 +4316,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-            </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
