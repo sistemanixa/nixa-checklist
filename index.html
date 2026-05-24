@@ -1938,7 +1938,8 @@ function listenChecklist(){
             sendWhatsApp(`✅ NIXA Bariloche\n🔴 Crítico completado\n👤 ${e.by}\n📋 ${li.querySelector('.it').textContent.slice(0,80)}\n📂 ${sec}`);
           }
         }
-        checkers[e.by]=(checkers[e.by]||0)+1;
+        const normBy = e.by ? e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ') : e.by;
+        checkers[normBy]=(checkers[normBy]||0)+1;
       } else {
         li.classList.remove('checked');
         const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
@@ -4324,4 +4325,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                     </html>
+                                </html>
