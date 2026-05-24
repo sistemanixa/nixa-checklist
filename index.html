@@ -2921,7 +2921,7 @@ function saveObs(){
 }
 
 // ── RESUMEN DEL DÍA ─────────────────────────────────
-function showDailySummary(){
+async function showDailySummary(){
   const now = new Date();
   const today = now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   const total = parseInt(document.getElementById('gtotal').textContent)||0;
@@ -2929,15 +2929,23 @@ function showDailySummary(){
   const pct   = total>0?Math.round(done/total*100):0;
   const crit  = parseInt(document.getElementById('sp-crit').textContent)||0;
 
-  // Items completed today
+  // Items completed today — fetch from Firebase with timestamp
   const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  const todayTs = todayStart.getTime();
   const todayItems = [];
+
+  const checkSnap = await db.ref('checklist').once('value');
+  const checkData = checkSnap.val() || {};
+
   document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
-    const timeEl = li.querySelector('.itime');
-    const byEl   = li.querySelector('.ic');
-    const text   = li.querySelector('.it')?.textContent?.trim()||'';
-    const sec    = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
-    todayItems.push({ text, by: byEl?.textContent||'', time: timeEl?.textContent||'', sec });
+    const id    = li.dataset.id;
+    const entry = checkData[id];
+    // Only include if marked today
+    if(entry && entry.ts && entry.ts >= todayTs){
+      const text = li.querySelector('.it')?.textContent?.trim()||'';
+      const sec  = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
+      todayItems.push({ text, by: entry.by||'', time: new Date(entry.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), sec });
+    }
   });
 
   // Techs active today
@@ -4316,4 +4324,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+                                                                                                                                                                                                                                     </html>
