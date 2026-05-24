@@ -170,6 +170,8 @@ body{padding-top:56px;}
 #photo-lightbox img{max-width:92vw;max-height:80vh;object-fit:contain;border:1px solid var(--border2);}
 #photo-lightbox-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;}
 #photo-lightbox-del{background:rgba(248,113,113,.1);border:1px solid var(--red);color:var(--red);font-family:'DM Mono',monospace;font-size:.6rem;padding:.3rem .8rem;cursor:pointer;letter-spacing:.05em;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+
 /* ── FILTER BUTTONS ──────────────────── */
 .filter-btn{background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.28rem .65rem;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
 .filter-btn:hover{border-color:var(--accent);color:var(--text);}
@@ -701,6 +703,21 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
   <span style="font-size:.85rem;">⚠️</span>
   <span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent2);letter-spacing:.06em;">SIN CONEXIÓN — Los cambios no se están guardando</span>
   <span style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-left:auto;">Reconectando...</span>
+</div>
+
+<!-- GAME START MODAL -->
+<div id="game-modal" style="display:none;position:fixed;inset:0;z-index:9500;align-items:center;justify-content:center;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);">
+  <div style="text-align:center;padding:2.5rem 2rem;max-width:340px;position:relative;">
+    <div style="font-size:2.5rem;margin-bottom:1.25rem;animation:pulse 2s ease-in-out infinite;">⚡</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">¡Que comience<br>el proyecto!</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:1.25rem;font-weight:300;">
+      Cada ítem que marquen es un paso más hacia una casa que se controla sola. Gracias por ser parte de este proyecto — la dedicación de este equipo es lo que hace posible lo extraordinario.
+    </div>
+    <div style="width:40px;height:1px;background:var(--border2);margin:0 auto 1.25rem;"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;">NIXA · Bariloche 2026</div>
+    <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:2rem;">15 días · 226 ítems · sin red de contención</div>
+    <button onclick="document.getElementById('game-modal').style.display='none'" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:.65rem 2rem;cursor:pointer;width:100%;">LET'S GO →</button>
+  </div>
 </div>
 
 <!-- TOASTS -->
@@ -1548,6 +1565,40 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
       </div>
     </div>
 
+  <!-- GASTOS — solo admin -->
+  <div class="section collapsed" id="sgastos" style="display:none;">
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">💰</span><span class="sec-t">Gastos del Proyecto</span><span class="sec-st"></span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box">Solo visible para admin. Los gastos se guardan por fecha en Firebase.</div>
+
+      <!-- Formulario nuevo gasto -->
+      <div style="background:var(--s2);border:1px solid var(--border);padding:1rem;margin-bottom:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">Registrar gasto</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+          <select id="gasto-cat" style="background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.45rem .6rem;outline:none;">
+            <option value="">— Categoría —</option>
+            <option value="herramientas">🔧 Herramientas</option>
+            <option value="combustible">⛽ Combustible</option>
+            <option value="comida">🍽 Comida</option>
+            <option value="generales">📦 Gastos generales</option>
+          </select>
+          <input id="gasto-monto" type="number" placeholder="Monto $" style="background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.45rem .6rem;outline:none;"/>
+        </div>
+        <input id="gasto-desc" type="text" placeholder="Descripción del gasto..." maxlength="120" style="width:100%;background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.45rem .6rem;outline:none;margin-bottom:.5rem;"/>
+        <button onclick="addGasto()" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;cursor:pointer;width:100%;">+ Registrar</button>
+      </div>
+
+      <!-- Lista de gastos -->
+      <div id="gastos-list"></div>
+
+      <!-- Total -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem .5rem;border-top:1px solid var(--border);margin-top:.5rem;">
+        <span style="font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Total proyecto</span>
+        <span id="gastos-total" style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--accent);font-weight:700;">$0</span>
+      </div>
+    </div>
+  </div>
+
   </div><!-- content -->
 </div><!-- main -->
 
@@ -1668,7 +1719,18 @@ function doLogin(){
   listenPhotos();
   updateDayCounter();
   if(isSup) initObs();
+  if(isSup) initGastos();
   setTimeout(()=>{ quiet=false; }, 1800);
+
+  // 🎮 Cartel de inicio — solo del 23/05 al 25/05 hasta las 10:00
+  const now = new Date();
+  const start  = new Date('2026-05-23T00:00:00');
+  const end    = new Date('2026-05-25T10:00:00');
+  if(now >= start && now <= end){
+    setTimeout(()=>{
+      document.getElementById('game-modal').style.display = 'flex';
+    }, 800);
+  }
 }
 
 // ── SECTION TOGGLE ─────────────────────────────────
@@ -2883,6 +2945,75 @@ function listenPhotos(){
   });
 }
 
+// ── GASTOS ──────────────────────────────────────────
+const GASTO_CATS = {
+  herramientas: '🔧 Herramientas',
+  combustible:  '⛽ Combustible',
+  comida:       '🍽 Comida',
+  generales:    '📦 Gastos generales',
+};
+
+function initGastos(){
+  // Show gastos section only for admin
+  const sec = document.getElementById('sgastos');
+  if(sec) sec.style.display = 'block';
+  listenGastos();
+}
+
+function addGasto(){
+  const cat   = document.getElementById('gasto-cat').value;
+  const monto = parseFloat(document.getElementById('gasto-monto').value);
+  const desc  = document.getElementById('gasto-desc').value.trim();
+  if(!cat || !monto || monto <= 0){ toast('<span>Completá categoría y monto</span>'); return; }
+  const key = 'g_'+Date.now();
+  db.ref('gastos/'+key).set({
+    cat, monto, desc, by: me.name,
+    date: new Date().toLocaleDateString('es-AR'),
+    ts: Date.now()
+  }).then(()=>{
+    document.getElementById('gasto-cat').value   = '';
+    document.getElementById('gasto-monto').value = '';
+    document.getElementById('gasto-desc').value  = '';
+    toast('<span>Gasto registrado ✓</span>');
+  });
+}
+
+function listenGastos(){
+  db.ref('gastos').on('value', snap=>{
+    const data = snap.val() || {};
+    const list = document.getElementById('gastos-list');
+    const totalEl = document.getElementById('gastos-total');
+    if(!list) return;
+
+    const items = Object.entries(data).sort((a,b)=> b[1].ts - a[1].ts);
+    let total = 0;
+
+    if(!items.length){
+      list.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin gastos registrados</div>';
+    } else {
+      list.innerHTML = items.map(([key, g])=>{
+        total += g.monto || 0;
+        return `<div style="display:flex;align-items:center;gap:.6rem;padding:.45rem .4rem;border-bottom:1px solid var(--border);">
+          <span style="font-size:.75rem;flex-shrink:0;">${GASTO_CATS[g.cat]?.split(' ')[0]||'📦'}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.desc||GASTO_CATS[g.cat]||g.cat}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--muted);">${g.date||''} · ${g.by||''} · ${GASTO_CATS[g.cat]||g.cat}</div>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--accent);flex-shrink:0;">$${g.monto.toLocaleString('es-AR')}</span>
+          ${isSup ? `<button onclick="deleteGasto('${key}')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:.65rem;flex-shrink:0;">✕</button>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    if(totalEl) totalEl.textContent = '$'+total.toLocaleString('es-AR');
+  });
+}
+
+function deleteGasto(key){
+  if(!isSup) return;
+  db.ref('gastos/'+key).remove();
+}
+
 // ── SWIPE GESTURES ──────────────────────────────────
 function initSwipe(){
   let startX = null;
@@ -3240,6 +3371,8 @@ function closeItemInfoBtn(){
 }
 
 // expose globals
+window.addGasto=addGasto;
+window.deleteGasto=deleteGasto;
 window.togglePhoto=togglePhoto;
 window.closeLightbox=closeLightbox;
 window.deleteCurrentPhoto=deleteCurrentPhoto;
