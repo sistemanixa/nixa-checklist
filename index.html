@@ -826,8 +826,9 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <div id="sup-panel">
   <div class="sup-inner">
 
-    <!-- CONTADOR DE DÍAS -->
+    <!-- ESTADO DEL PROYECTO -->
     <div class="sup-title">Estado del proyecto</div>
+    <div id="device-info" style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--dim);margin-bottom:.75rem;line-height:1.8;"></div>
     <div id="day-counter" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem;"></div>
 
     <!-- OBSERVACIONES DEL DÍA -->
@@ -1681,7 +1682,7 @@ let me        = null;
 let isSup     = false;
 let quiet     = true;
 const APP_VERSION = '1.0';
-const ADMIN_PASS = '1734';
+const ADMIN_PASS = '17346382';
 const COLORS  = ['#00c8f0','#e8621a','#4ade80','#fbbf24','#f87171','#a78bfa','#fb7185','#34d399'];
 const checkers = {};
 let pendingUncheck = null;
@@ -1776,6 +1777,18 @@ function doLogin(){
   window.scrollTo(0,0);
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
+  if(isSup){
+    const ua = navigator.userAgent;
+    let device = 'PC / Escritorio';
+    if(/Android/.test(ua)){
+      const m = ua.match(/;\s*([^;)]+)\sBuild\//);
+      device = m ? m[1].trim() : 'Android';
+    } else if(/iPhone|iPad/.test(ua)){
+      device = /iPad/.test(ua) ? 'iPad' : 'iPhone';
+    }
+    const devEl = document.getElementById('device-info');
+    if(devEl) devEl.textContent = '📱 '+device+' · '+new Date().toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'});
+  }
   document.getElementById('stats-panel').style.display='block';
   document.getElementById('info-btn').style.display='block';
   document.getElementById('pdf-btn').style.display='block';
@@ -3037,28 +3050,35 @@ function listenPhotos(){
 async function biometricAvailable(){
   try{
     if(!window.PublicKeyCredential) return false;
-    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-    return available;
+    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
   }catch(e){ return false; }
 }
 
-async function biometricAuth(reason){
+async function biometricAuth(){
   try{
-    // Use credential get with userVerification required
+    // Register a temporary credential to trigger biometric
     const challenge = new Uint8Array(32);
     crypto.getRandomValues(challenge);
-    const assertion = await navigator.credentials.get({
+    const userId = new Uint8Array(16);
+    crypto.getRandomValues(userId);
+
+    const cred = await navigator.credentials.create({
       publicKey:{
         challenge,
+        rp:{ name:'NIXA Checklist', id: window.location.hostname },
+        user:{ id: userId, name:'admin', displayName:'Admin NIXA' },
+        pubKeyCredParams:[{ type:'public-key', alg:-7 },{ type:'public-key', alg:-257 }],
+        authenticatorSelection:{
+          authenticatorAttachment:'platform',
+          userVerification:'required',
+          residentKey:'discouraged',
+        },
         timeout: 60000,
-        userVerification: 'required',
-        rpId: window.location.hostname || 'localhost',
-        allowCredentials: [],
       }
     });
-    return !!assertion;
+    return !!cred;
   }catch(e){
-    // User cancelled or failed
+    // NotAllowedError = user cancelled, everything else = not supported
     return false;
   }
 }
@@ -3078,7 +3098,7 @@ async function adminAuth(callback){
 
 function pinFallback(callback){
   const pin = prompt('Clave de administrador:');
-  if(pin === '1734') callback();
+  if(pin === ADMIN_PASS) callback();
   else if(pin !== null) toast('<span>Clave incorrecta</span>');
 }
 
@@ -3839,4 +3859,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                                                                                                                                                          </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
