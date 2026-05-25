@@ -1928,18 +1928,19 @@ function listenChecklist(){
         const tm=li.querySelector('.im .itime');
         if(nm) nm.textContent=e.by||'—';
         if(tm) tm.textContent=fmtTime(e.ts);
-        if(!was && e.by!==me?.name){
+        // Only notify if: not initial load, genuinely new, and by someone else
+        if(!was && initialLoadDone && !initialChecks.has(id) && e.by!==me?.name){
           toast('<b>'+e.by+'</b> <span>completó: '+li.querySelector('.it').textContent.slice(0,40)+'…</span>');
-          // Push notif for critical items
           const isCrit = !!li.querySelector('.tag.tc');
           if(isCrit){
             sendNotif('✅ NIXA — Ítem Crítico Completado',
               e.by + ': ' + li.querySelector('.it').textContent.slice(0,60));
-            // WhatsApp notification for critical items
             const sec = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
             sendWhatsApp(`✅ NIXA Bariloche\n🔴 Crítico completado\n👤 ${e.by}\n📋 ${li.querySelector('.it').textContent.slice(0,80)}\n📂 ${sec}`);
           }
         }
+        // Register as initial check on first load
+        if(!initialLoadDone) initialChecks.add(id);
         const normBy = e.by ? e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ') : e.by;
         checkers[normBy]=(checkers[normBy]||0)+1;
       } else {
@@ -1948,6 +1949,10 @@ function listenChecklist(){
         const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
       }
     });
+    // Mark initial load as done after first snapshot
+    if(!initialLoadDone){
+      setTimeout(()=>{ initialLoadDone=true; }, 500);
+    }
     updateStats();
     if(currentFilter !== 'all') applyFilter();
   });
@@ -2049,11 +2054,11 @@ function updateStats(){
     else {
       cl.innerHTML=sorted.map(([name,count])=>{
         const pct = totalItems > 0 ? Math.round(count/totalItems*100) : 0;
-        return '<div class="sup-checker-row">'+
+        return '<div class="sup-checker-row" onclick="showTechChecks(\''+name+'\')" style="cursor:pointer;border-radius:2px;transition:background .12s;" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'\'">'+
           '<div style="flex:1;">'+
             '<div style="display:flex;justify-content:space-between;margin-bottom:.3rem;">'+
               '<span class="sup-checker-name">'+name+'</span>'+
-              '<span class="sup-checker-count">'+count+' ítems · '+pct+'%</span>'+
+              '<span class="sup-checker-count">'+count+' ítems · '+pct+'% <span style="color:var(--dim);font-size:.45rem;">▶</span></span>'+
             '</div>'+
             '<div style="height:3px;background:var(--border2);border-radius:2px;">'+
               '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s;"></div>'+
@@ -2856,7 +2861,7 @@ function planRowClick(taskText){
 }
 
 // ── CONTADOR DE DÍAS ────────────────────────────────
-const PROJECT_START = new Date('2026-05-23'); // Primer día en Bariloche
+const PROJECT_START = new Date('2026-05-25'); // Primer día en Bariloche
 const PROJECT_DAYS  = 15;
 
 function updateDayCounter(){
@@ -3498,6 +3503,50 @@ function sendWhatsApp(msg){
   fetch(url).catch(()=>{}); // fire and forget
 }
 
+// ── TECH CHECKS ─────────────────────────────────────
+function showTechChecks(techName){
+  const modal = document.getElementById('tech-modal');
+  const title = document.getElementById('tech-modal-title');
+  const list  = document.getElementById('tech-modal-list');
+  if(!modal) return;
+
+  title.textContent = '✓ Checks de ' + techName;
+
+  const items = [];
+  document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
+    const by = li.querySelector('.ic')?.textContent?.trim()||'';
+    const normBy = by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+    if(normBy !== techName) return;
+    const text = li.querySelector('.it')?.textContent?.trim()||'';
+    const time = li.querySelector('.itime')?.textContent?.trim()||'';
+    const sec  = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
+    const isCrit = !!li.querySelector('.tag.tc');
+    items.push({ text, time, sec, isCrit, id: li.dataset.id });
+  });
+
+  if(!items.length){
+    list.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin ítems completados</div>';
+  } else {
+    list.innerHTML = items.map(item=>`
+      <div onclick="closeTechChecks();searchGoTo('${item.id}')" style="display:flex;align-items:flex-start;gap:.6rem;padding:.45rem .4rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+        <span style="color:var(--green);font-size:.8rem;flex-shrink:0;">✓</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.73rem;color:var(--text);line-height:1.4;">${item.text}${item.isCrit ? ' <span style="font-family:DM Mono,monospace;font-size:.44rem;color:var(--red);border:1px solid var(--red);padding:.05rem .2rem;">CRÍTICO</span>' : ''}</div>
+          <div style="font-family:\'DM Mono\',monospace;font-size:.48rem;color:var(--muted);margin-top:.15rem;">${item.sec}${item.time ? ' · '+item.time : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  modal.style.display = 'flex';
+  document.body.classList.add('no-scroll');
+}
+
+function closeTechChecks(){
+  document.getElementById('tech-modal').style.display = 'none';
+  document.body.classList.remove('no-scroll');
+}
+
 // ── DASHBOARD ────────────────────────────────────────
 let dashData = { logins: {}, checklist: {} };
 
@@ -4103,6 +4152,8 @@ function closeItemInfoBtn(){
 }
 
 // expose globals
+window.showTechChecks=showTechChecks;
+window.closeTechChecks=closeTechChecks;
 window.openDashboard=openDashboard;
 window.closeDashboard=closeDashboard;
 window.renderDashboard=renderDashboard;
@@ -4251,6 +4302,15 @@ window.closeDrawer=function(){
   </div>
 </div>
 
+
+<!-- TECH CHECKS MODAL -->
+<div id="tech-modal" style="display:none;position:fixed;inset:0;z-index:6500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:1.25rem 1.1rem 2rem;position:relative;">
+    <button onclick="closeTechChecks()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
+    <div id="tech-modal-title" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:1rem;"></div>
+    <div id="tech-modal-list" style="display:flex;flex-direction:column;gap:.2rem;"></div>
+  </div>
+</div>
 
 <!-- DASHBOARD MODAL -->
 <div id="dashboard-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);overflow-y:auto;">
