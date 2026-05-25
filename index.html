@@ -710,13 +710,13 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <div id="game-modal" style="display:none;position:fixed;inset:0;z-index:9500;align-items:center;justify-content:center;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);">
   <div style="text-align:center;padding:2.5rem 2rem;max-width:340px;position:relative;">
     <div style="font-size:2.5rem;margin-bottom:1.25rem;animation:pulse 2s ease-in-out infinite;">⚡</div>
-    <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">¡Que comience<br>el juego!</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">Proyecto<br>completado.</div>
     <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:1.25rem;font-weight:300;">
-      Cada ítem que marquen es un paso más hacia una casa que se controla sola. Gracias por ser parte de este proyecto — la dedicación de este equipo es lo que hace posible lo extraordinario.
+      15 días. 226 ítems. Cero excusas.<br>Gracias a cada técnico que dejó todo en campo — esto no es solo un checklist, es el resultado del esfuerzo de un equipo extraordinario.
     </div>
     <div style="width:40px;height:1px;background:var(--border2);margin:0 auto 1.25rem;"></div>
     <div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;">NIXA · Bariloche 2026</div>
-    <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:2rem;">15 días · 226 ítems · sin red de contención</div>
+    <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:2rem;">Domótica Premium · Entregado</div>
     <button onclick="document.getElementById('game-modal').style.display='none'" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:.65rem 2rem;cursor:pointer;width:100%;">LET'S GO →</button>
   </div>
 </div>
@@ -1872,11 +1872,11 @@ async function doLogin(){
   if(isSup) initGastos();
   setTimeout(()=>{ quiet=false; }, 1800);
 
-  // 🎮 Cartel de inicio — solo del 23/05 al 25/05 hasta las 10:00
-  const now = new Date();
-  const start  = new Date('2026-05-23T00:00:00');
-  const end    = new Date('2026-05-25T10:00:00');
-  if(now >= start && now <= end){
+  // 🎉 Cartel de cierre — último día del proyecto (8 de junio 2026)
+  const now2 = new Date();
+  const closeStart = new Date('2026-06-08T17:00:00');
+  const closeEnd   = new Date('2026-06-09T23:59:00');
+  if(now2 >= closeStart && now2 <= closeEnd){
     setTimeout(()=>{
       document.getElementById('game-modal').style.display = 'flex';
     }, 800);
