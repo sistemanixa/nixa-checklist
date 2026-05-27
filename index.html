@@ -1205,7 +1205,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
           <li data-id="s4_07"><div class="cb"><span class="ci">✓</span></div><span class="it">Auto-channel DESHABILITADO en todos los APs para SSID IoT</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_07',event)" title="Foto">📷</button><button class="info-btn" onclick="openItemInfo('s4_07',event)" title="Cómo hacerlo">i</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
         </ul></div>
         <div class="sub"><div class="sub-t">SSIDs — Arquitectura Definitiva</div><ul class="cl" data-s="4">
-          <li data-id="s4_08"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_IoT_PB_Pasillo → 2.4 GHz → AP-PB1 Pasillo | SSID_IoT_PB_Bar → AP-PB3 Bar | SSID_IoT_PB_Hab → AP-PB2 Habitaciones</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_08',event)" title="Foto">📷</button><button class="info-btn" onclick="openItemInfo('s4_08',event)" title="Cómo hacerlo">i</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
+          <li data-id="s4_08"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_IoT_PB_Pasillo → 2.4 GHz → AP-PB1 Pasillo | SSID_IoT_PB_Bar → AP-PB2 Bar | SSID_IoT_PB_Hab → AP-PB3 Habitaciones</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_08',event)" title="Foto">📷</button><button class="info-btn" onclick="openItemInfo('s4_08',event)" title="Cómo hacerlo">i</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s4_09"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_IoT_PA_HabPrincipal → 2.4 GHz → AP-PA1 Hab. Principal | SSID_IoT_PA_Hab → AP-PA2 Habitaciones PA</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_09',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s4_10"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_IoT_SB → 2.4 GHz → AP Subsuelo (cochera/subsuelo)</span><span class="tag tc">Crítico</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_10',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
           <li data-id="s4_11"><div class="cb"><span class="ci">✓</span></div><span class="it">SSID_Clientes → 2.4+5 GHz → todos los APs → band steering activo</span><span class="tag th">Alto</span><button class="note-btn">nota</button><button class="photo-btn" onclick="togglePhoto('s4_11',event)" title="Foto">📷</button><div class="im"><span class="ic">—</span><span class="itime"></span></div></li>
@@ -1665,6 +1665,33 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     </div>
   </div>
 
+  <!-- AP CLIENTS — visible para todos -->
+  <div class="section collapsed" id="sapc">
+    <div class="sec-hdr" onclick="toggleSec(this)"><span class="sec-n">📡</span><span class="sec-t">Clientes por AP</span><span class="sec-st"></span><span class="sec-chev">▼</span></div>
+    <div class="sec-body">
+      <div class="note-box">Registro diario de clientes conectados por AP al cierre de jornada.</div>
+
+      <div style="background:var(--s2);border:1px solid var(--border);padding:1rem;margin-bottom:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">Fecha del registro</div>
+        <div id="apc-date" style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);margin-bottom:1rem;"></div>
+
+        <div style="display:flex;flex-direction:column;gap:.5rem;" id="apc-form"></div>
+
+        <!-- Notas -->
+        <div style="margin-top:.75rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;">Notas de la jornada</div>
+          <textarea id="apc-notes" placeholder="Observaciones de red, dispositivos problemáticos, señal débil..." style="width:100%;background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.72rem;padding:.5rem .6rem;resize:vertical;min-height:60px;outline:none;line-height:1.6;"></textarea>
+        </div>
+
+        <button onclick="saveAPClients()" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;cursor:pointer;width:100%;margin-top:.75rem;">Guardar registro</button>
+      </div>
+
+      <!-- History -->
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">Historial</div>
+      <div id="apc-history"></div>
+    </div>
+  </div>
+
   </div><!-- content -->
 </div><!-- main -->
 
@@ -1871,6 +1898,7 @@ async function doLogin(){
   updateDayCounter();
   if(isSup) initObs();
   if(isSup) initGastos();
+  initAPClients();
   setTimeout(()=>{ quiet=false; }, 1800);
 
   // 🎉 Cartel de cierre — último día del proyecto (8 de junio 2026)
@@ -2257,6 +2285,7 @@ const SECTIONS = [
   ['s13', '13', 'Diagnóstico'],
   ['s14', '14', 'Arquitectura'],
   ['s15', '15', 'Prioridades'],
+  ['sapc', '📡', 'Clientes AP'],
 ];
 
 function buildNavFromSections(){
@@ -3495,6 +3524,105 @@ function logout(){
   location.reload();
 }
 
+// ── CLIENTES POR AP ─────────────────────────────────
+const APS = [
+  { id:'AP-PB1', label:'AP-PB1 — Pasillo (PB)' },
+  { id:'AP-PB2', label:'AP-PB2 — Bar (PB)' },
+  { id:'AP-PB3', label:'AP-PB3 — Habitaciones (PB)' },
+  { id:'AP-PA1', label:'AP-PA1 — Hab. Principal (PA)' },
+  { id:'AP-PA2', label:'AP-PA2 — Habitaciones (PA)' },
+  { id:'AP-SB',  label:'AP-SB — Subsuelo' },
+];
+
+function initAPClients(){
+  const today = new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  const dateEl = document.getElementById('apc-date');
+  if(dateEl) dateEl.textContent = today;
+
+  const form = document.getElementById('apc-form');
+  if(!form) return;
+  form.innerHTML = APS.map(ap=>`
+    <div style="display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:center;padding:.4rem .5rem;background:var(--s3);border:1px solid var(--border);">
+      <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text);">${ap.label}</span>
+      <div style="display:flex;align-items:center;gap:.35rem;">
+        <button onclick="adjustAPC('${ap.id}',-1)" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;width:1.6rem;height:1.6rem;cursor:pointer;line-height:1;">−</button>
+        <span id="apc-val-${ap.id}" style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);min-width:1.5rem;text-align:center;">0</span>
+        <button onclick="adjustAPC('${ap.id}',1)" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.75rem;width:1.6rem;height:1.6rem;cursor:pointer;line-height:1;">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Load today's saved values and notes
+  const todayKey = new Date().toISOString().slice(0,10);
+  db.ref('ap_clients/'+todayKey).once('value').then(snap=>{
+    const data = snap.val()||{};
+    APS.forEach(ap=>{
+      const el = document.getElementById('apc-val-'+ap.id);
+      if(el && data[ap.id] !== undefined) el.textContent = data[ap.id];
+    });
+    const notesEl = document.getElementById('apc-notes');
+    if(notesEl && data.notes) notesEl.value = data.notes;
+  });
+
+  loadAPClientsHistory();
+}
+
+function adjustAPC(apId, dir){
+  const el = document.getElementById('apc-val-'+apId);
+  if(!el) return;
+  const val = Math.max(0, parseInt(el.textContent||0) + dir);
+  el.textContent = val;
+}
+
+function saveAPClients(){
+  const todayKey = new Date().toISOString().slice(0,10);
+  const data = {};
+  APS.forEach(ap=>{
+    const el = document.getElementById('apc-val-'+ap.id);
+    data[ap.id] = parseInt(el?.textContent||0);
+  });
+  const total = Object.values(data).reduce((a,b)=>a+b,0);
+  const notes = document.getElementById('apc-notes')?.value.trim()||'';
+  db.ref('ap_clients/'+todayKey).set({
+    ...data, total, notes, by: me.name,
+    date: new Date().toLocaleDateString('es-AR'),
+    ts: Date.now()
+  }).then(()=>{
+    toast('<span>✓ Registro guardado</span>');
+    loadAPClientsHistory();
+  });
+}
+
+function loadAPClientsHistory(){
+  db.ref('ap_clients').once('value').then(snap=>{
+    const data = snap.val()||{};
+    const hist = document.getElementById('apc-history');
+    if(!hist) return;
+    const entries = Object.entries(data).sort((a,b)=> b[1].ts-a[1].ts);
+    if(!entries.length){
+      hist.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin registros aún</div>';
+      return;
+    }
+    hist.innerHTML = entries.map(([key, d])=>`
+      <div style="background:var(--s2);border:1px solid var(--border);padding:.75rem;margin-bottom:.5rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+          <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);">${d.date||key}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);">Total: <b style="color:var(--text);">${d.total||0}</b> clientes · ${d.by||''}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;">
+          ${APS.map(ap=>`
+            <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.52rem;padding:.2rem .35rem;background:var(--s3);">
+              <span style="color:var(--muted);">${ap.id}</span>
+              <span style="color:var(--text);font-weight:700;">${d[ap.id]||0}</span>
+            </div>
+          `).join('')}
+        </div>
+        ${d.notes ? `<div style="margin-top:.5rem;padding:.4rem .5rem;background:var(--s3);border-left:2px solid var(--accent);font-size:.68rem;color:var(--muted);line-height:1.5;">${d.notes}</div>` : ''}
+      </div>
+    `).join('');
+  });
+}
+
 // ── SESSION TIMEOUT ─────────────────────────────────
 const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hora
 let inactivityTimer = null;
@@ -4189,6 +4317,8 @@ window.removeDevice=removeDevice;
 window.openPasswdPanel=openPasswdPanel;
 window.closePasswdPanel=closePasswdPanel;
 window.changePassword=changePassword;
+window.adjustAPC=adjustAPC;
+window.saveAPClients=saveAPClients;
 window.addGasto=addGasto;
 window.syncGastoFromARS=syncGastoFromARS;
 window.syncGastoFromUSD=syncGastoFromUSD;
