@@ -4066,10 +4066,10 @@ function setFilter(f){
 function applyFilter(){
   document.querySelectorAll('.cl li[data-id]').forEach(li=>{
     const isChecked  = li.classList.contains('checked');
-    const isAlto     = !!li.querySelector('.tag.tc');
+    const isAlto     = !!li.querySelector('.tag.th');
     const isMedio    = !!li.querySelector('.tag.tm');
     const isBajo     = !!li.querySelector('.tag.tl');
-    const isCritical = isAlto; // crítico = alto prioridad
+    const isCritical = !!li.querySelector('.tag.tc');
     let show = true;
     if(currentFilter === 'pending')  show = !isChecked;
     if(currentFilter === 'done')     show = isChecked;
@@ -4634,4 +4634,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-</html>
+  </html>
