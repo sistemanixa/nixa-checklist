@@ -1899,6 +1899,7 @@ async function doLogin(){
   initComponents();
   buildRooms();
   listenRoomTasks();
+  setTimeout(refreshSRSummary, 1500); // after Firebase loads
   initNotifications();
   initScrollSpy();
   initConnectivity();
@@ -2937,31 +2938,35 @@ function listenRoomTasks(){
 
 
 // ── RESUMEN COMPONENTES POR HABITACIÓN ──────────────
+const COMP_NAMES = {
+  'c_01': 'Mini-Dim', 'c_02': 'Mini-RBS', 'c_03': 'R5',
+  'c_04': 'R5 (luces)', 'c_11': 'HDMI cable', 'c_12': 'HDMI extender',
+  'c_05': 'Relé WiFi', 'c_06': 'Relé DIN', 'c_07': 'Termostato',
+  'c_08': 'Sensor Zigbee', 'c_09': 'Relé Zigbee', 'c_10': 'Termómetro Zigbee',
+};
+
 function refreshSRSummary(){
+  const el = document.getElementById('sr-summary');
+  if(!el) return;
+
   db.ref('room_tasks').once('value').then(snap=>{
     const data = snap.val() || {};
-    const el = document.getElementById('sr-summary');
-    if(!el) return;
 
-    // Build component name map from DOM
-    const compNames = {};
-    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
-      const cid = row.dataset.cid;
-      const name = row.querySelector('.comp-name')?.textContent?.trim()||cid;
-      compNames[cid] = name;
-    });
-
-    // Build: { compId: { label, rooms:{roomName: qty}, total } }
+    // summary: { compId: { label, rooms:{}, total } }
     const summary = {};
 
     ROOMS.forEach(room=>{
-      ROOM_TASKS.forEach(([label, stockCid,, taskSuffix])=>{
+      ROOM_TASKS.forEach(([label, stockCid], ti)=>{
         if(!stockCid) return;
-        const taskId = room.id + '_' + taskSuffix;
+        // taskId format: roomId_t{index} (e.g. r_h1_t2)
+        const taskId = room.id + '_t' + ti;
         const entry  = data[taskId];
         const qty    = entry?.qty || 0;
         if(qty === 0) return;
-        if(!summary[stockCid]) summary[stockCid] = { label: compNames[stockCid]||label, rooms:{}, total:0 };
+        if(!summary[stockCid]){
+          const domName = document.querySelector(`.comp-row[data-cid="${stockCid}"] .comp-name`)?.textContent?.trim();
+          summary[stockCid] = { label: domName || COMP_NAMES[stockCid] || label, rooms:{}, total:0 };
+        }
         summary[stockCid].rooms[room.name] = (summary[stockCid].rooms[room.name]||0) + qty;
         summary[stockCid].total += qty;
       });
@@ -2974,7 +2979,7 @@ function refreshSRSummary(){
 
     el.innerHTML = Object.entries(summary).map(([cid, s])=>{
       const rows = Object.entries(s.rooms)
-        .sort((a,b)=>b[1]-a[1])
+        .sort((a,b)=> b[1]-a[1])
         .map(([room, qty])=>`
           <div style="display:flex;justify-content:space-between;padding:.2rem .4rem;font-size:.68rem;border-bottom:1px solid var(--border);">
             <span style="color:var(--muted);">${room}</span>
@@ -2984,7 +2989,7 @@ function refreshSRSummary(){
         <div style="margin-bottom:.85rem;border:1px solid var(--border);overflow:hidden;">
           <div style="display:flex;justify-content:space-between;padding:.45rem .75rem;background:var(--s2);">
             <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);font-weight:700;">${s.label}</span>
-            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text);">Total: <b>${s.total}</b></span>
+            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text);">Total instalados: <b>${s.total}</b></span>
           </div>
           ${rows}
         </div>`;
