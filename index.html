@@ -1278,6 +1278,13 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
     <div class="sec-body">
       <div class="note-box"><strong>Marcá cada tarea al completarla.</strong> Los componentes usados se descuentan del stock automáticamente.</div>
       <div id="sr-body"></div>
+
+      <!-- RESUMEN DE COMPONENTES -->
+      <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">Resumen de componentes instalados</div>
+        <div id="sr-summary"></div>
+        <button onclick="refreshSRSummary()" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.5rem;padding:.3rem .75rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;margin-top:.5rem;">↻ Actualizar</button>
+      </div>
     </div>
   </div>
 
@@ -2915,6 +2922,7 @@ function listenRoomTasks(){
     const stsr  = document.getElementById('stsr'); if(stsr) stsr.textContent=done+'/'+total;
     const npsr  = document.getElementById('npsr'); if(npsr) npsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
     const dnpsr = document.getElementById('dnpsr'); if(dnpsr) dnpsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
+    refreshSRSummary();
   });
   db.ref('room_notes').on('value', snap=>{
     const data = snap.val() || {};
@@ -2927,6 +2935,64 @@ function listenRoomTasks(){
   });
 }
 
+
+// ── RESUMEN COMPONENTES POR HABITACIÓN ──────────────
+const STOCK_LABELS = {
+  'c_01': 'Mini-Dim',
+  'c_02': 'Mini-RBS',
+  'c_03': 'R5 (cortinas)',
+  'c_04': 'R5 (luces)',
+  'c_11': 'HDMI extender',
+  'c_12': 'HDMI cable',
+};
+
+function refreshSRSummary(){
+  db.ref('room_tasks').once('value').then(snap=>{
+    const data = snap.val() || {};
+    const el = document.getElementById('sr-summary');
+    if(!el) return;
+
+    // Build: { compId: { roomName: qty, total: N } }
+    const summary = {};
+
+    ROOMS.forEach(room=>{
+      ROOM_TASKS.forEach(([label, stockCid,, taskSuffix])=>{
+        if(!stockCid) return;
+        const taskId = room.id + '_' + taskSuffix;
+        const entry  = data[taskId];
+        const qty    = entry?.qty || 0;
+        if(qty === 0) return;
+        if(!summary[stockCid]) summary[stockCid] = { rooms:{}, total:0 };
+        summary[stockCid].rooms[room.name] = qty;
+        summary[stockCid].total += qty;
+      });
+    });
+
+    if(!Object.keys(summary).length){
+      el.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin cantidades cargadas aún</div>';
+      return;
+    }
+
+    el.innerHTML = Object.entries(summary).map(([cid, s])=>{
+      const label = STOCK_LABELS[cid] || cid;
+      const rows = Object.entries(s.rooms)
+        .sort((a,b)=>b[1]-a[1])
+        .map(([room, qty])=>`
+          <div style="display:flex;justify-content:space-between;padding:.2rem .4rem;font-size:.68rem;border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted);">${room}</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--text);font-weight:600;">${qty}</span>
+          </div>`).join('');
+      return `
+        <div style="margin-bottom:.85rem;border:1px solid var(--border);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;padding:.45rem .75rem;background:var(--s2);">
+            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);font-weight:700;">${label}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text);">Total: <b>${s.total}</b></span>
+          </div>
+          ${rows}
+        </div>`;
+    }).join('');
+  });
+}
 
 // ── PLAN SEARCH ────────────────────────────────────
 function planRowClick(taskText){
@@ -4473,6 +4539,7 @@ window.removeDevice=removeDevice;
 window.openPasswdPanel=openPasswdPanel;
 window.closePasswdPanel=closePasswdPanel;
 window.changePassword=changePassword;
+window.refreshSRSummary=refreshSRSummary;
 window.adjustAPC=adjustAPC;
 window.saveAPClients=saveAPClients;
 window.addGasto=addGasto;
@@ -4697,4 +4764,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-  </html>
+</html>
