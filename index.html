@@ -2193,7 +2193,12 @@ function initComponents(){
       const entry = data[cid] || { qty: 0, by: null };
       const valEl = row.querySelector('.comp-val');
       const byEl  = row.querySelector('.comp-updated-by');
-      if(valEl) valEl.textContent = entry.qty ?? 0;
+      if(valEl){
+        const qty = entry.qty ?? 0;
+        valEl.textContent = qty;
+        valEl.style.color = qty < 0 ? 'var(--red)' : '';
+        valEl.style.fontWeight = qty < 0 ? '700' : '';
+      }
       if(byEl)  byEl.textContent  = (entry.by && entry.qty > 0) ? '· '+entry.by : '';
     });
     const total = Object.values(data).reduce((a,v)=>a+(v.qty||0), 0);
@@ -2811,7 +2816,9 @@ function attachRoomEvents(){
       const taskId = row.dataset.rtid;
       const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
       if(row.classList.contains('checked')){
-        db.ref('room_tasks/'+taskId).set(null);
+        // Confirm before uncheck
+        if(!confirm('¿Desmarcar este ítem?')) return;
+        db.ref('room_tasks/'+taskId).set(qty > 0 ? { qty } : null);
       } else {
         db.ref('room_tasks/'+taskId).set({ by: me.name, ts: Date.now(), qty });
       }
@@ -2840,15 +2847,15 @@ function attachRoomEvents(){
       const taskId   = row.dataset.rtid;
       const stockCid = row.dataset.stockCid;
 
-      // Update qty in Firebase (without marking as checked)
+      // Save qty WITHOUT marking as checked
       db.ref('room_tasks/'+taskId+'/qty').set(newQty);
 
-      // Adjust stock by the difference
+      // Adjust stock by the difference — allow negative (shows in red)
       if(stockCid){
-        const diff = newQty - oldQty; // +1 means one more used, -1 means one returned
+        const diff = newQty - oldQty;
         db.ref('components/'+stockCid).once('value').then(s=>{
           const cur = s.val()?.qty ?? 0;
-          const updated = Math.max(0, cur - diff);
+          const updated = cur - diff; // allow negative
           db.ref('components/'+stockCid).set({ qty: updated, by: me.name, ts: Date.now() });
         });
       }
@@ -2891,9 +2898,10 @@ function listenRoomTasks(){
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const e = data[row.dataset.rtid];
       if(e){
-        row.classList.add('checked');
+        const isChecked = !!e.by; // only checked if has 'by' (was explicitly checked)
+        row.classList.toggle('checked', isChecked);
         const m = row.querySelector('.rt-meta');
-        if(m) m.textContent = (e.by||'')+(e.qty?' ×'+e.qty:'');
+        if(m) m.textContent = isChecked ? (e.by||'')+(e.qty?' ×'+e.qty:'') : '';
         const v = row.querySelector('.rt-qty-val');
         if(v && e.qty != null) v.textContent = e.qty;
       } else {
@@ -4689,4 +4697,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                          </html>
+  </html>
