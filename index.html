@@ -2795,44 +2795,91 @@ function buildRooms(){
 }
 
 function attachRoomEvents(){
-  document.querySelectorAll('.room-task').forEach(row=>{
-    const taskId   = row.dataset.rtid;
-    const stockCid = row.dataset.stockCid;
-    // checkbox
-    row.querySelector('.rt-cb').addEventListener('click', e=>{
+  const body = document.getElementById('sr-body');
+  if(!body || body._eventsAttached) return;
+  body._eventsAttached = true;
+
+  body.addEventListener('click', e=>{
+    if(!me) return;
+
+    // Checkbox — only marks completion, NO stock change
+    const cb = e.target.closest('.rt-cb');
+    if(cb){
       e.stopPropagation();
-      if(!me) return;
-      if(row.classList.contains('checked')){ db.ref('room_tasks/'+taskId).set(null); return; }
+      const row = cb.closest('.room-task');
+      if(!row) return;
+      const taskId = row.dataset.rtid;
       const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
-      db.ref('room_tasks/'+taskId).set({ by:me.name, ts:Date.now(), qty });
-      if(stockCid && qty > 0){
+      if(row.classList.contains('checked')){
+        db.ref('room_tasks/'+taskId).set(null);
+      } else {
+        db.ref('room_tasks/'+taskId).set({ by: me.name, ts: Date.now(), qty });
+      }
+      return;
+    }
+
+    // Label click → trigger checkbox
+    const label = e.target.closest('.rt-label');
+    if(label){
+      const row = label.closest('.room-task');
+      if(row) row.querySelector('.rt-cb')?.click();
+      return;
+    }
+
+    // Qty buttons — save qty to Firebase and update stock
+    const qtyBtn = e.target.closest('.rt-qty-btn');
+    if(qtyBtn){
+      e.stopPropagation();
+      const row = qtyBtn.closest('.room-task');
+      if(!row) return;
+      const v = row.querySelector('.rt-qty-val');
+      const oldQty = parseInt(v?.textContent||'0')||0;
+      const newQty = Math.max(0, oldQty + (qtyBtn.dataset.dir==='+'?1:-1));
+      if(v) v.textContent = newQty;
+
+      const taskId   = row.dataset.rtid;
+      const stockCid = row.dataset.stockCid;
+
+      // Update qty in Firebase (without marking as checked)
+      db.ref('room_tasks/'+taskId+'/qty').set(newQty);
+
+      // Adjust stock by the difference
+      if(stockCid){
+        const diff = newQty - oldQty; // +1 means one more used, -1 means one returned
         db.ref('components/'+stockCid).once('value').then(s=>{
-          const cur = s.val()?.qty || 0;
-          db.ref('components/'+stockCid).set({ qty: Math.max(0, cur-qty), by:me.name, ts:Date.now() });
+          const cur = s.val()?.qty ?? 0;
+          const updated = Math.max(0, cur - diff);
+          db.ref('components/'+stockCid).set({ qty: updated, by: me.name, ts: Date.now() });
         });
       }
-    });
-    row.querySelector('.rt-label').addEventListener('click', e=>{ e.stopPropagation(); row.querySelector('.rt-cb').click(); });
-    // qty buttons
-    row.querySelectorAll('.rt-qty-btn').forEach(btn=>{
-      btn.addEventListener('click', e=>{ e.stopPropagation(); if(!me||row.classList.contains('checked')) return; const v=row.querySelector('.rt-qty-val'); v.textContent=Math.max(0,(parseInt(v.textContent)||0)+(btn.dataset.dir==='+'?1:-1)); });
-    });
-    // note button
-    const nb = row.querySelector('.rt-note-btn');
-    nb.addEventListener('click', e=>{
+      return;
+    }
+
+    // Note button
+    const nb = e.target.closest('.rt-note-btn');
+    if(nb){
       e.stopPropagation();
+      const row = nb.closest('.room-task');
+      if(!row) return;
+      const taskId = row.dataset.rtid;
       let panel = row.nextElementSibling;
-      if(!panel||!panel.classList.contains('comp-note-panel')){
+      if(!panel || !panel.classList.contains('comp-note-panel')){
         panel = document.createElement('div');
         panel.className = 'comp-note-panel';
         panel.innerHTML = '<textarea class="comp-note-input" placeholder="Nota..."></textarea><div class="comp-note-actions"><button class="comp-cancel">Cancelar</button><button class="comp-save">Guardar</button></div>';
         row.after(panel);
-        db.ref('room_notes/'+taskId).once('value').then(s=>{ if(s.val()) panel.querySelector('.comp-note-input').value=s.val().text||''; });
-        panel.querySelector('.comp-cancel').addEventListener('click',()=>panel.classList.remove('open'));
-        panel.querySelector('.comp-save').addEventListener('click',()=>{ if(!me) return; const val=panel.querySelector('.comp-note-input').value.trim(); db.ref('room_notes/'+taskId).set(val?{text:val,by:me.name,ts:Date.now()}:null); panel.classList.remove('open'); });
+        db.ref('room_notes/'+taskId).once('value').then(s=>{ if(s.val()) panel.querySelector('.comp-note-input').value = s.val().text||''; });
+        panel.querySelector('.comp-cancel').addEventListener('click', ()=>panel.classList.remove('open'));
+        panel.querySelector('.comp-save').addEventListener('click', ()=>{
+          if(!me) return;
+          const val = panel.querySelector('.comp-note-input').value.trim();
+          db.ref('room_notes/'+taskId).set(val ? {text:val, by:me.name, ts:Date.now()} : null);
+          panel.classList.remove('open');
+        });
       }
       panel.classList.toggle('open');
-    });
+      return;
+    }
   });
 }
 
@@ -4642,4 +4689,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-      </html>
+                                                                                                                                                                                                                                                                                                                                                                                                          </html>
