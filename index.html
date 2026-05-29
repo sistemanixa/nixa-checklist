@@ -2320,20 +2320,24 @@ function navTo(id){
 
 // ── NOMENCLATURA ────────────────────────────────────
 const NOM_ROOMS = [
-  { id:'H1', label:'Habitación 1', type:'hab' },
-  { id:'H2', label:'Habitación 2', type:'hab' },
-  { id:'H3', label:'Habitación 3', type:'hab' },
-  { id:'H4', label:'Habitación 4', type:'hab' },
-  { id:'H5', label:'Habitación 5', type:'hab' },
-  { id:'H6', label:'Habitación 6', type:'hab' },
-  { id:'H7', label:'Habitación 7', type:'hab' },
-  { id:'H8', label:'Habitación 8', type:'hab' },
+  { id:'H1', label:'Habitación 11', type:'hab' },
+  { id:'H2', label:'Habitación 13', type:'hab' },
+  { id:'H3', label:'Habitación 15', type:'hab' },
+  { id:'H4', label:'Habitación 17', type:'hab' },
+  { id:'H5', label:'Habitación 22', type:'hab' },
+  { id:'H6', label:'Habitación 24', type:'hab' },
+  { id:'H7', label:'Habitación 26', type:'hab' },
+  { id:'H8', label:'Habitación 28', type:'hab' },
   { id:'HP', label:'Habitación Principal', type:'principal' },
+  { id:'BHP',label:'Baño Hab. Principal', type:'principal' },
   { id:'LV', label:'Living', type:'comun' },
   { id:'BA', label:'Bar', type:'comun' },
   { id:'CO', label:'Cocina', type:'comun' },
   { id:'QU', label:'Quincho', type:'comun' },
   { id:'PL', label:'Playroom', type:'comun' },
+  { id:'PP', label:'Pasillo Principal', type:'pasillo' },
+  { id:'PPB',label:'Pasillo PB Habitaciones', type:'pasillo' },
+  { id:'PPA',label:'Pasillo PA Habitaciones', type:'pasillo' },
   { id:'SB', label:'Subsuelo / Cochera', type:'comun' },
   { id:'LA', label:'Lavadero', type:'comun' },
 ];
@@ -2742,13 +2746,17 @@ const ROOM_INFO = {
 const STOCK_NAMES = { 'c_01':'Mini-Dim','c_02':'Mini-RBS','c_03':'R5','c_11':'HDMI cable','c_12':'HDMI extender' };
 
 const ROOMS = [
-  { id:'r_h1', name:'Habitación 1' }, { id:'r_h2', name:'Habitación 2' },
-  { id:'r_h3', name:'Habitación 3' }, { id:'r_h4', name:'Habitación 4' },
-  { id:'r_h5', name:'Habitación 5' }, { id:'r_h6', name:'Habitación 6' },
-  { id:'r_h7', name:'Habitación 7' }, { id:'r_h8', name:'Habitación 8' },
-  { id:'r_hp', name:'Habitación Principal' }, { id:'r_lv', name:'Living' },
-  { id:'r_co', name:'Cocina' },       { id:'r_pl', name:'Playroom' },
-  { id:'r_ba', name:'Bar' },          { id:'r_qu', name:'Quincho' },
+  { id:'r_h1', name:'Habitación 11' }, { id:'r_h2', name:'Habitación 13' },
+  { id:'r_h3', name:'Habitación 15' }, { id:'r_h4', name:'Habitación 17' },
+  { id:'r_h5', name:'Habitación 22' }, { id:'r_h6', name:'Habitación 24' },
+  { id:'r_h7', name:'Habitación 26' }, { id:'r_h8', name:'Habitación 28' },
+  { id:'r_hp', name:'Habitación Principal' }, { id:'r_bhp', name:'Baño Hab. Principal' },
+  { id:'r_lv', name:'Living' },        { id:'r_co', name:'Cocina' },
+  { id:'r_pl', name:'Playroom' },      { id:'r_ba', name:'Bar' },
+  { id:'r_qu', name:'Quincho' },
+  { id:'r_pp', name:'Pasillo Principal' },
+  { id:'r_ppb', name:'Pasillo PB Habitaciones' },
+  { id:'r_ppa', name:'Pasillo PA Habitaciones' },
 ];
 
 const roomState = {};
@@ -4246,7 +4254,7 @@ const INFO = {
   // S7 - Alexa
   s7_01:{tag:'Alexa',title:'Todas las Alexa en la misma cuenta',steps:['Abrir la app Alexa en el celular del administrador','Ir a Dispositivos → Echo y Alexa','Contar que aparecen las 12 unidades','Si alguna aparece en otra cuenta: hacer factory reset y configurarla con la cuenta del proyecto']},
   s7_02:{tag:'Alexa',title:'Skill eWeLink y dispositivos importados',steps:['En la app Alexa → Más → Skills y juegos → Buscar "eWeLink"','Verificar que el skill está habilitado y la cuenta eWeLink está vinculada','Ir a Dispositivos → Todos los dispositivos y verificar que aparecen los Sonoff','Si faltan dispositivos: en eWeLink app → Perfil → Vincular con Alexa → Re-discover']},
-  s7_04:{tag:'Alexa',title:'Crear grupos de habitación en Alexa',steps:['En app Alexa → Dispositivos → Agregar → Grupo','Crear un grupo por habitación (ej: "Living", "Habitación 1", "Cocina")','Agregar todos los dispositivos del ambiente al grupo','Agregar el Echo/Alexa de esa habitación al mismo grupo','Esto permite decir "Alexa, apaga las luces" desde cualquier Alexa y controlar solo esa habitación']},
+  s7_04:{tag:'Alexa',title:'Crear grupos de habitación en Alexa',steps:['En app Alexa → Dispositivos → Agregar → Grupo','Crear un grupo por habitación (ej: "Living", "Habitación 11", "Cocina")','Agregar todos los dispositivos del ambiente al grupo','Agregar el Echo/Alexa de esa habitación al mismo grupo','Esto permite decir "Alexa, apaga las luces" desde cualquier Alexa y controlar solo esa habitación']},
   s7_05:{tag:'Alexa',title:'Verificar que cada Alexa controla solo su habitación',steps:['Pararse en el living y decir: "Alexa, enciende las luces"','Verificar que SOLO se encienden las luces del living','Ir a otra habitación y repetir','Si Alexa controla luces de otros ambientes: revisar los grupos — puede haber dispositivos asignados al grupo incorrecto']},
 
   // S8 - Estabilidad
@@ -4634,4 +4642,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-  </html>
+      </html>
