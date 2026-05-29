@@ -2937,22 +2937,21 @@ function listenRoomTasks(){
 
 
 // ── RESUMEN COMPONENTES POR HABITACIÓN ──────────────
-const STOCK_LABELS = {
-  'c_01': 'Mini-Dim',
-  'c_02': 'Mini-RBS',
-  'c_03': 'R5 (cortinas)',
-  'c_04': 'R5 (luces)',
-  'c_11': 'HDMI extender',
-  'c_12': 'HDMI cable',
-};
-
 function refreshSRSummary(){
   db.ref('room_tasks').once('value').then(snap=>{
     const data = snap.val() || {};
     const el = document.getElementById('sr-summary');
     if(!el) return;
 
-    // Build: { compId: { roomName: qty, total: N } }
+    // Build component name map from DOM
+    const compNames = {};
+    document.querySelectorAll('.comp-row[data-cid]').forEach(row=>{
+      const cid = row.dataset.cid;
+      const name = row.querySelector('.comp-name')?.textContent?.trim()||cid;
+      compNames[cid] = name;
+    });
+
+    // Build: { compId: { label, rooms:{roomName: qty}, total } }
     const summary = {};
 
     ROOMS.forEach(room=>{
@@ -2962,8 +2961,8 @@ function refreshSRSummary(){
         const entry  = data[taskId];
         const qty    = entry?.qty || 0;
         if(qty === 0) return;
-        if(!summary[stockCid]) summary[stockCid] = { rooms:{}, total:0 };
-        summary[stockCid].rooms[room.name] = qty;
+        if(!summary[stockCid]) summary[stockCid] = { label: compNames[stockCid]||label, rooms:{}, total:0 };
+        summary[stockCid].rooms[room.name] = (summary[stockCid].rooms[room.name]||0) + qty;
         summary[stockCid].total += qty;
       });
     });
@@ -2974,7 +2973,6 @@ function refreshSRSummary(){
     }
 
     el.innerHTML = Object.entries(summary).map(([cid, s])=>{
-      const label = STOCK_LABELS[cid] || cid;
       const rows = Object.entries(s.rooms)
         .sort((a,b)=>b[1]-a[1])
         .map(([room, qty])=>`
@@ -2985,7 +2983,7 @@ function refreshSRSummary(){
       return `
         <div style="margin-bottom:.85rem;border:1px solid var(--border);overflow:hidden;">
           <div style="display:flex;justify-content:space-between;padding:.45rem .75rem;background:var(--s2);">
-            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);font-weight:700;">${label}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);font-weight:700;">${s.label}</span>
             <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text);">Total: <b>${s.total}</b></span>
           </div>
           ${rows}
