@@ -4070,23 +4070,24 @@ function renderDashboard(){
   const filter = document.getElementById('dash-filter')?.value || 'all';
   const today  = new Date().toLocaleDateString('es-AR');
 
-  // Load logins and checklist in parallel
+  // Load logins, checklist and room_tasks in parallel
   Promise.all([
     db.ref('logins').once('value'),
     db.ref('checklist').once('value'),
-  ]).then(([loginSnap, checkSnap])=>{
-    const logins   = loginSnap.val()  || {};
-    const checks   = checkSnap.val()  || {};
+    db.ref('room_tasks').once('value'),
+  ]).then(([loginSnap, checkSnap, roomSnap])=>{
+    const logins    = loginSnap.val()  || {};
+    const checks    = checkSnap.val()  || {};
+    const roomTasks = roomSnap.val()   || {};
+    const normName  = n => n?.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ')||'';
 
     // Filter logins
     const loginArr = Object.values(logins)
       .filter(l=> filter==='today' ? l.date===today : true)
       .sort((a,b)=> b.ts-a.ts);
 
-    // Count per person - normalize names
+    // Count per person
     const people = {};
-    const normName = n => n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
-
     Object.values(logins).forEach(l=>{
       const name = normName(l.name||'');
       if(!people[name]) people[name] = { logins:0, lastLogin:'—', role: l.role };
@@ -4097,7 +4098,7 @@ function renderDashboard(){
       }
     });
 
-    // Count checks per person
+    // Count checklist checks per person
     Object.values(checks).forEach(c=>{
       if(!c?.by) return;
       const name = normName(c.by);
@@ -4105,9 +4106,17 @@ function renderDashboard(){
       people[name].checks = (people[name].checks||0)+1;
     });
 
+    // Count room task checks per person
+    Object.values(roomTasks).forEach(e=>{
+      if(!e?.by) return;
+      const name = normName(e.by);
+      if(!people[name]) people[name] = { logins:0, lastLogin:'—', role:'Integrador' };
+      people[name].checks = (people[name].checks||0)+1;
+    });
+
     // Total stats
     const totalLogins  = Object.values(logins).length;
-    const totalChecks  = Object.values(checks).length;
+    const totalChecks  = Object.values(checks).length + Object.values(roomTasks).filter(e=>e?.by).length;
     const totalPeople  = Object.keys(people).length;
     const todayLogins  = Object.values(logins).filter(l=>l.date===today).length;
 
@@ -5026,4 +5035,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                             </html>
+                                                                                                                                                                                                                                                                                                                                                                                                           </html>
