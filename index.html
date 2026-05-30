@@ -1958,6 +1958,14 @@ function listenChecklist(){
   db.ref('checklist').on('value', snap=>{
     const data=snap.val()||{};
     Object.keys(checkers).forEach(k=>delete checkers[k]);
+    const roomCheckers = {}; // room tasks counts kept separately
+    // Merge room task counts into checkers
+    document.querySelectorAll('.room-task[data-rtid].checked').forEach(row=>{
+      const by = row.querySelector('.rt-meta')?.textContent?.replace(/\s*×\d+$/,'').trim()||'';
+      if(!by) return;
+      const normBy = by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+      roomCheckers[normBy] = (roomCheckers[normBy]||0)+1;
+    });
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
       const id=li.dataset.id;
       const e=data[id];
@@ -1988,6 +1996,10 @@ function listenChecklist(){
         const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
         const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
       }
+    });
+    // Merge room task counts into checkers
+    Object.entries(roomCheckers).forEach(([name, count])=>{
+      checkers[name] = (checkers[name]||0) + count;
     });
     // Mark initial load as done after first snapshot
     if(!initialLoadDone){
@@ -2917,14 +2929,6 @@ function listenRoomTasks(){
         const m = row.querySelector('.rt-meta'); if(m) m.textContent='';
       }
     });
-
-    // Add room task checks to checkers panel
-    Object.values(data).forEach(e=>{
-      if(!e?.by) return;
-      const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
-      checkers[normBy] = (checkers[normBy]||0) + 1;
-    });
-    updateStats();
 
     // update sr stats
     const total = document.querySelectorAll('.room-task[data-rtid]').length;
@@ -4776,4 +4780,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                              </html>
+  </html>
