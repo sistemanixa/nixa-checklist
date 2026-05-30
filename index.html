@@ -2906,7 +2906,7 @@ function listenRoomTasks(){
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const e = data[row.dataset.rtid];
       if(e){
-        const isChecked = !!e.by; // only checked if has 'by' (was explicitly checked)
+        const isChecked = !!e.by;
         row.classList.toggle('checked', isChecked);
         const m = row.querySelector('.rt-meta');
         if(m) m.textContent = isChecked ? (e.by||'')+(e.qty?' ×'+e.qty:'') : '';
@@ -2917,6 +2917,15 @@ function listenRoomTasks(){
         const m = row.querySelector('.rt-meta'); if(m) m.textContent='';
       }
     });
+
+    // Add room task checks to checkers panel
+    Object.values(data).forEach(e=>{
+      if(!e?.by) return;
+      const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+      checkers[normBy] = (checkers[normBy]||0) + 1;
+    });
+    updateStats();
+
     // update sr stats
     const total = document.querySelectorAll('.room-task[data-rtid]').length;
     const done  = document.querySelectorAll('.room-task[data-rtid].checked').length;
@@ -4767,4 +4776,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                       </html>
+                                                                                                                                                                                                                                              </html>
