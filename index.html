@@ -1893,18 +1893,20 @@ async function doLogin(){
   const presRef = db.ref('presence/'+uid);
   presRef.set({ name:me.name, role:me.role, color:me.color, ts:Date.now() });
   presRef.onDisconnect().remove();
-  listenChecklist();
   listenPresence();
   listenNotes();
   initComponents();
   buildRooms();
-  listenRoomTasks();
-  setTimeout(refreshSRSummary, 1500); // after Firebase loads
+  listenRoomTasks(); // must run first to populate window.roomCheckers
+  setTimeout(()=>{ listenChecklist(); }, 800); // wait for roomCheckers
+  setTimeout(refreshSRSummary, 1500);
   initNotifications();
   initScrollSpy();
   initConnectivity();
   initSwipe();
   initInactivityTimer();
+  checkReadOnly();
+  checkForcedPassChange();
   listenPhotos();
   updateDayCounter();
   if(isSup) initObs();
@@ -1958,8 +1960,6 @@ function listenChecklist(){
   db.ref('checklist').on('value', snap=>{
     const data=snap.val()||{};
     Object.keys(checkers).forEach(k=>delete checkers[k]);
-    const roomCheckers = window.roomCheckers || {};
-    // Read room task counts directly from Firebase state (not DOM)
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
       const id=li.dataset.id;
       const e=data[id];
@@ -1990,10 +1990,6 @@ function listenChecklist(){
         const nm=li.querySelector('.im .ic'); if(nm) nm.textContent='—';
         const tm=li.querySelector('.im .itime'); if(tm) tm.textContent='';
       }
-    });
-    // Merge room task counts into checkers
-    Object.entries(roomCheckers).forEach(([name, count])=>{
-      checkers[name] = (checkers[name]||0) + count;
     });
     // Mark initial load as done after first snapshot
     if(!initialLoadDone){
@@ -2094,8 +2090,14 @@ function updateStats(){
   updateDayCounter();
   if(isSup){
     const cl=document.getElementById('sup-checker-list');
-    const sorted=Object.entries(checkers).sort((a,b)=>b[1]-a[1]);
-    const totalItems = document.querySelectorAll('.cl li[data-id]').length;
+    // Combine checklist checks + room task checks
+    const combined = {...checkers};
+    Object.entries(window.roomCheckers||{}).forEach(([name,count])=>{
+      combined[name] = (combined[name]||0) + count;
+    });
+    const sorted=Object.entries(combined).sort((a,b)=>b[1]-a[1]);
+    const totalItems = document.querySelectorAll('.cl li[data-id]').length +
+                       document.querySelectorAll('.room-task[data-rtid]').length;
     if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; }
     else {
       cl.innerHTML=sorted.map(([name,count])=>{
@@ -2861,8 +2863,16 @@ function attachRoomEvents(){
       const taskId   = row.dataset.rtid;
       const stockCid = row.dataset.stockCid;
 
-      // Save qty WITHOUT marking as checked
-      db.ref('room_tasks/'+taskId+'/qty').set(newQty);
+      // Save qty WITH by field so activity panel can count it
+      db.ref('room_tasks/'+taskId).once('value').then(s=>{
+        const existing = s.val() || {};
+        db.ref('room_tasks/'+taskId).set({
+          ...existing,
+          qty: newQty,
+          by: existing.by || me.name, // keep existing by if already set
+          ts: existing.ts || Date.now(),
+        });
+      });
 
       // Adjust stock by the difference — allow negative (shows in red)
       if(stockCid){
@@ -2919,6 +2929,8 @@ function listenRoomTasks(){
       const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
       window.roomCheckers[normBy] = (window.roomCheckers[normBy]||0)+1;
     });
+    console.log('roomCheckers:', JSON.stringify(window.roomCheckers));
+    console.log('room_tasks with by:', Object.values(data).filter(e=>e?.by).map(e=>e.by));
 
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const e = data[row.dataset.rtid];
@@ -2955,6 +2967,168 @@ function listenRoomTasks(){
   });
 }
 
+
+// ── MODO SOLO LECTURA POST-PROYECTO ─────────────────
+const PROJECT_END     = new Date('2026-06-08T17:00:00');
+const READONLY_START  = new Date('2026-06-13T00:00:00'); // 5 días después
+let   isReadOnly      = false;
+
+function checkReadOnly(){
+  const now = new Date();
+  if(now < READONLY_START) return;
+  if(isSup) return; // admin siempre puede
+  isReadOnly = true;
+  // Show banner
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:56px;left:0;right:0;z-index:4000;background:rgba(251,191,36,.1);border-bottom:1px solid var(--yellow);padding:.45rem 1.25rem;font-family:DM Mono,monospace;font-size:.55rem;color:var(--yellow);text-align:center;';
+  banner.textContent = '👁 Modo solo lectura — El proyecto ha finalizado';
+  document.body.appendChild(banner);
+  // Disable all checkboxes and buttons
+  document.querySelectorAll('.cb, .rt-cb, .rt-qty-btn, .comp-btn').forEach(el=>{
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '.4';
+  });
+  // Override click on list items
+  document.querySelectorAll('.cl li[data-id]').forEach(li=>{
+    li.style.cursor = 'default';
+  });
+}
+
+// ── CAMBIO DE CLAVE OBLIGATORIO ──────────────────────
+function checkForcedPassChange(){
+  if(!isSup) return;
+  const now = new Date();
+  if(now < PROJECT_END) return;
+  // Check if already changed (stored in Firebase)
+  db.ref('config/passChanged').once('value').then(snap=>{
+    if(snap.val()) return; // already changed
+    // Show forced change modal
+    setTimeout(()=>{ openForcedPassChange(); }, 1000);
+  });
+}
+
+function openForcedPassChange(){
+  const modal = document.getElementById('forced-pass-modal');
+  if(modal) modal.style.display = 'flex';
+  document.body.classList.add('no-scroll');
+}
+
+function submitForcedPass(){
+  const p1 = document.getElementById('fpass-new').value;
+  const p2 = document.getElementById('fpass-confirm').value;
+  const err = document.getElementById('fpass-err');
+  if(p1.length < 6){ err.textContent='Mínimo 6 caracteres'; return; }
+  if(p1 !== p2){ err.textContent='Las claves no coinciden'; return; }
+  db.ref('config/adminPass').set(p1).then(()=>{
+    db.ref('config/passChanged').set(true).then(()=>{
+      document.getElementById('forced-pass-modal').style.display = 'none';
+      document.body.classList.remove('no-scroll');
+      toast('<span>✓ Clave actualizada correctamente</span>');
+    });
+  });
+}
+
+// ── REASIGNAR TAREAS ────────────────────────────────
+let reassignQueue = [];
+let reassignIdx   = 0;
+let reassignSelected = null;
+
+function openReassign(filterTech){
+  // Build queue from roomState filtering by tech
+  const norm = n => n?.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ')||'';
+  reassignQueue = Object.entries(roomState||{})
+    .filter(([, e])=> !filterTech || norm(e?.by) === norm(filterTech))
+    .map(([taskId, e])=>{
+      const row = document.querySelector(`.room-task[data-rtid="${taskId}"]`);
+      const label = row?.querySelector('.rt-label')?.textContent?.trim()||taskId;
+      const room  = row?.closest('.sub')?.querySelector('.sub-t')?.textContent||'';
+      return { taskId, label, room, by: e?.by||'', qty: e?.qty||0, ts: e?.ts||0 };
+    });
+  reassignIdx = 0;
+  reassignSelected = null;
+  document.getElementById('reassign-modal').style.display = 'flex';
+  document.body.classList.add('no-scroll');
+  showReassignTask();
+}
+
+function showReassignTask(){
+  if(reassignIdx >= reassignQueue.length){
+    closeReassign();
+    toast('<span>✓ Reasignación completada</span>');
+    return;
+  }
+  const task = reassignQueue[reassignIdx];
+  const prog = document.getElementById('reassign-progress');
+  const room = document.getElementById('reassign-room');
+  const label= document.getElementById('reassign-label');
+  const techs= document.getElementById('reassign-techs');
+
+  if(prog)  prog.textContent = `Tarea ${reassignIdx+1} de ${reassignQueue.length}`;
+  if(room)  room.textContent = task.room;
+  if(label) label.textContent = task.label + (task.qty ? ` ×${task.qty}` : '');
+
+  const knownTechs = [...new Set([
+    ...Object.keys(checkers),
+    ...Object.values(roomState||{}).map(e=>e?.by).filter(Boolean)
+      .map(n=>n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' '))
+  ])].filter(Boolean).sort();
+
+  if(!reassignSelected) reassignSelected = task.by || null;
+
+  if(techs){
+    techs.innerHTML = knownTechs.map(t=>`
+      <button data-tech="${t}"
+        style="font-family:'DM Mono',monospace;font-size:.58rem;padding:.3rem .65rem;border:1px solid ${t===reassignSelected?'var(--accent)':'var(--border2)'};background:${t===reassignSelected?'rgba(0,200,240,.12)':'var(--s3)'};color:${t===reassignSelected?'var(--accent)':'var(--muted)'};cursor:pointer;border-radius:2px;">
+        ${t}${t===task.by?' (actual)':''}
+      </button>
+    `).join('');
+
+    // Attach events directly after render
+    techs.querySelectorAll('button[data-tech]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        reassignSelected = btn.dataset.tech;
+        // Update button styles
+        techs.querySelectorAll('button[data-tech]').forEach(b=>{
+          const active = b.dataset.tech === reassignSelected;
+          b.style.border = active ? '1px solid var(--accent)' : '1px solid var(--border2)';
+          b.style.background = active ? 'rgba(0,200,240,.12)' : 'var(--s3)';
+          b.style.color = active ? 'var(--accent)' : 'var(--muted)';
+        });
+      });
+    });
+  }
+}
+
+function selectReassignTech(name){
+  reassignSelected = name;
+  showReassignTask(); // re-render to update button styles
+}
+
+function skipReassign(){
+  reassignIdx++;
+  reassignSelected = null;
+  showReassignTask();
+}
+
+function confirmReassign(){
+  if(!reassignSelected) return;
+  const task = reassignQueue[reassignIdx];
+  db.ref('room_tasks/'+task.taskId).once('value').then(s=>{
+    const existing = s.val()||{};
+    db.ref('room_tasks/'+task.taskId).set({
+      ...existing, by: reassignSelected, ts: existing.ts||Date.now()
+    }).then(()=>{
+      reassignIdx++;
+      reassignSelected = null;
+      showReassignTask();
+    });
+  });
+}
+
+function closeReassign(){
+  document.getElementById('reassign-modal').style.display = 'none';
+  document.body.classList.remove('no-scroll');
+}
 
 // ── RESUMEN COMPONENTES POR HABITACIÓN ──────────────
 const COMP_NAMES = {
@@ -3810,7 +3984,15 @@ function sendWhatsApp(msg){
 }
 
 // ── TECH CHECKS ─────────────────────────────────────
+let currentTechModal = null;
+
+function openReassignForTech(){
+  closeTechChecks();
+  openReassign(currentTechModal);
+}
+
 function showTechChecks(techName){
+  currentTechModal = techName;
   const modal = document.getElementById('tech-modal');
   const title = document.getElementById('tech-modal-title');
   const list  = document.getElementById('tech-modal-list');
@@ -3819,6 +4001,8 @@ function showTechChecks(techName){
   title.textContent = '✓ Checks de ' + techName;
 
   const items = [];
+
+  // 1. Regular checklist items
   document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
     const by = li.querySelector('.ic')?.textContent?.trim()||'';
     const normBy = by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
@@ -3830,11 +4014,26 @@ function showTechChecks(techName){
     items.push({ text, time, sec, isCrit, id: li.dataset.id });
   });
 
+  // 2. Room tasks
+  Object.entries(roomState||{}).forEach(([taskId, e])=>{
+    if(!e?.by) return;
+    const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+    if(normBy !== techName) return;
+    // Find the row to get label and room
+    const row = document.querySelector(`.room-task[data-rtid="${taskId}"]`);
+    if(!row) return;
+    const text = row.querySelector('.rt-label')?.textContent?.trim()||taskId;
+    const room = row.closest('[class*="room-section"], .sub')?.querySelector('.sub-t, .room-title')?.textContent||'Instalación Hab.';
+    const time = e.ts ? new Date(e.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}) : '';
+    const qty  = e.qty ? ` ×${e.qty}` : '';
+    items.push({ text: text+qty, time, sec: room, isCrit: false, id: taskId });
+  });
+
   if(!items.length){
     list.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:.6rem;color:var(--dim);padding:.5rem 0;">Sin ítems completados</div>';
   } else {
     list.innerHTML = items.map(item=>`
-      <div onclick="closeTechChecks();searchGoTo('${item.id}')" style="display:flex;align-items:flex-start;gap:.6rem;padding:.45rem .4rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+      <div style="display:flex;align-items:flex-start;gap:.6rem;padding:.45rem .4rem;border-bottom:1px solid var(--border);">
         <span style="color:var(--green);font-size:.8rem;flex-shrink:0;">✓</span>
         <div style="flex:1;min-width:0;">
           <div style="font-size:.73rem;color:var(--text);line-height:1.4;">${item.text}${item.isCrit ? ' <span style="font-family:DM Mono,monospace;font-size:.44rem;color:var(--red);border:1px solid var(--red);padding:.05rem .2rem;">CRÍTICO</span>' : ''}</div>
@@ -4548,6 +4747,11 @@ function closeItemInfoBtn(){
 }
 
 // expose globals
+window.submitForcedPass=submitForcedPass;
+window.openReassign=openReassign;
+window.closeReassign=closeReassign;
+window.skipReassign=skipReassign;
+window.confirmReassign=confirmReassign;
 window.showTechChecks=showTechChecks;
 window.closeTechChecks=closeTechChecks;
 window.openDashboard=openDashboard;
@@ -4561,6 +4765,7 @@ window.removeDevice=removeDevice;
 window.openPasswdPanel=openPasswdPanel;
 window.closePasswdPanel=closePasswdPanel;
 window.changePassword=changePassword;
+window.fixRoomTasksBy=fixRoomTasksBy;
 window.refreshSRSummary=refreshSRSummary;
 window.adjustAPC=adjustAPC;
 window.saveAPClients=saveAPClients;
@@ -4702,11 +4907,46 @@ window.closeDrawer=function(){
 </div>
 
 
+<!-- FORCED PASS CHANGE MODAL -->
+<div id="forced-pass-modal" style="display:none;position:fixed;inset:0;z-index:9800;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(16px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);padding:1.75rem 1.5rem;max-width:320px;width:90%;text-align:center;">
+    <div style="font-size:1.5rem;margin-bottom:.75rem;">🔑</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:.5rem;">Cambio de clave requerido</div>
+    <div style="font-size:.75rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;">El proyecto ha finalizado. Por seguridad debés actualizar la clave de administrador antes de continuar.</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;">
+      <input id="fpass-new" type="password" placeholder="Nueva clave" style="background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.45rem .6rem;outline:none;width:100%;"/>
+      <input id="fpass-confirm" type="password" placeholder="Confirmar clave" style="background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.45rem .6rem;outline:none;width:100%;"/>
+    </div>
+    <div id="fpass-err" style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--red);margin-bottom:.5rem;min-height:.8rem;"></div>
+    <button onclick="submitForcedPass()" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.55rem;cursor:pointer;width:100%;">Guardar nueva clave</button>
+  </div>
+</div>
+
+<!-- REASSIGN MODAL -->
+<div id="reassign-modal" style="display:none;position:fixed;inset:0;z-index:7000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);">
+  <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.25rem 1.1rem 2rem;position:relative;">
+    <button onclick="closeReassign()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem;">🔄 Reasignar tareas</div>
+    <div id="reassign-progress" style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:1rem;"></div>
+    <div id="reassign-task-box" style="background:var(--s2);border:1px solid var(--border);padding:.85rem;margin-bottom:.75rem;">
+      <div id="reassign-room" style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--accent);margin-bottom:.3rem;"></div>
+      <div id="reassign-label" style="font-size:.82rem;color:var(--text);margin-bottom:.75rem;"></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:.4rem;">Asignar a:</div>
+      <div id="reassign-techs" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;"></div>
+      <div style="display:flex;gap:.5rem;">
+        <button onclick="skipReassign()" style="flex:1;background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.4rem;cursor:pointer;">Omitir</button>
+        <button onclick="confirmReassign()" style="flex:1;background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.55rem;font-weight:700;padding:.4rem;cursor:pointer;">Confirmar →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TECH CHECKS MODAL -->
 <div id="tech-modal" style="display:none;position:fixed;inset:0;z-index:6500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:1.25rem 1.1rem 2rem;position:relative;">
     <button onclick="closeTechChecks()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
-    <div id="tech-modal-title" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:1rem;"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.5rem;" id="tech-modal-title"></div>
+    <button id="tech-modal-reassign" onclick="openReassignForTech()" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.48rem;padding:.25rem .65rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;">🔄 Reasignar tareas de este técnico</button>
     <div id="tech-modal-list" style="display:flex;flex-direction:column;gap:.2rem;"></div>
   </div>
 </div>
@@ -4786,4 +5026,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-  </html>
+                                                                                                                                                                                                                             </html>
