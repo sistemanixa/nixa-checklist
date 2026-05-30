@@ -1958,14 +1958,8 @@ function listenChecklist(){
   db.ref('checklist').on('value', snap=>{
     const data=snap.val()||{};
     Object.keys(checkers).forEach(k=>delete checkers[k]);
-    const roomCheckers = {}; // room tasks counts kept separately
-    // Merge room task counts into checkers
-    document.querySelectorAll('.room-task[data-rtid].checked').forEach(row=>{
-      const by = row.querySelector('.rt-meta')?.textContent?.replace(/\s*×\d+$/,'').trim()||'';
-      if(!by) return;
-      const normBy = by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
-      roomCheckers[normBy] = (roomCheckers[normBy]||0)+1;
-    });
+    const roomCheckers = window.roomCheckers || {};
+    // Read room task counts directly from Firebase state (not DOM)
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
       const id=li.dataset.id;
       const e=data[id];
@@ -2913,8 +2907,19 @@ function attachRoomEvents(){
 function listenRoomTasks(){
   db.ref('room_tasks').on('value', snap=>{
     const data = snap.val() || {};
+    // Update roomCheckers from Firebase data and trigger panel refresh
     Object.keys(roomState).forEach(k=>delete roomState[k]);
     Object.assign(roomState, data);
+
+    // Rebuild roomCheckers
+    if(!window.roomCheckers) window.roomCheckers = {};
+    Object.keys(window.roomCheckers).forEach(k=>delete window.roomCheckers[k]);
+    Object.values(data).forEach(e=>{
+      if(!e?.by) return;
+      const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+      window.roomCheckers[normBy] = (window.roomCheckers[normBy]||0)+1;
+    });
+
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const e = data[row.dataset.rtid];
       if(e){
@@ -2937,6 +2942,7 @@ function listenRoomTasks(){
     const npsr  = document.getElementById('npsr'); if(npsr) npsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
     const dnpsr = document.getElementById('dnpsr'); if(dnpsr) dnpsr.textContent=total>0?Math.round(done/total*100)+'%':'—';
     refreshSRSummary();
+    updateStats(); // refresh activity panel with updated roomCheckers
   });
   db.ref('room_notes').on('value', snap=>{
     const data = snap.val() || {};
