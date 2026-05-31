@@ -643,6 +643,99 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 .nom-badge{font-family:'DM Mono',monospace;font-size:.44rem;padding:.05rem .28rem;border-radius:2px;white-space:nowrap;}
 .nom-saved{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--green);opacity:0;transition:opacity .3s;}
 .nom-tbd{color:var(--dim);font-style:italic;font-size:.65rem;}
+
+
+/* ── FIX PC SIDEBAR + PROJECT INFO MODAL ─────────── */
+@media (min-width:801px){
+  .main{max-width:1280px;grid-template-columns:260px minmax(0,1fr);}
+  .sidebar{
+    max-height:calc(100vh - 88px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:thin;
+    scrollbar-color:var(--border2) transparent;
+  }
+  .sidebar::-webkit-scrollbar{width:6px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px;}
+  .sidebar .nav-item{padding:.48rem .9rem;font-size:.68rem;line-height:1.25;}
+  .sidebar .ni-n{min-width:1.45rem;}
+  .sidebar .ni-p{min-width:2.1rem;text-align:right;}
+}
+#info-modal{z-index:10000;}
+#info-modal.open{display:flex!important;}
+body.modal-open{overflow:hidden;}
+
+
+
+/* =========================================================
+   FIX NIXA 2026-05-31 — Sidebar desktop real a la izquierda
+   El índice estaba dentro del flujo de .main, por eso quedaba
+   debajo del panel de progreso. En escritorio queda fijo/sticky
+   a la izquierda y todo el contenido se desplaza a la derecha.
+   ========================================================= */
+@media (min-width: 801px){
+  :root{
+    --nixa-sidebar-w: 220px;
+    --nixa-sidebar-gap: 18px;
+    --nixa-page-w: 1160px;
+  }
+
+  .hero,
+  .stats-panel,
+  #sup-panel,
+  .main,
+  footer{
+    max-width: var(--nixa-page-w) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: calc(var(--nixa-sidebar-w) + var(--nixa-sidebar-gap) + 1.25rem) !important;
+  }
+
+  .main{
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+  }
+
+  .main > .content{
+    width: 100% !important;
+  }
+
+  .sidebar{
+    display: block !important;
+    position: fixed !important;
+    top: 72px !important;
+    left: max(1.25rem, calc((100vw - var(--nixa-page-w)) / 2 + 1.25rem)) !important;
+    width: var(--nixa-sidebar-w) !important;
+    max-height: calc(100vh - 92px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    z-index: 180 !important;
+  }
+
+  .sidebar::-webkit-scrollbar{width:6px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+  .nav-item{
+    min-height: 28px;
+  }
+}
+
+@media (max-width: 800px){
+  .hero,
+  .stats-panel,
+  #sup-panel,
+  .main,
+  footer{
+    padding-left: 1.25rem !important;
+  }
+}
+
+/* FIX extra — apertura robusta del modal Información de proyecto */
+#info-modal.open{
+  display:flex !important;
+}
+
 </style>
 </head>
 <body>
@@ -4834,12 +4927,29 @@ window.openRoomInfo=function(key, event){
 window.clearSearch=clearSearch;
 window.searchGoTo=searchGoTo;
 window.openInfo=function(){
-  document.getElementById('im-ver').textContent   = 'v'+APP_VERSION;
-  document.getElementById('im-secs').textContent  = SECTIONS.length+' secciones';
-  document.getElementById('im-items').textContent = document.getElementById('gtotal').textContent+' ítems';
-  document.getElementById('info-modal').classList.add('open');
+  const modal = document.getElementById('info-modal');
+  if(!modal) return;
+
+  const verEl   = document.getElementById('im-ver');
+  const secsEl  = document.getElementById('im-secs');
+  const itemsEl = document.getElementById('im-items');
+  const totalEl = document.getElementById('gtotal');
+
+  if(verEl)   verEl.textContent   = 'v' + (window.APP_VERSION || APP_VERSION || '—');
+  if(secsEl)  secsEl.textContent  = SECTIONS.length + ' secciones';
+  if(itemsEl) itemsEl.textContent = (totalEl ? totalEl.textContent : '0') + ' ítems';
+
+  modal.style.display = 'flex';
+  modal.classList.add('open');
+  document.body.classList.add('modal-open');
 };
-window.closeInfo=function(){ document.getElementById('info-modal').classList.remove('open'); };
+window.closeInfo=function(){
+  const modal = document.getElementById('info-modal');
+  if(!modal) return;
+  modal.classList.remove('open');
+  modal.style.display = 'none';
+  document.body.classList.remove('modal-open');
+};
 window.openDrawer=function(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
@@ -5030,6 +5140,34 @@ window.closeDrawer=function(){
   <img id="lightbox-img" src="" alt=""/>
   <button id="photo-lightbox-del" onclick="deleteCurrentPhoto()">🗑 Eliminar foto</button>
 </div>
+
+
+<script>
+// FIX NIXA 2026-05-31 — funciones robustas para Información de proyecto
+(function(){
+  window.openInfo = function(){
+    const modal = document.getElementById('info-modal');
+    if(!modal) return;
+    const ver = document.getElementById('im-ver');
+    const secs = document.getElementById('im-secs');
+    const items = document.getElementById('im-items');
+    if(ver && typeof APP_VERSION !== 'undefined') ver.textContent = APP_VERSION;
+    if(secs && Array.isArray(window.SECTIONS)) secs.textContent = window.SECTIONS.length;
+    if(items){
+      const total = document.querySelectorAll('.cl li, .room-task').length;
+      if(total) items.textContent = total;
+    }
+    modal.classList.add('open');
+    modal.style.display = 'flex';
+  };
+  window.closeInfo = function(){
+    const modal = document.getElementById('info-modal');
+    if(!modal) return;
+    modal.classList.remove('open');
+    modal.style.display = 'none';
+  };
+})();
+</script>
 
 </body>
 </html>
