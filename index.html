@@ -267,7 +267,7 @@ li.filter-hidden{display:none!important;}
 .stock-tag{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:.06em;white-space:nowrap;margin-top:3px;flex-shrink:0;}
 
 /* ── CONFIRM UNCHECK MODAL ───────────── */
-#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;pointer-events:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
 #confirm-modal.open{display:flex;}
 .confirm-box{background:var(--s1);border:1px solid var(--border2);padding:1.75rem 1.5rem;max-width:320px;width:90%;text-align:center;}
 .confirm-title{font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.5rem;}
@@ -568,13 +568,6 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 /* ── MOBILE DRAWER ───────────────────── */
 #drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;backdrop-filter:blur(4px);}
 #drawer-overlay.open{display:block;}
-#drawer{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--s1);border-right:1px solid var(--border2);z-index:501;transform:translateX(-100%);transition:transform .25s ease;overflow-y:auto;padding-top:56px;}
-#drawer.open{transform:translateX(0);}
-#drawer .sb-head{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:.8rem 1.1rem .6rem;border-bottom:1px solid var(--border);}
-#drawer .nav-item{display:flex;align-items:center;gap:.5rem;padding:.5rem 1.1rem;text-decoration:none;font-size:.72rem;font-weight:500;color:var(--muted);border-left:2px solid transparent;transition:all .12s;cursor:pointer;}
-#drawer .nav-item:hover{background:var(--s2);color:var(--text);border-left-color:var(--accent);}
-#drawer .ni-n{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);min-width:.9rem;}
-#drawer .ni-p{margin-left:auto;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);}
 
 /* hamburger */
 .h-burger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:.3rem;}
@@ -725,7 +718,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 <div id="toasts"></div>
 
 <!-- INFO MODAL -->
-<div id="info-modal" style="display:none;position:fixed;inset:0;z-index:4000;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+<div id="info-modal">
   <div style="background:var(--s1);border:1px solid var(--border2);padding:1.5rem;max-width:340px;width:90%;position:relative;">
     <button onclick="closeInfo()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;">NIXA</div>
@@ -788,7 +781,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
       <span id="hme-name">—</span>
     </div>
     <div style="position:relative;">
-      <button onclick="toggleMenu()" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem;padding:.18rem .5rem;cursor:pointer;">⋯</button>
+      <button onclick="toggleMenu(event)" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem;padding:.18rem .5rem;cursor:pointer;">⋯</button>
       <div id="h-menu" style="display:none;position:absolute;top:36px;right:0;background:var(--s1);border:1px solid var(--border2);min-width:150px;z-index:300;flex-direction:column;">
         <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">🌙  Modo claro</button>
         <button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">ℹ️  Info proyecto</button>
@@ -1728,6 +1721,8 @@ const db = firebase.database();
 const uid     = 'u_' + Math.random().toString(36).substr(2,9);
 let me        = null;
 let isSup     = false;
+
+
 let quiet     = true;
 const initialChecks = new Set(); // tracks items already checked on load
 let initialLoadDone = false;
@@ -1878,6 +1873,7 @@ async function doLogin(){
   document.getElementById('info-btn').style.display='block';
   document.getElementById('pdf-btn').style.display='block';
   if(isSup){
+    document.getElementById('sup-panel').style.display='block';
     document.getElementById('devices-btn').style.display='block';
     document.getElementById('passwd-btn').style.display='block';
   }
@@ -2118,12 +2114,10 @@ function updateStats(){
 
     // section progress bars
     const barsEl = document.getElementById('sup-sec-bars');
-    if(barsEl){
-      barsEl.innerHTML = SECTIONS.map(([sid,,label])=>{
+    if(barsEl){ barsEl.innerHTML = SECTIONS.map(([sid,,label])=>{
         const sec = document.getElementById(sid); if(!sec) return '';
         let t, d;
         if(sid === 'sr'){
-          // room tasks use .room-task not .cl li
           t = sec.querySelectorAll('.room-task[data-rtid]').length;
           d = sec.querySelectorAll('.room-task[data-rtid].checked').length;
         } else {
@@ -4396,16 +4390,21 @@ function initScrollSpy(){
 }
 
 // ── MENU ────────────────────────────────────────────
-function toggleMenu(){
+function toggleMenu(e){
+  if(e){ e.stopPropagation(); e.preventDefault(); }
   const m = document.getElementById('h-menu');
-  m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+  if(!m) return;
+  const isOpen = m.style.display === 'flex';
+  m.style.display = isOpen ? 'none' : 'flex';
 }
 function closeMenu(){
-  document.getElementById('h-menu').style.display = 'none';
+  const m = document.getElementById('h-menu');
+  if(m) m.style.display = 'none';
 }
 document.addEventListener('click', e=>{
   const menu = document.getElementById('h-menu');
-  if(menu && !menu.parentElement.contains(e.target)){
+  if(!menu || menu.style.display !== 'flex') return;
+  if(!menu.parentElement.contains(e.target)){
     menu.style.display = 'none';
   }
 });
@@ -4838,15 +4837,13 @@ window.openInfo=function(){
   document.getElementById('im-ver').textContent   = 'v'+APP_VERSION;
   document.getElementById('im-secs').textContent  = SECTIONS.length+' secciones';
   document.getElementById('im-items').textContent = document.getElementById('gtotal').textContent+' ítems';
-  document.getElementById('info-modal').style.display='flex';
+  document.getElementById('info-modal').classList.add('open');
 };
-window.closeInfo=function(){ document.getElementById('info-modal').style.display='none'; };
+window.closeInfo=function(){ document.getElementById('info-modal').classList.remove('open'); };
 window.openDrawer=function(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
-  // Block scroll without moving page
   document.getElementById('drawer-overlay').addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive:false });
-  // Trigger highlight
   let currentId = '';
   SECTIONS.forEach(([sid])=>{
     const sec = document.getElementById(sid);
@@ -5035,4 +5032,4 @@ window.closeDrawer=function(){
 </div>
 
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                           </html>
+</html>
