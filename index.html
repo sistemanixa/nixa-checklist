@@ -267,7 +267,7 @@ li.filter-hidden{display:none!important;}
 .stock-tag{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:.06em;white-space:nowrap;margin-top:3px;flex-shrink:0;}
 
 /* ── CONFIRM UNCHECK MODAL ───────────── */
-#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;pointer-events:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
 #confirm-modal.open{display:flex;}
 .confirm-box{background:var(--s1);border:1px solid var(--border2);padding:1.75rem 1.5rem;max-width:320px;width:90%;text-align:center;}
 .confirm-title{font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.5rem;}
@@ -862,7 +862,7 @@ body.modal-open{overflow:hidden;}
     <div style="width:40px;height:1px;background:var(--border2);margin:0 auto 1.25rem;"></div>
     <div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;">NIXA · Bariloche 2026</div>
     <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:2rem;">Domótica Premium · Entregado</div>
-    <button onclick="document.getElementById('game-modal').style.display='none'" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:.65rem 2rem;cursor:pointer;width:100%;">LET'S GO →</button>
+    <button onclick="document.getElementById('game-modal').style.display='none'; document.body.classList.remove('no-scroll');" style="background:var(--accent);border:none;color:var(--bg);font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:.65rem 2rem;cursor:pointer;width:100%;">LET'S GO →</button>
   </div>
 </div>
 
@@ -968,35 +968,40 @@ body.modal-open{overflow:hidden;}
     <div class="stat-card"><div class="stat-num" id="sp-pct">0%</div><div class="stat-label">Avance</div></div>
     <div class="stat-card"><div class="stat-num" id="sp-crit" style="color:var(--red)">0</div><div class="stat-label">Críticos pend.</div></div>
   </div>
+  <!-- Estado del proyecto para todos -->
+  <div id="all-day-counter" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.75rem 1.25rem 0;"></div>
+  <!-- Actividad por técnico para todos -->
+  <div style="padding:0 1.25rem .5rem;">
+    <div class="sup-title" style="margin-top:.75rem;">Actividad por técnico</div>
+    <div id="all-checker-list"><div class="sup-empty">Sin actividad aún</div></div>
+  </div>
+  <!-- Parte del día para todos -->
+  <div style="padding:0 1.25rem .75rem;">
+    <button onclick="showDailySummary()" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.35rem .85rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;width:100%;">📋 Parte del día</button>
+  </div>
+  <!-- Barras de sección para todos -->
+  <div style="padding:.5rem 1.25rem 1rem;">
+    <div class="sup-title" style="margin-top:.75rem;">Progreso por sección</div>
+    <div id="all-sec-bars"></div>
+  </div>
 </div>
 
 <!-- SUPERVISOR PANEL -->
-<div id="sup-panel">
+<div id="sup-panel" style="display:none;">
   <div class="sup-inner">
 
-    <!-- ESTADO DEL PROYECTO -->
-    <div class="sup-title">Estado del proyecto</div>
-    <div id="day-counter" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem;"></div>
-
-    <!-- OBSERVACIONES DEL DÍA -->
-    <div class="sup-title" style="margin-top:1.1rem;">Observaciones del día</div>
+    <!-- OBSERVACIONES DEL DÍA — solo admin -->
+    <div class="sup-title">Observaciones del día</div>
     <textarea id="obs-input" placeholder="Imprevistos, decisiones, materiales faltantes..." style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:.6rem .75rem;resize:vertical;min-height:72px;outline:none;line-height:1.6;"></textarea>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;">
       <span id="obs-status" style="font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);">Sin cambios</span>
       <button onclick="saveObs()" style="background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.5rem;padding:.25rem .65rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Guardar</button>
     </div>
 
-    <!-- ACTIVIDAD POR TÉCNICO -->
-    <div class="sup-title" style="margin-top:1.1rem;">Actividad por técnico</div>
-    <div id="sup-checker-list"><div class="sup-empty">Sin actividad aún</div></div>
-    <div style="margin-top:.85rem;display:flex;gap:.5rem;">
-      <button onclick="showDailySummary()" style="flex:1;background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.35rem .85rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Parte del día</button>
-      <button onclick="openDashboard()" style="flex:1;background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.35rem .85rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Dashboard</button>
+    <!-- DASHBOARD — solo admin -->
+    <div style="margin-top:.85rem;">
+      <button onclick="openDashboard()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.55rem;padding:.35rem .85rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">📊 Dashboard completo</button>
     </div>
-
-    <!-- PROGRESO POR SECCIÓN -->
-    <div class="sup-title" style="margin-top:1.25rem;">Progreso por sección</div>
-    <div id="sup-sec-bars"></div>
 
   </div>
 </div>
@@ -2068,7 +2073,7 @@ async function doLogin(){
   const closeEnd   = new Date('2026-06-09T23:59:00');
   if(now2 >= closeStart && now2 <= closeEnd){
     setTimeout(()=>{
-      document.getElementById('game-modal').style.display = 'flex';
+      document.getElementById('game-modal').style.display = 'flex'; document.body.classList.add('no-scroll');
     }, 800);
   }
 }
@@ -2237,36 +2242,10 @@ function updateStats(){
   const spCrit  = document.getElementById('sp-crit');  if(spCrit)  spCrit.textContent=critPend;
   updateDayCounter();
   if(isSup){
-    const cl=document.getElementById('sup-checker-list');
-    // Combine checklist checks + room task checks
-    const combined = {...checkers};
-    Object.entries(window.roomCheckers||{}).forEach(([name,count])=>{
-      combined[name] = (combined[name]||0) + count;
-    });
-    const sorted=Object.entries(combined).sort((a,b)=>b[1]-a[1]);
-    const totalItems = document.querySelectorAll('.cl li[data-id]').length +
-                       document.querySelectorAll('.room-task[data-rtid]').length;
-    if(!sorted.length){ cl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; }
-    else {
-      cl.innerHTML=sorted.map(([name,count])=>{
-        const pct = totalItems > 0 ? Math.round(count/totalItems*100) : 0;
-        return '<div class="sup-checker-row" onclick="showTechChecks(\''+name+'\')" style="cursor:pointer;border-radius:2px;transition:background .12s;" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'\'">'+
-          '<div style="flex:1;">'+
-            '<div style="display:flex;justify-content:space-between;margin-bottom:.3rem;">'+
-              '<span class="sup-checker-name">'+name+'</span>'+
-              '<span class="sup-checker-count">'+count+' ítems · '+pct+'% <span style="color:var(--dim);font-size:.45rem;">▶</span></span>'+
-            '</div>'+
-            '<div style="height:3px;background:var(--border2);border-radius:2px;">'+
-              '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s;"></div>'+
-            '</div>'+
-          '</div>'+
-        '</div>';
-      }).join('');
-    }
-
-    // section progress bars
+    // section progress bars (admin copy, kept for compatibility)
     const barsEl = document.getElementById('sup-sec-bars');
-    if(barsEl){ barsEl.innerHTML = SECTIONS.map(([sid,,label])=>{
+    const allBarsEl = document.getElementById('all-sec-bars');
+    const barsHTML = SECTIONS.map(([sid,,label])=>{
         const sec = document.getElementById(sid); if(!sec) return '';
         let t, d;
         if(sid === 'sr'){
@@ -2284,7 +2263,62 @@ function updateStats(){
           '<span class="sec-bar-pct">'+d+'/'+t+'</span>'+
         '</div>';
       }).join('');
+    if(barsEl) barsEl.innerHTML = barsHTML;
+    if(allBarsEl) allBarsEl.innerHTML = barsHTML;
+  }
+
+  // Activity panel for all users
+  const allCheckerEl = document.getElementById('all-checker-list');
+  if(allCheckerEl){
+    const combined = {...checkers};
+    Object.entries(window.roomCheckers||{}).forEach(([name,count])=>{
+      combined[name] = (combined[name]||0) + count;
+    });
+    const sorted = Object.entries(combined).sort((a,b)=>b[1]-a[1]);
+    const totalItems = document.querySelectorAll('.cl li[data-id]').length +
+                       document.querySelectorAll('.room-task[data-rtid]').length;
+    if(!sorted.length){ allCheckerEl.innerHTML='<div class="sup-empty">Sin actividad aún</div>'; }
+    else {
+      allCheckerEl.innerHTML = sorted.map(([name,count])=>{
+        const pct = totalItems > 0 ? Math.round(count/totalItems*100) : 0;
+        const clickable = isSup ? `onclick="showTechChecks('${name}')" style="cursor:pointer;border-radius:2px;transition:background .12s;" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''"` : '';
+        const arrow = isSup ? `<span style="color:var(--dim);font-size:.45rem;"> ▶</span>` : '';
+        return `<div class="sup-checker-row" ${clickable}>` +
+          '<div style="flex:1;">' +
+            '<div style="display:flex;justify-content:space-between;margin-bottom:.3rem;">' +
+              `<span class="sup-checker-name">${name}</span>` +
+              `<span class="sup-checker-count">${count} ítems · ${pct}%${arrow}</span>` +
+            '</div>' +
+            '<div style="height:3px;background:var(--border2);border-radius:2px;">' +
+              `<div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s;"></div>` +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
     }
+  }
+
+  // Section bars for all users (outside isSup block)
+  const allBarsEl2 = document.getElementById('all-sec-bars');
+  if(allBarsEl2 && !isSup){
+    allBarsEl2.innerHTML = SECTIONS.map(([sid,,label])=>{
+      const sec = document.getElementById(sid); if(!sec) return '';
+      let t, d;
+      if(sid === 'sr'){
+        t = sec.querySelectorAll('.room-task[data-rtid]').length;
+        d = sec.querySelectorAll('.room-task[data-rtid].checked').length;
+      } else {
+        t = sec.querySelectorAll('.cl li[data-id]').length;
+        d = sec.querySelectorAll('.cl li[data-id].checked').length;
+      }
+      if(t===0) return '';
+      const pct = Math.round(d/t*100);
+      return '<div class="sec-bar-row" onclick="navTo(\''+sid+'\')" style="cursor:pointer;" title="Ir a sección">'+
+        '<span class="sec-bar-label">'+label+'</span>'+
+        '<div class="sec-bar-track"><div class="sec-bar-fill" style="width:'+pct+'%"></div></div>'+
+        '<span class="sec-bar-pct">'+d+'/'+t+'</span>'+
+      '</div>';
+    }).join('');
   }
 }
 
@@ -2542,7 +2576,7 @@ const NOM_DEVICES_HP = [
 let nomData = {};
 
 function openNomenclatura(){
-  document.getElementById('nom-modal').style.display = 'flex';
+  document.getElementById('nom-modal').style.display = 'flex'; document.body.classList.add('no-scroll');
   document.body.classList.add('no-scroll');
   buildNomTable();
   listenNomData();
@@ -2716,10 +2750,10 @@ function exportPDF(){
   y = 30;
 
   // Global stats
-  const total = parseInt(document.getElementById('gtotal').textContent) || 0;
-  const done  = parseInt(document.getElementById('gcount').textContent) || 0;
+  const total = document.querySelectorAll('.cl li[data-id]').length;
+  const done  = document.querySelectorAll('.cl li[data-id].checked').length;
   const pct   = total > 0 ? Math.round(done/total*100) : 0;
-  const crit  = parseInt(document.getElementById('sp-crit').textContent) || 0;
+  const crit  = document.querySelectorAll('.cl li[data-id]:not(.checked) .tag.tc').length;
 
   // Stats cards row
   const cardW = (colW - 6) / 4;
@@ -3369,29 +3403,33 @@ const PROJECT_START = new Date('2026-05-25'); // Primer día en Bariloche
 const PROJECT_DAYS  = 15;
 
 function updateDayCounter(){
-  if(!me) return; // Solo después del login
-  const el = document.getElementById('day-counter');
-  if(!el) return;
+  if(!me) return;
+  const el    = document.getElementById('day-counter');    // kept for compatibility
+  const allEl = document.getElementById('all-day-counter');
+  if(!el && !allEl) return;
   const now = new Date();
   const diffMs = now - PROJECT_START;
-  const dayNum = Math.max(1, Math.min(PROJECT_DAYS, Math.ceil(diffMs / (1000*60*60*24))));
-  const daysLeft = Math.max(0, PROJECT_DAYS - dayNum + 1);
-  const total = parseInt(document.getElementById('gtotal')?.textContent)||0;
-  const done  = parseInt(document.getElementById('gcount')?.textContent)||0;
+  const dayNum  = Math.max(1, Math.min(PROJECT_DAYS, Math.ceil(diffMs/(1000*60*60*24))));
+  const daysLeft= Math.max(0, PROJECT_DAYS - dayNum + 1);
+  const total   = parseInt(document.getElementById('gtotal')?.textContent)||0;
+  const done    = parseInt(document.getElementById('gcount')?.textContent)||0;
   const pctTime = Math.round(dayNum/PROJECT_DAYS*100);
   const pctWork = total>0 ? Math.round(done/total*100) : 0;
-  const ratio = pctWork >= pctTime ? 'Adelantado' : pctWork >= pctTime-10 ? 'En ritmo' : 'Retrasado';
+  const ratio   = pctWork >= pctTime ? '✅ Adelantado' : pctWork >= pctTime-10 ? '⚠️ En ritmo' : '🔴 Retrasado';
 
-  el.innerHTML = [
-    { label:'Día actual', value: dayNum+' / '+PROJECT_DAYS, color:'var(--accent)' },
-    { label:'Días restantes', value: daysLeft, color: daysLeft<=2?'var(--red)':'var(--text)' },
-    { label:'Ritmo', value: ratio, color:'var(--muted)', small:true },
+  const html = [
+    { label:'Día actual',      value: dayNum+' / '+PROJECT_DAYS, color:'var(--accent)' },
+    { label:'Días restantes',  value: daysLeft, color: daysLeft<=2?'var(--red)':'var(--text)' },
+    { label:'Ritmo',           value: ratio, color:'var(--muted)', small:true },
   ].map(c=>`
     <div style="background:var(--s2);border:1px solid var(--border);padding:.6rem .75rem;">
       <div style="font-family:'DM Mono',monospace;font-size:${c.small?'.6':'1.1'}rem;color:${c.color};font-weight:${c.small?'400':'700'};line-height:1.3;">${c.value}</div>
       <div style="font-family:'DM Mono',monospace;font-size:.46rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.25rem;">${c.label}</div>
     </div>
   `).join('');
+
+  if(el) el.innerHTML = html;
+  if(allEl) allEl.innerHTML = html;
 }
 
 // ── OBSERVACIONES DEL DÍA ───────────────────────────
@@ -3436,10 +3474,11 @@ function saveObs(){
 async function showDailySummary(){
   const now = new Date();
   const today = now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-  const total = parseInt(document.getElementById('gtotal').textContent)||0;
-  const done  = parseInt(document.getElementById('gcount').textContent)||0;
+  // Calculate directly from DOM for accuracy
+  const total = document.querySelectorAll('.cl li[data-id]').length;
+  const done  = document.querySelectorAll('.cl li[data-id].checked').length;
   const pct   = total>0?Math.round(done/total*100):0;
-  const crit  = parseInt(document.getElementById('sp-crit').textContent)||0;
+  const crit  = document.querySelectorAll('.cl li[data-id]:not(.checked) .tag.tc').length;
 
   // Items completed today — fetch from Firebase with timestamp
   const todayStart = new Date(); todayStart.setHours(0,0,0,0);
@@ -3517,10 +3556,12 @@ async function showDailySummary(){
   const modal = document.getElementById('daily-modal');
   document.getElementById('daily-content').innerHTML = html;
   modal.style.display = 'flex';
+  document.body.classList.add('no-scroll');
 }
 
 function closeDailySummary(){
   document.getElementById('daily-modal').style.display = 'none';
+  document.body.classList.remove('no-scroll');
 }
 
 // ── FOTOS POR ÍTEM ──────────────────────────────────
@@ -3635,7 +3676,11 @@ function listenPhotos(){
     document.querySelectorAll('.cl li[data-id]').forEach(li=>{
       const btn = li.querySelector('.photo-btn');
       if(!btn) return;
-      const hasPhotos = data[li.dataset.id] && Object.keys(data[li.dataset.id]).length > 0;
+      const itemPhotos = data[li.dataset.id];
+      const hasPhotos = itemPhotos !== null && 
+                        itemPhotos !== undefined && 
+                        typeof itemPhotos === 'object' && 
+                        Object.keys(itemPhotos).filter(k=> itemPhotos[k] !== null).length > 0;
       btn.classList.toggle('has-photo', hasPhotos);
     });
   });
@@ -3661,6 +3706,9 @@ function setDeviceFallback(devEl, timestamp){
 async function biometricAvailable(){
   try{
     if(!window.PublicKeyCredential) return false;
+    // Only allow biometric on mobile devices
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(!isMobile) return false;
     return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
   }catch(e){ return false; }
 }
@@ -4202,13 +4250,13 @@ function closeTechChecks(){
 let dashData = { logins: {}, checklist: {} };
 
 function openDashboard(){
-  document.getElementById('dashboard-modal').style.display = 'flex';
+  document.getElementById('dashboard-modal').style.display = 'flex'; document.body.classList.add('no-scroll');
   document.body.classList.add('no-scroll');
   renderDashboard();
 }
 
 function closeDashboard(){
-  document.getElementById('dashboard-modal').style.display = 'none';
+  document.getElementById('dashboard-modal').style.display = 'none'; document.body.classList.remove('no-scroll');
   document.body.classList.remove('no-scroll');
 }
 
@@ -5009,7 +5057,7 @@ window.closeInfo=function(){
   modal.style.display = 'none';
   document.body.classList.remove('modal-open');
 };
-window.openDrawer=function(){
+function openDrawer(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
   document.getElementById('drawer-overlay').addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive:false });
@@ -5022,11 +5070,11 @@ window.openDrawer=function(){
   document.querySelectorAll('#drawer .nav-item').forEach(a=>{
     a.classList.toggle('nav-active', a.getAttribute('href') === '#'+currentId);
   });
-};
-window.closeDrawer=function(){
+}
+function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
-};
+}
 </script>
 
 <!-- NOMENCLATURA MODAL -->
