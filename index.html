@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NIXA — Commissioning Bariloche</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <!-- Firebase compat SDK — funciona en Safari/iOS sin problemas -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -115,7 +115,7 @@ body.no-scroll{overflow:hidden;position:fixed;width:100%;}
 /* ── HEADER ──────────────────────────── */
 header{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  background:rgba(8,9,12,.98);backdrop-filter:blur(24px);
+  background:rgba(8,9,12,.98);
   border-bottom:1px solid var(--border);
   height:56px;display:flex;align-items:center;padding:0 1.5rem;gap:1.25rem;
 }
@@ -267,7 +267,7 @@ li.filter-hidden{display:none!important;}
 .stock-tag{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:.06em;white-space:nowrap;margin-top:3px;flex-shrink:0;}
 
 /* ── CONFIRM UNCHECK MODAL ───────────── */
-#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+#confirm-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);}
 #confirm-modal.open{display:flex;}
 .confirm-box{background:var(--s1);border:1px solid var(--border2);padding:1.75rem 1.5rem;max-width:320px;width:90%;text-align:center;}
 .confirm-title{font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.5rem;}
@@ -499,7 +499,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 #info-modal{
   position:fixed;inset:0;z-index:4000;display:none;
   align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.65);
 }
 #info-modal.open{display:flex;}
 .info-box{
@@ -542,7 +542,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 /* ── MOBILE DRAWER ───────────────────── */
 #drawer-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
-  z-index:500;backdrop-filter:blur(4px);
+  z-index:500;
 }
 #drawer-overlay.open{display:block;}
 #drawer{
@@ -566,7 +566,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 .h-burger span{display:block;width:18px;height:1.5px;background:var(--muted);}
 
 /* ── MOBILE DRAWER ───────────────────── */
-#drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;backdrop-filter:blur(4px);}
+#drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;}
 #drawer-overlay.open{display:block;}
 
 /* hamburger */
@@ -595,7 +595,7 @@ footer{border-top:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;ju
 #item-info-modal{
   position:fixed;inset:0;z-index:4500;display:none;
   align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.7);
 }
 #item-info-modal.open{display:flex;}
 .item-info-box{
@@ -795,6 +795,33 @@ body.modal-open{overflow:hidden;}
 #sup-panel.sup-collapsed .sup-collapsible{display:none;}
 #sup-panel.sup-collapsed .sup-inner{padding-bottom:1rem;}
 
+
+@keyframes pf-spin{to{transform:rotate(360deg);}}
+
+/* ── PRUEBA FINAL ───────────────────── */
+.pf-room{margin-bottom:1.5rem;border:1px solid rgba(212,175,55,.2);padding:.75rem;}
+.pf-room-title{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#d4af37;margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid rgba(212,175,55,.2);}
+.pf-sub-title{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#c9a227;margin:.75rem 0 .4rem;padding:.35rem .5rem;background:rgba(212,175,55,.06);border-left:2px solid #d4af37;}
+.pf-group-title{font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:.6rem 0 .2rem;padding-left:.25rem;}
+.pf-item{display:flex;align-items:center;gap:.5rem;padding:.55rem .4rem;border-bottom:1px solid var(--border);transition:background .12s;min-height:3rem;}
+.pf-item.pf-checked{background:var(--checked);}
+.pf-item.pf-checked .pf-label{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--dim);}
+.pf-check-wrap{flex-shrink:0;}
+.pf-cb{width:1rem;height:1rem;border:1.5px solid var(--border2);background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.pf-item.pf-checked .pf-cb{background:var(--accent);border-color:var(--accent);}
+.pf-item.pf-checked .pf-cb::after{content:'✓';color:var(--bg);font-size:.65rem;font-weight:700;}
+.pf-label{flex:1;font-size:.74rem;color:var(--text);line-height:1.4;}
+.pf-qty-wrap{display:flex;align-items:center;gap:.2rem;flex-shrink:0;}
+.pf-qty-btn{background:var(--s2);border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.7rem;width:1.4rem;height:1.4rem;cursor:pointer;line-height:1;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+.pf-qty-val{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);min-width:1.2rem;text-align:center;}
+.pf-note-btn{background:none;border:1px solid var(--border2);color:var(--dim);font-family:'DM Mono',monospace;font-size:.44rem;padding:.15rem .35rem;cursor:pointer;flex-shrink:0;}
+.pf-meta{font-family:'DM Mono',monospace;font-size:.44rem;color:var(--muted);flex-shrink:0;min-width:2.5rem;text-align:right;}
+.pf-note-panel{display:none;padding:.4rem .5rem;background:var(--s2);border:1px solid var(--border);}
+.pf-note-panel.open{display:block;}
+.pf-note-input{width:100%;background:var(--s3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.72rem;padding:.35rem .45rem;resize:vertical;min-height:48px;outline:none;}
+.pf-note-actions{display:flex;gap:.4rem;margin-top:.3rem;}
+.pf-note-actions button{font-family:'DM Mono',monospace;font-size:.48rem;padding:.25rem .6rem;cursor:pointer;border:1px solid var(--border2);background:var(--s3);color:var(--muted);}
+
 </style>
 </head>
 <body>
@@ -852,7 +879,7 @@ body.modal-open{overflow:hidden;}
 </div>
 
 <!-- GAME START MODAL -->
-<div id="game-modal" style="display:none;position:fixed;inset:0;z-index:9500;align-items:center;justify-content:center;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);">
+<div id="game-modal" style="display:none;position:fixed;inset:0;z-index:9500;align-items:center;justify-content:center;background:rgba(0,0,0,.88);">
   <div style="text-align:center;padding:2.5rem 2rem;max-width:340px;position:relative;">
     
     <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:1rem;">Proyecto<br>completado.</div>
@@ -936,7 +963,8 @@ body.modal-open{overflow:hidden;}
       <button onclick="toggleMenu(event)" style="background:none;border:1px solid var(--border2);color:var(--muted);font-family:'DM Mono',monospace;font-size:.8rem;padding:.18rem .5rem;cursor:pointer;">⋯</button>
       <div id="h-menu" style="display:none;position:absolute;top:36px;right:0;background:var(--s1);border:1px solid var(--border2);min-width:150px;z-index:300;flex-direction:column;">
         <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Modo claro</button>
-        <button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Info proyecto</button>
+        <button onclick="openPF();closeMenu()" style="background:none;border:none;border-bottom:1px solid var(--border);color:#d4af37;font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">✦ Prueba Final</button>
+<button id="info-btn" onclick="openInfo();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Info proyecto</button>
         <button id="pdf-btn" onclick="exportPDF();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Exportar PDF</button>
         <button id="devices-btn" onclick="openDevicesPanel();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Dispositivos admin</button>
         <button id="passwd-btn" onclick="openPasswdPanel();closeMenu()" style="display:none;background:none;border:none;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.55rem .85rem;cursor:pointer;text-align:left;width:100%;">Cambiar clave</button>
@@ -947,7 +975,7 @@ body.modal-open{overflow:hidden;}
 </header>
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="hero" style="display:none">
   <div class="hero-eyebrow">Proyecto Domótica Premium</div>
   <div class="hero-title">Super Checklist Bariloche</div>
   <div class="hero-badges">
@@ -1007,7 +1035,7 @@ body.modal-open{overflow:hidden;}
 </div>
 
 <!-- MAIN -->
-<div class="main">
+<div class="main" id="main-content" style="display:none">
 
   <nav class="sidebar" id="sidebar"><div class="sb-head">Índice</div></nav>
 
@@ -1855,7 +1883,7 @@ body.modal-open{overflow:hidden;}
   </div><!-- content -->
 </div><!-- main -->
 
-<footer>
+<footer id="footer" style="display:none">
   <div class="fl">NIXA</div>
   <div class="fm">Documento vivo — <span id="footer-ver">v1.0</span> · Firebase Compat SDK · Android + iOS</div>
 </footer>
@@ -1895,7 +1923,7 @@ function confirmUncheck(){
   // Double-check ownership before writing
   db.ref('checklist/'+pendingUncheck).once('value').then(snap=>{
     const data = snap.val();
-    if(data && data.by && data.by !== me?.name && !isSup){
+     if(data && data.by && data.by !== (me ? me.name : null) && !isSup){
       toast('<span>No tenés permiso para desmarcar este ítem</span>');
       closeConfirm();
       return;
@@ -1983,7 +2011,7 @@ async function doLogin(){
     if(bioAdminVerified){
       // Check if this was a new device that needed password verification
       const passWrap = document.getElementById('admin-pass-wrap');
-      const needsRegister = passWrap?.dataset.registerDevice === 'true';
+       const needsRegister = (passWrap && passWrap.dataset) ? passWrap.dataset.registerDevice === 'true' : false;
       if(needsRegister){
         // Verify password for new device
         const pass = document.getElementById('admin-pass').value;
@@ -2024,6 +2052,27 @@ async function doLogin(){
   document.getElementById('login').style.display='none';
   document.body.classList.remove('no-scroll');
   window.scrollTo(0,0);
+
+  // Show post-login loading screen
+  var postLoad = document.getElementById('pf-loading');
+  var tipEl = document.getElementById('pf-load-tip');
+  var tips = [
+    'Sincronizando checklist con Firebase...',
+    'Cargando ' + document.querySelectorAll('.cl li[data-id]').length + ' ítems...',
+    'Obteniendo estado de instalación por habitación...',
+    'Preparando panel de actividad...',
+  ];
+  var tipIdx = 0;
+  if(tipEl) tipEl.textContent = tips[0];
+  window._pfTipTimer = setInterval(function(){
+    tipIdx = (tipIdx+1) % tips.length;
+    if(tipEl) tipEl.textContent = tips[tipIdx];
+  }, 900);
+  if(postLoad) postLoad.style.display = 'flex';
+
+  document.getElementById('hero').style.display='block';
+  document.getElementById('main-content').style.display='grid';
+  document.getElementById('footer').style.display='block';
   document.getElementById('hme').style.display='flex';
   document.getElementById('hme-name').textContent = name + (isSup ? ' · Admin' : '');
   document.getElementById('stats-panel').style.display='block';
@@ -2059,6 +2108,7 @@ async function doLogin(){
   initSwipe();
   initInactivityTimer();
   checkReadOnly();
+  attachPFEvents();
   checkForcedPassChange();
   listenPhotos();
   updateDayCounter();
@@ -2091,7 +2141,7 @@ document.querySelectorAll('.cl').forEach(ul=>{
     const isChecked=li.classList.contains('checked');
     if(isChecked){
       // Check who marked this item
-      const markedBy = li.querySelector('.ic')?.textContent?.trim() || '';
+       const markedBy = (li.querySelector('.ic') ? li.querySelector('.ic').textContent.trim() : '') || '';
       // Only allow uncheck if: admin OR same user who checked it
       if(!isSup && markedBy && markedBy !== me.name){
         toast('<span>Solo <b>'+markedBy+'</b> o el admin puede desmarcar este ítem</span>');
@@ -2124,13 +2174,13 @@ function listenChecklist(){
         if(nm) nm.textContent=e.by||'—';
         if(tm) tm.textContent=fmtTime(e.ts);
         // Only notify if: not initial load, genuinely new, and by someone else
-        if(!was && initialLoadDone && !initialChecks.has(id) && e.by!==me?.name){
+         if(!was && initialLoadDone && !initialChecks.has(id) && e.by !== (me ? me.name : null)){
           toast('<b>'+e.by+'</b> <span>completó: '+li.querySelector('.it').textContent.slice(0,40)+'…</span>');
           const isCrit = !!li.querySelector('.tag.tc');
           if(isCrit){
             sendNotif('NIXA — Ítem Crítico Completado',
               e.by + ': ' + li.querySelector('.it').textContent.slice(0,60));
-            const sec = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
+             const secEl = li.closest('.section'); const sec = (secEl ? (secEl.querySelector('.sec-t') ? secEl.querySelector('.sec-t').textContent : '') : '') || '';
             sendWhatsApp(`✅ NIXA Bariloche\n🔴 Crítico completado\n ${e.by}\n📋 ${li.querySelector('.it').textContent.slice(0,80)}\n📂 ${sec}`);
           }
         }
@@ -2146,7 +2196,20 @@ function listenChecklist(){
     });
     // Mark initial load as done after first snapshot
     if(!initialLoadDone){
-      setTimeout(()=>{ initialLoadDone=true; }, 500);
+      setTimeout(()=>{
+        initialLoadDone=true;
+        // Hide post-login loading screen
+        const postLoad = document.getElementById('pf-loading');
+        if(postLoad && postLoad.style.display !== 'none'){
+          postLoad.style.opacity = '1';
+          postLoad.style.transition = 'opacity .4s';
+          setTimeout(()=>{
+            postLoad.style.opacity = '0';
+            setTimeout(()=>{ postLoad.style.display = 'none'; postLoad.style.opacity = '1'; }, 400);
+          }, 300);
+          if(window._pfTipTimer) clearInterval(window._pfTipTimer);
+        }
+      }, 500);
     }
     updateStats();
     if(currentFilter !== 'all') applyFilter();
@@ -2390,7 +2453,7 @@ function initComponents(){
       const valEl = row.querySelector('.comp-val');
       const byEl  = row.querySelector('.comp-updated-by');
       if(valEl){
-        const qty = entry.qty ?? 0;
+        const qty = (entry.qty !== undefined && entry.qty !== null) ? entry.qty : 0;
         valEl.textContent = qty;
         valEl.style.color = qty < 0 ? 'var(--red)' : '';
         valEl.style.fontWeight = qty < 0 ? '700' : '';
@@ -2515,7 +2578,7 @@ function navTo(id){
     const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
     window.scrollTo({ top: y, behavior:'smooth' });
   }, 50);
-  closeDrawer?.();
+   if(closeDrawer) closeDrawer();
 }
 
 
@@ -2745,7 +2808,7 @@ function exportPDF(){
   // Date and user
   doc.setTextColor(...C.accent);
   doc.text(dateStr, pageW - margin, 11, {align:'right'});
-  doc.text((me?.name || '') + (isSup ? ' · Admin' : ''), pageW - margin, 16, {align:'right'});
+   doc.text(((me ? me.name : '') || '') + (isSup ? ' · Admin' : ''), pageW - margin, 16, {align:'right'});
 
   y = 30;
 
@@ -2846,10 +2909,10 @@ function exportPDF(){
 
     document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
       if(y > 280){ doc.addPage(); doc.setFillColor(...C.bg); doc.rect(0,0,210,297,'F'); y = margin; }
-      const text = li.querySelector('.it')?.textContent?.trim() || '';
-      const by   = li.querySelector('.ic')?.textContent?.trim() || '';
-      const time = li.querySelector('.itime')?.textContent?.trim() || '';
-      const sec  = li.closest('.section')?.querySelector('.sec-t')?.textContent?.trim() || '';
+       const text = (li.querySelector('.it') ? li.querySelector('.it').textContent.trim() : '') || '';
+       const by   = (li.querySelector('.ic') ? li.querySelector('.ic').textContent.trim() : '') || '';
+       const time = (li.querySelector('.itime') ? li.querySelector('.itime').textContent.trim() : '') || '';
+       const secEl2 = li.closest('.section'); const sec  = (secEl2 ? (secEl2.querySelector('.sec-t') ? secEl2.querySelector('.sec-t').textContent.trim() : '') : '') || '';
 
       doc.setFont('helvetica','normal');
       doc.setFontSize(6);
@@ -3010,7 +3073,7 @@ function attachRoomEvents(){
       const row = cb.closest('.room-task');
       if(!row) return;
       const taskId = row.dataset.rtid;
-      const qty = parseInt(row.querySelector('.rt-qty-val')?.textContent||'0')||0;
+       const qty = parseInt((row.querySelector('.rt-qty-val') ? row.querySelector('.rt-qty-val').textContent : '0')||'0')||0;
       if(row.classList.contains('checked')){
         // Confirm before uncheck
         if(!confirm('¿Desmarcar este ítem?')) return;
@@ -3025,7 +3088,7 @@ function attachRoomEvents(){
     const label = e.target.closest('.rt-label');
     if(label){
       const row = label.closest('.room-task');
-      if(row) row.querySelector('.rt-cb')?.click();
+       if(row){ var cb2 = row.querySelector('.rt-cb'); if(cb2) cb2.click(); }
       return;
     }
 
@@ -3036,7 +3099,7 @@ function attachRoomEvents(){
       const row = qtyBtn.closest('.room-task');
       if(!row) return;
       const v = row.querySelector('.rt-qty-val');
-      const oldQty = parseInt(v?.textContent||'0')||0;
+       const oldQty = parseInt((v ? v.textContent : '0')||'0')||0;
       const newQty = Math.max(0, oldQty + (qtyBtn.dataset.dir==='+'?1:-1));
       if(v) v.textContent = newQty;
 
@@ -3058,7 +3121,7 @@ function attachRoomEvents(){
       if(stockCid){
         const diff = newQty - oldQty;
         db.ref('components/'+stockCid).once('value').then(s=>{
-          const cur = s.val()?.qty ?? 0;
+         const cur = (s.val() && s.val().qty !== undefined) ? s.val().qty : 0;
           const updated = cur - diff; // allow negative
           db.ref('components/'+stockCid).set({ qty: updated, by: me.name, ts: Date.now() });
         });
@@ -3105,12 +3168,12 @@ function listenRoomTasks(){
     if(!window.roomCheckers) window.roomCheckers = {};
     Object.keys(window.roomCheckers).forEach(k=>delete window.roomCheckers[k]);
     Object.values(data).forEach(e=>{
-      if(!e?.by) return;
+       if(!e || !e.by) return;
       const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
       window.roomCheckers[normBy] = (window.roomCheckers[normBy]||0)+1;
     });
     console.log('roomCheckers:', JSON.stringify(window.roomCheckers));
-    console.log('room_tasks with by:', Object.values(data).filter(e=>e?.by).map(e=>e.by));
+    console.log('room_tasks with by:', Object.values(data).filter(function(e){ return e && e.by; }).map(function(e){ return e.by; }));
 
     document.querySelectorAll('.room-task[data-rtid]').forEach(row=>{
       const e = data[row.dataset.rtid];
@@ -3215,14 +3278,14 @@ let reassignSelected = null;
 
 function openReassign(filterTech){
   // Build queue from roomState filtering by tech
-  const norm = n => n?.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ')||'';
+   const norm = function(n){ return n ? n.trim().split(' ').map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }).join(' ') : ''; };
   reassignQueue = Object.entries(roomState||{})
-    .filter(([, e])=> !filterTech || norm(e?.by) === norm(filterTech))
+     .filter(function(item){ var e=item[1]; return !filterTech || norm(e && e.by ? e.by : '') === norm(filterTech); })
     .map(([taskId, e])=>{
       const row = document.querySelector(`.room-task[data-rtid="${taskId}"]`);
-      const label = row?.querySelector('.rt-label')?.textContent?.trim()||taskId;
-      const room  = row?.closest('.sub')?.querySelector('.sub-t')?.textContent||'';
-      return { taskId, label, room, by: e?.by||'', qty: e?.qty||0, ts: e?.ts||0 };
+       const label = (row && row.querySelector('.rt-label')) ? row.querySelector('.rt-label').textContent.trim() : taskId;
+       const room  = (row && row.closest('.sub') && row.closest('.sub').querySelector('.sub-t')) ? row.closest('.sub').querySelector('.sub-t').textContent : '';
+       return { taskId: taskId, label: label, room: room, by: (e && e.by ? e.by : ''), qty: (e && e.qty ? e.qty : 0), ts: (e && e.ts ? e.ts : 0) };
     });
   reassignIdx = 0;
   reassignSelected = null;
@@ -3249,7 +3312,7 @@ function showReassignTask(){
 
   const knownTechs = [...new Set([
     ...Object.keys(checkers),
-    ...Object.values(roomState||{}).map(e=>e?.by).filter(Boolean)
+     ...Object.values(roomState||{}).map(function(e){ return e ? e.by : null; }).filter(Boolean)
       .map(n=>n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' '))
   ])].filter(Boolean).sort();
 
@@ -3334,10 +3397,10 @@ function refreshSRSummary(){
         // taskId format: roomId_t{index} (e.g. r_h1_t2)
         const taskId = room.id + '_t' + ti;
         const entry  = data[taskId];
-        const qty    = entry?.qty || 0;
+         const qty    = (entry && entry.qty) ? entry.qty : 0;
         if(qty === 0) return;
         if(!summary[stockCid]){
-          const domName = document.querySelector(`.comp-row[data-cid="${stockCid}"] .comp-name`)?.textContent?.trim();
+           const compEl = document.querySelector('.comp-row[data-cid="' + stockCid + '"] .comp-name'); const domName = compEl ? compEl.textContent.trim() : null;
           summary[stockCid] = { label: domName || COMP_NAMES[stockCid] || label, rooms:{}, total:0 };
         }
         summary[stockCid].rooms[room.name] = (summary[stockCid].rooms[room.name]||0) + qty;
@@ -3379,7 +3442,7 @@ function planRowClick(taskText){
   const termWords = term.split(/\s+/).filter(w => w.length > 3);
 
   document.querySelectorAll('.cl li[data-id]').forEach(li=>{
-    const liText = (li.querySelector('.it')?.textContent || '').toLowerCase();
+     const liText = ((li.querySelector('.it') ? li.querySelector('.it').textContent : '') || '').toLowerCase();
     let score = 0;
     termWords.forEach(w=>{ if(liText.includes(w)) score++; });
     if(score > bestScore){ bestScore=score; bestLi=li; }
@@ -3404,15 +3467,15 @@ const PROJECT_DAYS  = 15;
 
 function updateDayCounter(){
   if(!me) return;
-  const el    = document.getElementById('day-counter');    // kept for compatibility
+  const el    = null; // day-counter removed from sup-panel
   const allEl = document.getElementById('all-day-counter');
   if(!el && !allEl) return;
   const now = new Date();
   const diffMs = now - PROJECT_START;
   const dayNum  = Math.max(1, Math.min(PROJECT_DAYS, Math.ceil(diffMs/(1000*60*60*24))));
   const daysLeft= Math.max(0, PROJECT_DAYS - dayNum + 1);
-  const total   = parseInt(document.getElementById('gtotal')?.textContent)||0;
-  const done    = parseInt(document.getElementById('gcount')?.textContent)||0;
+   const total   = parseInt(document.getElementById('gtotal') ? document.getElementById('gtotal').textContent : '0')||0;
+   const done    = parseInt(document.getElementById('gcount') ? document.getElementById('gcount').textContent : '0')||0;
   const pctTime = Math.round(dayNum/PROJECT_DAYS*100);
   const pctWork = total>0 ? Math.round(done/total*100) : 0;
   const ratio   = pctWork >= pctTime ? '✅ Adelantado' : pctWork >= pctTime-10 ? '⚠️ En ritmo' : '🔴 Retrasado';
@@ -3493,8 +3556,8 @@ async function showDailySummary(){
     const entry = checkData[id];
     // Only include if marked today
     if(entry && entry.ts && entry.ts >= todayTs){
-      const text = li.querySelector('.it')?.textContent?.trim()||'';
-      const sec  = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
+       const text = (li.querySelector('.it') ? li.querySelector('.it').textContent.trim() : '') || '';
+       const secEl3 = li.closest('.section'); const sec  = (secEl3 && secEl3.querySelector('.sec-t')) ? secEl3.querySelector('.sec-t').textContent : '';
       todayItems.push({ text, by: entry.by||'', time: new Date(entry.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), sec });
     }
   });
@@ -3541,7 +3604,7 @@ async function showDailySummary(){
   // Show today's observations in summary
   const todayKey = new Date().toISOString().slice(0,10);
   db.ref('observations/'+todayKey).once('value').then(snap=>{
-    const obs = snap.val()?.text || '';
+       const obs = (s.val() && s.val().text) ? s.val().text : '';
     if(obs){
       const obsEl = document.createElement('div');
       obsEl.style.cssText = 'margin-top:1rem;';
@@ -3549,7 +3612,7 @@ async function showDailySummary(){
         <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">Observaciones del día</div>
         <div style="background:var(--s2);border:1px solid var(--border);padding:.65rem .85rem;font-size:.75rem;color:var(--text);line-height:1.7;white-space:pre-wrap;">${obs}</div>
       `;
-      document.getElementById('daily-content')?.appendChild(obsEl);
+       var dc = document.getElementById('daily-content'); if(dc) dc.appendChild(obsEl);
     }
   });
 
@@ -3887,7 +3950,7 @@ function updateBudgetDisplay(){
 
     // Calculate remaining
     const totalEl = document.getElementById('gastos-total');
-    const spent = parseFloat(totalEl?.textContent?.replace(/[$.]/g,'').replace(',','.') || 0);
+     const spent = parseFloat((totalEl && totalEl.textContent ? totalEl.textContent.replace(/[$.,]/g,'') : '0').replace(',','.') || 0);
     const remaining = budgetARS - spent;
     const isNeg = remaining < 0;
 
@@ -4101,10 +4164,10 @@ function saveAPClients(){
   const data = {};
   APS.forEach(ap=>{
     const el = document.getElementById('apc-val-'+ap.id);
-    data[ap.id] = parseInt(el?.textContent||0);
+     data[ap.id] = parseInt(el ? el.textContent : '0')||0;
   });
   const total = Object.values(data).reduce((a,b)=>a+b,0);
-  const notes = document.getElementById('apc-notes')?.value.trim()||'';
+   const notes = (document.getElementById('apc-notes') ? document.getElementById('apc-notes').value.trim() : '') || '';
   db.ref('ap_clients/'+todayKey).set({
     ...data, total, notes, by: me.name,
     date: new Date().toLocaleDateString('es-AR'),
@@ -4198,26 +4261,26 @@ function showTechChecks(techName){
 
   // 1. Regular checklist items
   document.querySelectorAll('.cl li[data-id].checked').forEach(li=>{
-    const by = li.querySelector('.ic')?.textContent?.trim()||'';
+     const by = (li.querySelector('.ic') ? li.querySelector('.ic').textContent.trim() : '') || '';
     const normBy = by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
     if(normBy !== techName) return;
-    const text = li.querySelector('.it')?.textContent?.trim()||'';
-    const time = li.querySelector('.itime')?.textContent?.trim()||'';
-    const sec  = li.closest('.section')?.querySelector('.sec-t')?.textContent||'';
+     const text = (li.querySelector('.it') ? li.querySelector('.it').textContent.trim() : '') || '';
+     const time = (li.querySelector('.itime') ? li.querySelector('.itime').textContent.trim() : '') || '';
+       const secEl4 = li.closest('.section'); const sec  = (secEl4 && secEl4.querySelector('.sec-t')) ? secEl4.querySelector('.sec-t').textContent : '';
     const isCrit = !!li.querySelector('.tag.tc');
     items.push({ text, time, sec, isCrit, id: li.dataset.id });
   });
 
   // 2. Room tasks
   Object.entries(roomState||{}).forEach(([taskId, e])=>{
-    if(!e?.by) return;
+     if(!e || !e.by) return;
     const normBy = e.by.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
     if(normBy !== techName) return;
     // Find the row to get label and room
     const row = document.querySelector(`.room-task[data-rtid="${taskId}"]`);
     if(!row) return;
-    const text = row.querySelector('.rt-label')?.textContent?.trim()||taskId;
-    const room = row.closest('[class*="room-section"], .sub')?.querySelector('.sub-t, .room-title')?.textContent||'Instalación Hab.';
+     const text = (row.querySelector('.rt-label') ? row.querySelector('.rt-label').textContent.trim() : '') || taskId;
+     const roomEl = row.closest('[class*="room-section"], .sub'); const room = (roomEl && roomEl.querySelector('.sub-t, .room-title')) ? roomEl.querySelector('.sub-t, .room-title').textContent : 'Instalación Hab.';
     const time = e.ts ? new Date(e.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}) : '';
     const qty  = e.qty ? ` ×${e.qty}` : '';
     items.push({ text: text+qty, time, sec: room, isCrit: false, id: taskId });
@@ -4261,7 +4324,7 @@ function closeDashboard(){
 }
 
 function renderDashboard(){
-  const filter = document.getElementById('dash-filter')?.value || 'all';
+   const dashFilter = document.getElementById('dash-filter'); const filter = dashFilter ? dashFilter.value : 'all';
   const today  = new Date().toLocaleDateString('es-AR');
 
   // Load logins, checklist and room_tasks in parallel
@@ -4273,7 +4336,7 @@ function renderDashboard(){
     const logins    = loginSnap.val()  || {};
     const checks    = checkSnap.val()  || {};
     const roomTasks = roomSnap.val()   || {};
-    const normName  = n => n?.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ')||'';
+     const normName  = function(n){ return n ? n.trim().split(' ').map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }).join(' ') : ''; };
 
     // Filter logins
     const loginArr = Object.values(logins)
@@ -4294,7 +4357,7 @@ function renderDashboard(){
 
     // Count checklist checks per person
     Object.values(checks).forEach(c=>{
-      if(!c?.by) return;
+       if(!c || !c.by) return;
       const name = normName(c.by);
       if(!people[name]) people[name] = { logins:0, lastLogin:'—', role:'Integrador' };
       people[name].checks = (people[name].checks||0)+1;
@@ -4302,7 +4365,7 @@ function renderDashboard(){
 
     // Count room task checks per person
     Object.values(roomTasks).forEach(e=>{
-      if(!e?.by) return;
+       if(!e || !e.by) return;
       const name = normName(e.by);
       if(!people[name]) people[name] = { logins:0, lastLogin:'—', role:'Integrador' };
       people[name].checks = (people[name].checks||0)+1;
@@ -4310,7 +4373,7 @@ function renderDashboard(){
 
     // Total stats
     const totalLogins  = Object.values(logins).length;
-    const totalChecks  = Object.values(checks).length + Object.values(roomTasks).filter(e=>e?.by).length;
+     const totalChecks  = Object.values(checks).length + Object.values(roomTasks).filter(function(e){ return e && e.by; }).length;
     const totalPeople  = Object.keys(people).length;
     const todayLogins  = Object.values(logins).filter(l=>l.date===today).length;
 
@@ -4388,7 +4451,7 @@ function getDeviceId(){
 }
 
 function getDeviceModel(){
-  if(navigator.userAgentData?.getHighEntropyValues){
+   if(navigator.userAgentData && navigator.userAgentData.getHighEntropyValues){
     return navigator.userAgentData.getHighEntropyValues(['model','platform'])
       .then(d=> d.model ? d.model+' ('+d.platform+')' : d.platform||'Escritorio')
       .catch(()=> Promise.resolve(uaFallbackModel()));
@@ -4414,7 +4477,7 @@ function openDevicesPanel(){
   db.ref('admin_devices/'+currentDeviceId).once('value').then(snap=>{
     const d = snap.val();
     const inp = document.getElementById('device-label');
-    if(inp && d?.label && d.label !== d.model) inp.value = d.label;
+     if(inp && d && d.label && d.label !== d.model) inp.value = d.label;
   });
   document.getElementById('devices-modal').style.display = 'flex';
   document.body.classList.add('no-scroll');
@@ -4525,7 +4588,7 @@ function initSwipe(){
     }
 
     const drawer = document.getElementById('drawer');
-    const isOpen = drawer?.classList.contains('open');
+     var isOpen = drawer && drawer.classList ? drawer.classList.contains('open') : false;
 
     if(dx > 0 && !isOpen) openDrawer();   // swipe → abre
     if(dx < 0 &&  isOpen) closeDrawer();  // swipe ← cierra
@@ -4672,7 +4735,7 @@ function doSearch(q){
     const text = itEl.textContent;
     if(!text.toLowerCase().includes(term)) return;
     const sec = li.closest('.section');
-    const secTitle = sec?.querySelector('.sec-t')?.textContent || 'General';
+     var secTitleEl = sec ? sec.querySelector('.sec-t') : null; const secTitle = secTitleEl ? secTitleEl.textContent : 'General';
     if(!grouped[secTitle]) grouped[secTitle] = [];
     grouped[secTitle].push({ li, text, id: li.dataset.id });
   });
@@ -5050,6 +5113,120 @@ window.openInfo=function(){
   modal.classList.add('open');
   document.body.classList.add('modal-open');
 };
+
+// ── PRUEBA FINAL ─────────────────────────────────────
+function openPF(){
+  document.getElementById('pf-modal').style.display = 'flex';
+  document.body.classList.add('no-scroll');
+  listenPF();
+  attachPFEvents();
+}
+function closePF(){
+  document.getElementById('pf-modal').style.display = 'none';
+  var loadEl = document.getElementById('pf-loading');
+  if(loadEl) loadEl.style.display = 'none';
+  document.body.classList.remove('no-scroll');
+}
+
+function listenPF(){
+  db.ref('prueba_final').on('value', function(snap){
+    var data = snap.val() || {};
+    document.querySelectorAll('.pf-item[data-pfid]').forEach(function(item){
+      var id = item.dataset.pfid;
+      var e = data[id];
+      var isChecked = e && e.by;
+      item.classList.toggle('pf-checked', !!isChecked);
+      var meta = item.querySelector('.pf-meta');
+      if(meta) meta.textContent = isChecked ? (e.by + (e.qty && e.qty > 0 ? ' ×' + e.qty : '')) : '';
+      var qtyEl = item.querySelector('.pf-qty-val');
+      if(qtyEl && e && e.qty !== undefined) qtyEl.textContent = e.qty;
+    });
+    updatePFProgress();
+  });
+}
+
+function updatePFProgress(){
+  var total = document.querySelectorAll('.pf-item[data-pfid]').length;
+  var done  = document.querySelectorAll('.pf-item.pf-checked').length;
+  var el = document.getElementById('pf-progress');
+  if(el) el.textContent = done + '/' + total;
+}
+
+var _pfQtyTouched = false;
+
+function attachPFEvents(){
+  var modal = document.getElementById('pf-modal');
+  if(!modal || modal._pfEvents) return;
+  modal._pfEvents = true;
+
+  modal.querySelectorAll('.pf-qty-btn').forEach(function(btn){
+    btn.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      if(!me) return;
+      var item = btn.closest('.pf-item');
+      if(!item) return;
+      var v = item.querySelector('.pf-qty-val');
+      var newQty = Math.max(0, (parseInt(v.textContent)||0) + (btn.dataset.dir === '+' ? 1 : -1));
+      v.textContent = newQty;
+      db.ref('prueba_final/' + item.dataset.pfid + '/qty').set(newQty);
+    });
+  });
+
+  // Attach direct listeners to all checkboxes
+  var lastCbFired = 0;
+  modal.querySelectorAll('.pf-cb').forEach(function(cb){
+    cb.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      var now = Date.now();
+      if(now - lastCbFired < 300) return;
+      lastCbFired = now;
+      if(!me) return;
+      var item = cb.closest('.pf-item');
+      if(!item) return;
+      var id = item.dataset.pfid;
+      var qty = parseInt(item.querySelector('.pf-qty-val').textContent || '0') || 0;
+      if(item.classList.contains('pf-checked')){
+        if(!confirm('¿Desmarcar este ítem?')) return;
+        db.ref('prueba_final/' + id).set(qty > 0 ? {qty: qty} : null);
+      } else {
+        db.ref('prueba_final/' + id).set({by: me.name, ts: Date.now(), qty: qty});
+      }
+    });
+  });
+
+  // Attach direct listeners to all note buttons
+  modal.querySelectorAll('.pf-note-btn').forEach(function(nb){
+    nb.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      ev.preventDefault();
+      var item = nb.closest('.pf-item');
+      if(!item) return;
+      var id = item.dataset.pfid;
+      var panel = item.nextElementSibling;
+      if(!panel || !panel.classList.contains('pf-note-panel')){
+        panel = document.createElement('div');
+        panel.className = 'pf-note-panel';
+        panel.innerHTML = '<textarea class="pf-note-input" placeholder="Nota..."></textarea><div class="pf-note-actions"><button class="pf-cancel">Cancelar</button><button class="pf-save">Guardar</button></div>';
+        item.after(panel);
+        db.ref('prueba_final_notes/' + id).once('value').then(function(s){
+          if(s.val()) panel.querySelector('.pf-note-input').value = s.val().text || '';
+        });
+        panel.querySelector('.pf-cancel').addEventListener('click', function(){ panel.classList.remove('open'); });
+        panel.querySelector('.pf-save').addEventListener('click', function(){
+          if(!me) return;
+          var val = panel.querySelector('.pf-note-input').value.trim();
+          db.ref('prueba_final_notes/' + id).set(val ? {text: val, by: me.name, ts: Date.now()} : null);
+          panel.classList.remove('open');
+        });
+      }
+      panel.classList.toggle('open');
+    });
+  });
+}
+
+window.openPF = openPF;
+window.closePF = closePF;
+
 window.closeInfo=function(){
   const modal = document.getElementById('info-modal');
   if(!modal) return;
@@ -5076,6 +5253,2473 @@ function closeDrawer(){
   document.getElementById('drawer-overlay').classList.remove('open');
 }
 </script>
+
+
+<!-- POST-LOGIN LOADING SCREEN -->
+<div id="pf-loading" style="display:none;position:fixed;inset:0;z-index:6300;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;color:var(--accent);">NIXA</div>
+  <div style="font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:-.5rem;">Commissioning System</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:.75rem;margin-top:.5rem;">
+    <div style="width:40px;height:40px;border:2px solid rgba(0,200,240,.15);border-top-color:var(--accent);border-radius:50%;animation:pf-spin 1s linear infinite;"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Cargando datos...</div>
+  </div>
+  <div id="pf-load-tip" style="font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--dim);text-align:center;max-width:280px;line-height:1.7;padding:0 1.5rem;"></div>
+</div>
+
+<!-- PRUEBA FINAL MODAL -->
+<div id="pf-modal" style="display:none;position:fixed;inset:0;z-index:6200;background:var(--bg);flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:#d4af37;">✦ Prueba Final</div>
+    <div style="display:flex;align-items:center;gap:.75rem;">
+      <span id="pf-progress" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);">0/181</span>
+      <button onclick="closePF()" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.6rem;padding:.25rem .65rem;cursor:pointer;border:1px solid var(--border2);">✕ CERRAR</button>
+    </div>
+  </div>
+  <div style="overflow-y:auto;flex:1;padding:1rem 1.25rem 3rem;">
+    <div class="pf-room"><div class="pf-room-title">Habitación 11</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h11_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h11_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h11_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h11_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h11_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 13</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h13_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h13_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h13_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h13_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h13_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 15</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h15_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h15_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h15_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h15_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h15_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 17</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h17_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h17_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h17_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h17_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h17_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 22</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h22_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h22_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h22_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h22_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h22_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 24</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h24_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h24_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h24_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h24_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h24_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 26</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h26_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h26_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h26_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h26_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h26_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación 28</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_h28_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_cortinas_control_por_voz_cort">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz cortinas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_h28_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_h28_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_h28_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">📺 TV</div>
+<div class="pf-item" data-pfid="pf_h28_tv_tv_internet">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">TV Internet</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Habitación Principal</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_hp_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_hp_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_hp_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-sub-title">Baño Hab. Principal</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_bhp_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_bhp_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_bhp_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_bhp_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Puente</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_puente_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_puente_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_puente_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Living</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_lv_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_lv_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_lv_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Bar</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_ba_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_ba_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_ba_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Cocina</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_co_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_co_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_co_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Quincho</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_qu_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_qu_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_qu_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Escaleras</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_esc_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_esc_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_esc_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_esc_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_esc_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_esc_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+<div class="pf-room"><div class="pf-room-title">Pasillos</div>
+<div class="pf-group-title">🪟 Cortinas</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_control_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_control_de_cortinas__2">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de cortinas por NsPanel (widgets)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_control_por_tablet_a">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por Tablet App eWeLink</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_control_por_voz">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_cortinas_agrupadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Cortinas agrupadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_cortinas_escena_de_cortinas_">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Escena de cortinas — subir y bajar</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">💡 Luces</div>
+<div class="pf-item" data-pfid="pf_pas_luces_control_de_luces_fís">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control de luces físico</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_luces_dimerización_de_luce">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Dimerización de luces por NsPanel</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_luces_combinadas">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Combinadas</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_luces_control_por_voz_apa">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Control por voz (apagado · encendido · dimer)</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-group-title">🌡️ Termostato</div>
+<div class="pf-item" data-pfid="pf_pas_termostato_termostato_vinculado">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Termostato vinculado a tecla</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+<div class="pf-item" data-pfid="pf_pas_termostato_temperatura_automáti">
+  <div class="pf-check-wrap">
+    <div class="pf-cb"></div>
+  </div>
+  <div class="pf-label">Temperatura automática</div>
+  <div class="pf-qty-wrap">
+    <button class="pf-qty-btn" data-dir="-">−</button>
+    <span class="pf-qty-val">0</span>
+    <button class="pf-qty-btn" data-dir="+">+</button>
+  </div>
+  <button class="pf-note-btn">nota</button>
+  <span class="pf-meta"></span>
+</div>
+</div>
+
+  </div>
+</div>
+
 
 <!-- NOMENCLATURA MODAL -->
 <div id="nom-modal" style="display:none;position:fixed;inset:0;z-index:6000;background:var(--bg);flex-direction:column;">
@@ -5131,7 +7775,7 @@ function closeDrawer(){
 
 
 <!-- FORCED PASS CHANGE MODAL -->
-<div id="forced-pass-modal" style="display:none;position:fixed;inset:0;z-index:9800;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(16px);">
+<div id="forced-pass-modal" style="display:none;position:fixed;inset:0;z-index:9800;align-items:center;justify-content:center;background:rgba(0,0,0,.92);">
   <div style="background:var(--s1);border:1px solid var(--border2);padding:1.75rem 1.5rem;max-width:320px;width:90%;text-align:center;">
     <div style="font-size:1.5rem;margin-bottom:.75rem;"></div>
     <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:.5rem;">Cambio de clave requerido</div>
@@ -5146,7 +7790,7 @@ function closeDrawer(){
 </div>
 
 <!-- REASSIGN MODAL -->
-<div id="reassign-modal" style="display:none;position:fixed;inset:0;z-index:7000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);">
+<div id="reassign-modal" style="display:none;position:fixed;inset:0;z-index:7000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.85);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.25rem 1.1rem 2rem;position:relative;">
     <button onclick="closeReassign()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.25rem;"> Reasignar tareas</div>
@@ -5165,7 +7809,7 @@ function closeDrawer(){
 </div>
 
 <!-- TECH CHECKS MODAL -->
-<div id="tech-modal" style="display:none;position:fixed;inset:0;z-index:6500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+<div id="tech-modal" style="display:none;position:fixed;inset:0;z-index:6500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;padding:1.25rem 1.1rem 2rem;position:relative;">
     <button onclick="closeTechChecks()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.5rem;" id="tech-modal-title"></div>
@@ -5175,7 +7819,7 @@ function closeDrawer(){
 </div>
 
 <!-- DASHBOARD MODAL -->
-<div id="dashboard-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);overflow-y:auto;">
+<div id="dashboard-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.85);overflow-y:auto;">
   <div style="background:var(--s1);border:1px solid var(--border2);width:100%;max-width:600px;padding:1.5rem 1.25rem 3rem;position:relative;min-height:100vh;">
     <button onclick="closeDashboard()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1.25rem;">Dashboard de Actividad</div>
@@ -5200,7 +7844,7 @@ function closeDrawer(){
 </div>
 
 <!-- DEVICES MODAL -->
-<div id="devices-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+<div id="devices-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.5rem 1.25rem 2rem;position:relative;">
     <button onclick="closeDevicesPanel()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;"> Dispositivos Admin</div>
@@ -5220,7 +7864,7 @@ function closeDrawer(){
 </div>
 
 <!-- PASSWORD MODAL -->
-<div id="passwd-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);">
+<div id="passwd-modal" style="display:none;position:fixed;inset:0;z-index:6000;align-items:center;justify-content:center;background:rgba(0,0,0,.75);">
   <div style="background:var(--s1);border:1px solid var(--border2);padding:1.5rem 1.25rem;max-width:320px;width:90%;position:relative;">
     <button onclick="closePasswdPanel()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;"> Cambiar clave</div>
@@ -5234,7 +7878,7 @@ function closeDrawer(){
 </div>
 
 <!-- DAILY SUMMARY MODAL -->
-<div id="daily-modal" style="display:none;position:fixed;inset:0;z-index:5500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);">
+<div id="daily-modal" style="display:none;position:fixed;inset:0;z-index:5500;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.75);">
   <div style="background:var(--s1);border:1px solid var(--border2);border-bottom:none;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:1.5rem 1.25rem 2rem;position:relative;">
     <button onclick="closeDailySummary()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;">✕</button>
     <div id="daily-content"></div>
@@ -5310,4 +7954,4 @@ function closeDrawer(){
 })();
 </script>
 </body>
-  </html>
+</html>
