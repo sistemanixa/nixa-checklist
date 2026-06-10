@@ -4034,16 +4034,28 @@ const GASTO_CATS = {
 let dolarOficial = null;
 
 function fetchDolar(){
-  // Try dolarapi.com (BNA/BCRA oficial) first, fallback to argentinadatos
-  fetch('https://dolarapi.com/v1/ar/oficial')
+  // Try BNA via CORS proxy scraping
+  const bnaUrl = 'https://www.bna.com.ar/Personas';
+  const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(bnaUrl);
+  
+  fetch(proxyUrl)
     .then(r=>r.json())
     .then(data=>{
-      const compra = parseFloat(data.compra)||0;
-      const venta  = parseFloat(data.venta)||0;
-      dolarOficial = compra && venta ? (compra + venta) / 2 : (venta || compra || null);
-      const el = document.getElementById('dolar-rate');
-      if(el && dolarOficial) el.textContent = '$'+dolarOficial.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD (BNA)';
-      renderGastosTotals();
+      const html = data.contents || '';
+      // BNA table has USD venta in a specific pattern
+      const match = html.match(/U\.S\. DOLAR[^<]*<\/td>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/i)
+                 || html.match(/US Dollar[^<]*<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>/i);
+      if(match){
+        const venta = parseFloat(match[2].replace(',','.').trim());
+        if(venta > 100){
+          dolarOficial = venta;
+          const el = document.getElementById('dolar-rate');
+          if(el) el.textContent = '$'+venta.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD (BNA)';
+          renderGastosTotals();
+          return;
+        }
+      }
+      throw new Error('BNA parse failed');
     })
     .catch(()=>{
       // Fallback to argentinadatos
@@ -4051,9 +4063,7 @@ function fetchDolar(){
         .then(r=>r.json())
         .then(data=>{
           const last = Array.isArray(data) ? data[data.length-1] : data;
-          const compra = last.compra || 0;
-          const venta  = last.venta  || 0;
-          dolarOficial = compra && venta ? (compra + venta) / 2 : (venta || compra || null);
+          dolarOficial = last.venta || last.compra || null;
           const el = document.getElementById('dolar-rate');
           if(el && dolarOficial) el.textContent = '$'+dolarOficial.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD';
           renderGastosTotals();
