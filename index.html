@@ -4034,17 +4034,15 @@ const GASTO_CATS = {
 let dolarOficial = null;
 
 function fetchDolar(){
-  // Try BNA via CORS proxy scraping
   const bnaUrl = 'https://www.bna.com.ar/Personas';
   const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(bnaUrl);
-  
+
   fetch(proxyUrl)
     .then(r=>r.json())
     .then(data=>{
       const html = data.contents || '';
-      // BNA table has USD venta in a specific pattern
-      const match = html.match(/U\.S\. DOLAR[^<]*<\/td>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/i)
-                 || html.match(/US Dollar[^<]*<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>/i);
+      // BNA table structure: <td class="tit">Dolar U.S.A</td><td>1405,00</td><td>1455,00</td>
+      const match = html.match(/Dolar U\.S\.A<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>/i);
       if(match){
         const venta = parseFloat(match[2].replace(',','.').trim());
         if(venta > 100){
@@ -4058,7 +4056,6 @@ function fetchDolar(){
       throw new Error('BNA parse failed');
     })
     .catch(()=>{
-      // Fallback to argentinadatos
       fetch('https://api.argentinadatos.com/v1/cotizaciones/dolares/oficial')
         .then(r=>r.json())
         .then(data=>{
