@@ -681,6 +681,79 @@ function accesoRapido() {
   iniciarLogin();
 }
 
+
+// ── CARGAR EMPLEADOS ──
+function fbCargarEmpleados() {
+  if (!window.fbDB) return;
+  window.fbOnValue(window.fbRef(window.fbDB, 'sisventas/empleados'), function(snap) {
+    var data = snap.val();
+    if (data) {
+      empData = {};
+      Object.entries(data).forEach(function(e, i) {
+        var emp = Object.assign({ fbKey: e[0] }, e[1]);
+        empData[i+1] = emp;
+      });
+      if (typeof renderTablaEmpleados === 'function') renderTablaEmpleados();
+      if (typeof actualizarSelectEmpleados === 'function') actualizarSelectEmpleados();
+    }
+  });
+}
+
+// ── CARGAR CATEGORÍAS ──
+function fbCargarCategorias() {
+  if (!window.fbDB) return;
+  window.fbOnValue(window.fbRef(window.fbDB, 'sisventas/categorias'), function(snap) {
+    var data = snap.val();
+    if (data) {
+      window.categoriasData = Object.values(data).map(function(c){ return c.nombre; });
+      // Actualizar selector de categorías en formulario de producto
+      var selCat = document.getElementById('np-cat');
+      if (selCat && window.categoriasData) {
+        selCat.innerHTML = window.categoriasData.map(function(c){
+          return '<option value="'+c+'">'+c+'</option>';
+        }).join('');
+      }
+    }
+  });
+}
+
+// ── CARGAR USUARIOS ──
+function fbCargarUsuarios() {
+  if (!window.fbDB) return;
+  window.fbOnValue(window.fbRef(window.fbDB, 'sisventas/usuarios'), function(snap) {
+    var data = snap.val();
+    if (data) {
+      window.usuariosData = Object.entries(data).map(function(e){
+        return Object.assign({ fbKey: e[0] }, e[1]);
+      });
+      // Actualizar sugerencias de login
+      if (window.usuariosData) {
+        LOGIN_USUARIOS = window.usuariosData
+          .filter(function(u){ return u.activo !== false; })
+          .map(function(u){
+            return {
+              email: u.mail || (u.login + '@sistemanixa.com'),
+              nombre: u.nombre,
+              rol: u.rol === 'admin' ? 'Admin' : 'Vendedor'
+            };
+          });
+      }
+    }
+  });
+}
+
+
+// Actualizar select de empleados en nueva venta
+function actualizarSelectEmpleados() {
+  var sel = document.getElementById('emp-sel');
+  if (!sel || !empData) return;
+  var activos = Object.values(empData).filter(function(e){ return e.activo !== false; });
+  sel.innerHTML = '<option value="">Seleccionar empleado...</option>' +
+    activos.map(function(e){
+      return '<option value="'+e.id+'">'+e.nombre+' — '+e.cargo+'</option>';
+    }).join('');
+}
+
 </script>
 </head>
 <body>
@@ -693,7 +766,7 @@ function accesoRapido() {
     <div class="login-logo">
       <div class="login-brand">SisVentas</div>
       <div class="login-tagline">sistema de gestión</div>
-    <div style="font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.5px">v3.6 · Firebase</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.5px">v3.8 · Firebase</div>
     </div>
     <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
     <div class="login-field">
@@ -2917,6 +2990,9 @@ function fbCargarTodo() {
   fbCargarVentas();
   fbCargarPresupuestos();
   fbCargarOTs();
+  fbCargarEmpleados();
+  fbCargarCategorias();
+  fbCargarUsuarios();
 }
 
 // ── CLIENTES ──
@@ -5196,75 +5272,117 @@ function generarOTdesdeVenta(ventaId, cliente, dir) {
 // KPIs DASHBOARD
 // ══════════════════════════════════════════════
 function renderKPIsDashboard() {
-  // Calcular desde datos reales de pptoData y otData
-  const total = typeof pptoData !== 'undefined' ? pptoData.length : 5;
-  const convertidos = typeof pptoData !== 'undefined' ? pptoData.filter(p => p.estado === 'convertido').length : 1;
-  const activos = typeof pptoData !== 'undefined' ? pptoData.filter(p => ['borrador','revision','aprobado_int','enviado','visto','aceptado'].includes(p.estado)).length : 4;
-  const conversion = total > 0 ? Math.round(convertidos / total * 100) : 0;
-  const otsPend = typeof otData !== 'undefined' ? otData.filter(o => o.estado === 'pendiente' || o.estado === 'en_progreso').length : 2;
+  var hoy = new Date().toISOString().slice(0,10);
+  var ayer = new Date(Date.now()-86400000).toISOString().slice(0,10);
 
-  const elConv = _get('kpi-conversion');
-  const elAct  = _get('kpi-activos');
-  const elOts  = document.getElementById('kpi-ots');
-  if (elConv) { elConv.textContent = conversion + '%'; elConv.style.color = conversion >= 50 ? 'var(--green)' : 'var(--amber)'; }
-  if (elAct)  elAct.textContent = activos;
-  if (elOts)  elOts.textContent = otsPend;
+  // ── Ventas ──
+  var ventas = ventasList || [];
+  var ventasHoy = ventas.filter(function(v){ return v.fecha === hoy; });
+  var ventasAyer = ventas.filter(function(v){ return v.fecha === ayer; });
+  var totalHoy  = ventasHoy.reduce(function(s,v){ return s + (parseFloat(v.total)||0); }, 0);
+  var totalAyer = ventasAyer.reduce(function(s,v){ return s + (parseFloat(v.total)||0); }, 0);
+  var diffPct   = totalAyer > 0 ? Math.round((totalHoy - totalAyer) / totalAyer * 100) : 0;
 
-  // Barras por estado
-  const estadosEl = document.getElementById('kpi-ppto-estados');
-  if (estadosEl && typeof pptoData !== 'undefined') {
-    const estadosList = ['borrador','revision','aprobado_int','enviado','visto','aceptado','rechazado','vencido','convertido'];
-    const colores = { borrador:'var(--text3)', revision:'var(--amber)', aprobado_int:'var(--blue)', enviado:'#0369a1', visto:'#92400e', aceptado:'var(--green)', rechazado:'var(--red)', vencido:'var(--text3)', convertido:'#5b21b6' };
-    const labels  = { borrador:'Borrador', revision:'En revisión', aprobado_int:'Aprobado intern.', enviado:'Enviado', visto:'Visto', aceptado:'Aceptado', rechazado:'Rechazado', vencido:'Vencido', convertido:'Convertido' };
-    estadosEl.innerHTML = estadosList.map(est => {
-      const cnt = pptoData.filter(p => p.estado === est).length;
-      if (!cnt) return '';
-      const pct = Math.round(cnt / total * 100);
-      return `<div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:12px;color:var(--text2);width:130px;flex-shrink:0">${labels[est]}</div>
-        <div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:${colores[est]};border-radius:4px;transition:width .4s"></div>
-        </div>
-        <div style="font-size:12px;color:var(--text3);width:40px;text-align:right;flex-shrink:0">${cnt} (${pct}%)</div>
-      </div>`;
+  _set('kpi-ventas-hoy', '$' + Math.round(totalHoy).toLocaleString('es-AR'));
+  var diffEl = document.getElementById('kpi-ventas-diff');
+  if (diffEl) {
+    diffEl.textContent = (diffPct >= 0 ? '↑ +' : '↓ ') + diffPct + '% vs ayer';
+    diffEl.style.color = diffPct >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  // ── Deuda clientes (ventas pendiente de cobro) ──
+  var deudaTotal = ventas.reduce(function(s,v){
+    if (v.estadoPago !== 'pago_total') {
+      s += parseFloat(v.total)||0;
+    }
+    return s;
+  }, 0);
+  var clientesConDeuda = ventas.filter(function(v){ return v.estadoPago !== 'pago_total'; })
+    .map(function(v){ return v.cliente; });
+  var clientesUnicos = new Set(clientesConDeuda).size;
+  _set('kpi-deuda', '$' + Math.round(deudaTotal).toLocaleString('es-AR'));
+  var deudaSubEl = document.getElementById('kpi-deuda-sub');
+  if (deudaSubEl) deudaSubEl.textContent = clientesUnicos + ' cliente' + (clientesUnicos !== 1 ? 's' : '') + ' con saldo';
+
+  // ── Presupuestos ──
+  var pptos = pptoData || [];
+  var pptosActivos = pptos.filter(function(p){
+    return ['borrador','revision','aprobado_int','enviado','visto','aceptado'].includes(p.estado);
+  });
+  _set('kpi-pptos', String(pptos.length));
+  var pptoSubEl = document.getElementById('kpi-pptos-sub');
+  if (pptoSubEl) pptoSubEl.textContent = pptosActivos.length + ' activos';
+
+  // ── IVA acumulado (mes actual) ──
+  var mesActual = hoy.slice(0,7);
+  var ivaTotal = ventas.filter(function(v){ return (v.fecha||'').slice(0,7) === mesActual; })
+    .reduce(function(s,v){ return s + (parseFloat(v.iva)||0); }, 0);
+  _set('kpi-iva', '$' + Math.round(ivaTotal).toLocaleString('es-AR'));
+  var ivaMesEl = document.getElementById('kpi-iva-mes');
+  if (ivaMesEl) {
+    var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    ivaMesEl.textContent = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
+  }
+
+  // ── Gráfico barras últimos 7 días ──
+  var bars = document.querySelectorAll('.bar');
+  var labels = document.querySelectorAll('.bar-lbl');
+  if (bars.length) {
+    var dias7 = [];
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(Date.now() - i*86400000);
+      dias7.push(d.toISOString().slice(0,10));
+    }
+    var maxVal = 0;
+    var totales = dias7.map(function(fecha) {
+      var t = ventas.filter(function(v){ return v.fecha === fecha; })
+        .reduce(function(s,v){ return s + (parseFloat(v.total)||0); }, 0);
+      if (t > maxVal) maxVal = t;
+      return t;
+    });
+    var diaNombres = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+    bars.forEach(function(bar, i) {
+      var pct = maxVal > 0 ? Math.round(totales[i]/maxVal*80)+4 : 4;
+      bar.style.height = pct + 'px';
+      bar.title = '$' + Math.round(totales[i]).toLocaleString('es-AR');
+      if (labels[i]) {
+        var d = new Date(dias7[i]);
+        labels[i].textContent = diaNombres[d.getDay() === 0 ? 6 : d.getDay()-1];
+      }
+    });
+  }
+
+  // ── Últimas ventas en dashboard ──
+  var ultVentasEl = document.getElementById('dash-ultimas-ventas');
+  if (ultVentasEl && ventas.length) {
+    var ultimas = ventas.slice(0, 5);
+    ultVentasEl.innerHTML = ultimas.map(function(v) {
+      var ep = v.estadoPago === 'pago_total' ? '✓' : v.estadoPago === 'seniado' ? '◑' : '○';
+      var epColor = v.estadoPago === 'pago_total' ? 'var(--green)' : v.estadoPago === 'seniado' ? 'var(--blue)' : 'var(--amber)';
+      var total = parseFloat(v.total)||0;
+      return '<tr onclick="showPage(this.dataset.pg,null)" data-pg="detalle" style="cursor:pointer">' +
+        '<td style="font-family:monospace;font-size:12px">' + (v.id||'') + '</td>' +
+        '<td>' + (v.cliente||'') + '</td>' +
+        '<td class="hide-mobile" style="color:var(--text3)">' + (v.fecha||'') + '</td>' +
+        '<td style="text-align:right;font-weight:600">$' + total.toLocaleString('es-AR') + '</td>' +
+        '<td style="text-align:right;color:' + epColor + '">' + ep + '</td>' +
+      '</tr>';
     }).join('');
   }
 
-  // Vendedores
-  const vBody = document.getElementById('kpi-vendedores-body');
-  if (vBody && typeof pptoData !== 'undefined') {
-    const vendedores = {};
-    pptoData.forEach(p => {
-      if (!vendedores[p.empleado]) vendedores[p.empleado] = { total:0, conv:0, monto:0 };
-      vendedores[p.empleado].total++;
-      if (p.estado === 'convertido') { vendedores[p.empleado].conv++; vendedores[p.empleado].monto += p.total; }
-    });
-    vBody.innerHTML = Object.entries(vendedores).sort((a,b) => b[1].conv - a[1].conv).map(([nombre, d]) => {
-      const tasa = d.total > 0 ? Math.round(d.conv/d.total*100) : 0;
-      const color = tasa >= 60 ? 'var(--green)' : tasa >= 30 ? 'var(--amber)' : 'var(--red)';
-      return `<tr>
-        <td>${escapeHTML(nombre)}</td>
-        <td class="tr">${d.total}</td>
-        <td class="tr">${d.conv}</td>
-        <td class="tr" style="color:${color};font-weight:500">${tasa}%</td>
-        <td class="tr" style="color:var(--green)">$${d.monto.toLocaleString('es-AR')}</td>
-      </tr>`;
+  // ── Comisiones (usa empData si está disponible) ──
+  var empTabla = document.getElementById('dash-comisiones');
+  if (empTabla && Object.keys(empData||{}).length) {
+    empTabla.innerHTML = Object.values(empData).map(function(e) {
+      return '<tr>' +
+        '<td>' + (e.nombre||'') + '</td>' +
+        '<td><span class="badge b-blue" style="font-size:10px">' + (e.categoria||'') + '</span></td>' +
+        '<td style="text-align:right;color:var(--green)">$' + (e.comisiones||0).toLocaleString('es-AR') + '</td>' +
+        '<td style="text-align:right;color:var(--text3)">' + (e.hextra ? '$'+e.hextra.toLocaleString('es-AR') : '—') + '</td>' +
+      '</tr>';
     }).join('');
   }
 }
-
-// Parchar showPage para renderizar KPIs al entrar al dashboard
-// ══════════════════════════════════════════════
-// ESTADOS DE VENTA
-// ══════════════════════════════════════════════
-var VENTA_ESTADOS = [
-  { id:'pendiente_pago',  label:'Pendiente pago',  icon:'ti-clock',          cls:'warn'   },
-  { id:'seniado',         label:'Señado',           icon:'ti-coin',           cls:'warn'   },
-  { id:'pago_total',      label:'Pago total',       icon:'ti-check',          cls:'done'   },
-  { id:'en_instalacion',  label:'En instalación',   icon:'ti-tool',           cls:'active' },
-  { id:'instalado',       label:'Instalado',        icon:'ti-home-check',     cls:'done'   },
-  { id:'con_garantia',    label:'Con garantía',     icon:'ti-shield-check',   cls:'done'   },
-];
 
 function renderVentaTimeline(containerId, estadoActual) {
   const el = document.getElementById(containerId);
