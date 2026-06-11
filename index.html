@@ -4034,41 +4034,18 @@ const GASTO_CATS = {
 let dolarOficial = null;
 
 function fetchDolar(){
-  const bnaUrl = 'https://www.bna.com.ar/Personas';
-  const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(bnaUrl);
-
-  fetch(proxyUrl)
+  fetch('https://api.argentinadatos.com/v1/cotizaciones/dolares/oficial')
     .then(r=>r.json())
     .then(data=>{
-      const html = data.contents || '';
-      // BNA table structure: <td class="tit">Dolar U.S.A</td><td>1405,00</td><td>1455,00</td>
-      const match = html.match(/Dolar U\.S\.A<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>\s*<td[^>]*>([\d,\.]+)<\/td>/i);
-      if(match){
-        const venta = parseFloat(match[2].replace(',','.').trim());
-        if(venta > 100){
-          dolarOficial = venta;
-          const el = document.getElementById('dolar-rate');
-          if(el) el.textContent = '$'+venta.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD (BNA)';
-          renderGastosTotals();
-          return;
-        }
-      }
-      throw new Error('BNA parse failed');
+      const last = Array.isArray(data) ? data[data.length-1] : data;
+      dolarOficial = last.venta || last.compra || null;
+      const el = document.getElementById('dolar-rate');
+      if(el && dolarOficial) el.textContent = '$'+dolarOficial.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD';
+      renderGastosTotals();
     })
     .catch(()=>{
-      fetch('https://api.argentinadatos.com/v1/cotizaciones/dolares/oficial')
-        .then(r=>r.json())
-        .then(data=>{
-          const last = Array.isArray(data) ? data[data.length-1] : data;
-          dolarOficial = last.venta || last.compra || null;
-          const el = document.getElementById('dolar-rate');
-          if(el && dolarOficial) el.textContent = '$'+dolarOficial.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' / USD';
-          renderGastosTotals();
-        })
-        .catch(()=>{
-          const el = document.getElementById('dolar-rate');
-          if(el) el.textContent = 'No disponible';
-        });
+      const el = document.getElementById('dolar-rate');
+      if(el) el.textContent = 'No disponible';
     });
 }
 
